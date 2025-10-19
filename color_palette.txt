@@ -1,0 +1,3 @@
+#b82f17 --red
+#ffe205 --yellow
+#3d2411 --brown
