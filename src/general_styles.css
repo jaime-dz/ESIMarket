@@ -55,7 +55,19 @@
     font-family: Arial, sans-serif;
 }
 
+#login{
+    text-align: center;
+}
+
 h2{
+    text-align: center;
+}
+
+#no-account{
+    text-align: center;
+}
+
+.submit-button{
     text-align: center;
 }
 
@@ -70,4 +82,3 @@ p{
 #formulario{
     text-align: center;
 }
-

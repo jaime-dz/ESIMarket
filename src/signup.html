@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sign in</title>
-        <link rel="stylesheet" href="signup_styles.css">
+        <link rel="stylesheet" href="general_styles.css">
         <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     </head>
     <body>
@@ -37,34 +37,36 @@
             <!--Seleccionar país (Solo UE)-->
             <div class="pais">
                 <label for="pais">Selecciona tu país</label>
-                <select id="pais" name="pais">
-                    <option value="" disabled selected>-- Seleccione una opción --</option>
-                    <option value="de">Alemania</option>
-                    <option value="a">Austria</option>
-                    <option value="be">Bélgica</option>
-                    <option value="bg">Bulgaria</option>
-                    <option value="hr">Croacia</option>
-                    <option value="cz">República Checa</option>
-                    <option value="dk">Dinamarca</option>
-                    <option value="sk">Eslovaquia</option>
-                    <option value="slo">Eslovenia</option>
-                    <option value="es">España</option>
-                    <option value="est">Estonia</option>
-                    <option value="fin">Finlandia</option>
-                    <option value="fr">Francia</option>
-                    <option value="gr">Grecia</option>
-                    <option value="h">Hungría</option>
-                    <option value="ir">Irlanda</option>
-                    <option value="it">Italia</option>
-                    <option value="lv">Letonia</option>
-                    <option value="lt">Lituania</option>
-                    <option value="l">Luxemburgo</option>
-                    <option value="nl">Países Bajos</option>
-                    <option value="pl">Polonia</option>
-                    <option value="pt">Portugal</option>
-                    <option value="r">Rumanía</option>
-                    <option value="s">Suecia</option>
-                </select>
+                
+                <input list="lista-paises" id="pais" name="pais" placeholder="-- Escribe o selecciona --">
+                
+                <datalist id="lista-paises">
+                    <option value="Alemania"></option>
+                    <option value="Austria"></option>
+                    <option value="Bélgica"></option>
+                    <option value="Bulgaria"></option>
+                    <option value="Croacia"></option>
+                    <option value="República Checa"></option>
+                    <option value="Dinamarca"></option>
+                    <option value="Eslovaquia"></option>
+                    <option value="Eslovenia"></option>
+                    <option value="España"></option>
+                    <option value="Estonia"></option>
+                    <option value="Finlandia"></option>
+                    <option value="Francia"></option>
+                    <option value="Grecia"></option>
+                    <option value="Hungría"></option>
+                    <option value="Irlanda"></option>
+                    <option value="Italia"></option>
+                    <option value="Letonia"></option>
+                    <option value="Lituania"></option>
+                    <option value="Luxemburgo"></option>
+                    <option value="Países Bajos"></option>
+                    <option value="Polonia"></option>
+                    <option value="Portugal"></option>
+                    <option value="Rumanía"></option>
+                    <option value="Suecia"></option>
+                </datalist>
             </div>
             <div class="tnc">
                 <input type="checkbox" required>
