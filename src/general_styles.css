@@ -61,6 +61,7 @@
 
 h2{
     text-align: center;
+    font-family: sans-serif;
 }
 
 #no-account{
@@ -73,12 +74,17 @@ h2{
 
 p{
     text-align: center;
+    font-family: sans-serif;
 }
 
 #mail,#tlf{
     font-family: monospace;
 }
 
-#formulario{
+#formulario, #signin{
     text-align: center;
+}
+
+.links-signup{
+    color:blue;
 }

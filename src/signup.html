@@ -21,8 +21,8 @@
         <h2>Registrarse</h2>
         <form id="signin">
             <div class="email">
-                <label for="email">Email*</label>
-                <input type="email" name="email" placeholder="Escribe tu email" required>
+                <label for="email">Correo electrónico*</label><br>
+                <input type="email" name="email" placeholder="Escribe tu correo electrónico" required>
             </div>
             <br>
             <div class="usuario">
@@ -34,7 +34,8 @@
                 <label for="contraseña">Contraseña*</label><br>
                 <input type="password" name="password" placeholder="Escribe tu contraseña" required><br><br>
             </div>
-            <!--Seleccionar país (Solo UE)-->
+            <br>
+            <!--Seleccionar país (Solo EEE)-->
             <div class="pais">
                 <label for="pais">Selecciona tu país</label>
                 
@@ -57,10 +58,12 @@
                     <option value="Grecia"></option>
                     <option value="Hungría"></option>
                     <option value="Irlanda"></option>
+                    <option value="Islandia"></option>
                     <option value="Italia"></option>
                     <option value="Letonia"></option>
                     <option value="Lituania"></option>
                     <option value="Luxemburgo"></option>
+                    <option value="Noruega"></option>
                     <option value="Países Bajos"></option>
                     <option value="Polonia"></option>
                     <option value="Portugal"></option>
@@ -68,15 +71,16 @@
                     <option value="Suecia"></option>
                 </datalist>
             </div>
+            <br>
             <div class="tnc">
                 <input type="checkbox" required>
-                <label for="tnc">He leído y acepto los <a href="tnc.txt">Términos y Condiciones</a> y la <a href="pp.txt">Política de Privacidad</a></label>
+                <label for="tnc">He leído y acepto los <a class="links-signup" href="tnc.html">Términos y Condiciones</a> y la <a class="links-signup" href="pp.html">Política de Privacidad</a></label>
             </div>
             <br>
             <div class="submit-button">
                 <button type="submit">Acceder</button>
             </div>
-            <p id="have-account"><a href="login.html">Ya tienes una cuenta?</a></p>
+            <p id="have-account"><a class="links-signup" href="login.html">¿Ya tienes una cuenta?</a></p>
         </form>
         <nav class="menu-inferior">
             <ul>
