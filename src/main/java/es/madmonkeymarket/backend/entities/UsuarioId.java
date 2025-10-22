@@ -9,10 +9,10 @@ import java.util.Objects;
 @Data
 public class UsuarioId implements Serializable {
 
-    @Column(name="Correo_Electronico")
+    @Column(name="correo_electronico")
     private String Correo;
 
-    @Column(name="Contrasenna")
+    @Column(name="contrasenna")
     private String Contrasenna;
 
     public UsuarioId() {}

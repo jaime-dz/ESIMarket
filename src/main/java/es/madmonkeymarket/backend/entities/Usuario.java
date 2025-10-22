@@ -14,16 +14,16 @@ public class Usuario {
     @EmbeddedId
     private UsuarioId id;
 
-    @Column(name="Nombre")
+    @Column(name="nombre")
     private String Nombre;
 
-    @Column(name="Apellidos")
+    @Column(name="apellidos")
     private String apellidos;
 
-    @Column(name="Saldo_Monedas")
+    @Column(name="saldo_monedas")
     private double Saldo_Monedas;
 
-    @Column(name="DNI")
+    @Column(name="dni")
     private String DNI;
 
     @Column(name="salt")
