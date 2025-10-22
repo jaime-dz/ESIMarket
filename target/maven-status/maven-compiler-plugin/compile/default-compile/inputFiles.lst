@@ -1,0 +1,6 @@
+/home/miguel/Descargas/MadMonkeyMarketBackend/src/main/java/es/madmonkeymarket/backend/config/MadMonkeyMarketBackendApplication.java
+/home/miguel/Descargas/MadMonkeyMarketBackend/src/main/java/es/madmonkeymarket/backend/controllers/HomeController.java
+/home/miguel/Descargas/MadMonkeyMarketBackend/src/main/java/es/madmonkeymarket/backend/controllers/UsuarioController.java
+/home/miguel/Descargas/MadMonkeyMarketBackend/src/main/java/es/madmonkeymarket/backend/entities/Usuario.java
+/home/miguel/Descargas/MadMonkeyMarketBackend/src/main/java/es/madmonkeymarket/backend/entities/UsuarioId.java
+/home/miguel/Descargas/MadMonkeyMarketBackend/src/main/java/es/madmonkeymarket/backend/repositories/UsuarioRepository.java

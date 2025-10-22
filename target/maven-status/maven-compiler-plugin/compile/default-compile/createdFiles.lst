@@ -1,0 +1,6 @@
+es/madmonkeymarket/backend/controllers/HomeController.class
+es/madmonkeymarket/backend/entities/Usuario.class
+es/madmonkeymarket/backend/controllers/UsuarioController.class
+es/madmonkeymarket/backend/entities/UsuarioId.class
+es/madmonkeymarket/backend/config/MadMonkeyMarketBackendApplication.class
+es/madmonkeymarket/backend/repositories/UsuarioRepository.class
