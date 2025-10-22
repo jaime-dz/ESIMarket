@@ -7,7 +7,6 @@ import lombok.Data;
 
 
 @Entity
-@Data
 @Table(name="usuarios")
 public class Usuario {
 
@@ -40,7 +39,7 @@ public class Usuario {
     public Usuario( String correo, String contrasenna , String nombre, String apellidos, double saldoMoneda, String DNI, String salt)
     {
         this.correo = correo;
-	this.contrasenna = contrasenna; 
+	this.contrasenna = contrasenna;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.saldoMoneda = saldoMoneda;
@@ -48,5 +47,25 @@ public class Usuario {
         this.salt = salt;
     }
 
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
+
+    public String getContrasenna() { return contrasenna; }
+    public void setContrasenna(String contrasenna) { this.contrasenna = contrasenna; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getApellidos() { return apellidos; }
+    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
+
+    public String getDni() { return dni; }
+    public void setDni(String dni) { this.dni = dni; }
+
+    public Double getSaldoMoneda() { return saldoMoneda; }
+    public void setSaldoMoneda(Double saldoMoneda) { this.saldoMoneda = saldoMoneda; }
+
+    public String getSalt() { return salt; }
+    public void setSalt(String salt) { this.salt = salt; }
 
 }
