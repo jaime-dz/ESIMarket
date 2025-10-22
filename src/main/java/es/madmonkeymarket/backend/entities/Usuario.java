@@ -15,16 +15,16 @@ public class Usuario {
     private UsuarioId id;
 
     @Column(name="nombre")
-    private String Nombre;
+    private String nombre;
 
     @Column(name="apellidos")
     private String apellidos;
 
     @Column(name="saldo_monedas")
-    private double Saldo_Monedas;
+    private double saldo_monedas;
 
     @Column(name="dni")
-    private String DNI;
+    private String dni;
 
     @Column(name="salt")
     private String salt;
@@ -34,10 +34,10 @@ public class Usuario {
     public Usuario( String correo, String contrasenna , String nombre, String apellidos, double saldo_monedas, String DNI, String salt)
     {
         this.id = new UsuarioId(correo, contrasenna);
-        this.Nombre = nombre;
+        this.nombre = nombre;
         this.apellidos = apellidos;
-        this.Saldo_Monedas = saldo_monedas;
-        this.DNI = DNI;
+        this.saldo_monedas = saldo_monedas;
+        this.dni = DNI;
         this.salt = salt;
     }
 
