@@ -1,5 +1,6 @@
-es/madmonkeymarket/backend/entities/UsuarioId.class
+es/madmonkeymarket/backend/MadMonkeyMarketBackendApplication.class
 es/madmonkeymarket/backend/repositories/UsuarioRepository.class
+es/madmonkeymarket/backend/DatabaseCheck.class
 es/madmonkeymarket/backend/controllers/HomeController.class
 es/madmonkeymarket/backend/entities/Usuario.class
 LoginEncriptado.class
