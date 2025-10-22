@@ -29,4 +29,10 @@ public class UsuarioId implements Serializable {
         return Objects.equals(Correo, that.Correo) &&
                 Objects.equals(Contrasenna, that.Contrasenna);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Correo, Contrasenna);
+    }
+
 }
