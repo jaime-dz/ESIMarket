@@ -12,20 +12,20 @@ public class Usuario {
 
 
     @Id
-    @Column(name = "correo", nullable = false)
-    private String correo;
+    @Column(name = "id", nullable = false)
+    private String id;
 
     @Column(name = "contrasenna", nullable = false)
     private String contrasenna;
+
+    @Column(name="correo" , nullable = false)
+    private String correo;
 
     @Column(name = "nombre")
     private String nombre;
 
     @Column(name = "apellidos")
     private String apellidos;
-
-    @Column(name = "dni")
-    private String dni;
 
     @Column(name = "saldoMoneda")
     private double saldoMoneda;
@@ -36,14 +36,14 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario( String correo, String contrasenna , String nombre, String apellidos, double saldoMoneda, String DNI, String salt)
+    public Usuario( String id, String correo, String contrasenna , String nombre, String apellidos, double saldoMoneda, String salt)
     {
+	this.id = id;
         this.correo = correo;
 	this.contrasenna = contrasenna;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.saldoMoneda = saldoMoneda;
-        this.dni = DNI;
         this.salt = salt;
     }
 
@@ -59,8 +59,8 @@ public class Usuario {
     public String getApellidos() { return apellidos; }
     public void setApellidos(String apellidos) { this.apellidos = apellidos; }
 
-    public String getDni() { return dni; }
-    public void setDni(String dni) { this.dni = dni; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public Double getSaldoMoneda() { return saldoMoneda; }
     public void setSaldoMoneda(Double saldoMoneda) { this.saldoMoneda = saldoMoneda; }
