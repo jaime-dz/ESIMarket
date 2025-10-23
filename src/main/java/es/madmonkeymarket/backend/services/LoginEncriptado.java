@@ -1,15 +1,15 @@
+package es.madmonkeymarket.backend.services;
+import org.springframework.stereotype.Component;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.SecureRandom;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.util.Base64;
-
-import java.util.Base64;
 import java.security.MessageDigest;
 
-public class LoginEncriptado
-{
+@Component
+public class LoginEncriptado {
 
     private static final int longitud_salt = 16; //la longitud de la salt
     private static final int iteraciones = 100; //cuantas vueltas se le da a la clave encriptada
