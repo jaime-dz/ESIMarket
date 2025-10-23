@@ -22,14 +22,21 @@ public class UsuarioController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute Usuario user) {
-        return usuarioService.registerUser(user);
+    public String signupG(@ModelAttribute Usuario user) {
+        return usuarioService.registerUser(user); // Falta probarlo
     }
 
     @GetMapping("/signup")
-    public String about() { return "signup.html"; }
+    public String signupP() { return "signup.html"; } // NO VA ( Cosas del html que no reconoce ns por que ;) )
 
 
+    @PostMapping("/login")
+    public String loginP(@ModelAttribute Usuario user) {
+        return ""; // Falta
+    }
+
+    @GetMapping("/login")
+    public String loginG() { return "login.html"; }
 
 
 }

@@ -33,11 +33,11 @@ public class LoginEncriptado {
         //se almacenarian en base 64
     }
 
-    public static boolean CompararContraseñas(String contraseña1,String contraseña2)
+    public static boolean CompararContrasennas(String contrasenna1,String contrasenna2)
     {
 
-        byte[] con1 = Base64.getDecoder().decode(contraseña1); //decodificamos la dos contraseñas, el det decoder lo que hace es crear una clase decoder y de esa lase cogemos la funcion decoder y lo decodificamos a bytes
-        byte[] con2 = Base64.getDecoder().decode(contraseña2);
+        byte[] con1 = Base64.getDecoder().decode(contrasenna1); //decodificamos la dos contraseñas, el det decoder lo que hace es crear una clase decoder y de esa lase cogemos la funcion decoder y lo decodificamos a bytes
+        byte[] con2 = Base64.getDecoder().decode(contrasenna2);
 
         return MessageDigest.isEqual(con1,con2); //simplemente compara los dos arrays de bytes
 
@@ -45,19 +45,18 @@ public class LoginEncriptado {
 
     public static void main(String[] args) throws Exception
     {
-        String contraseña = "Aqui va la contraseña que quieras encriptar";
+        String contrasenna = "Aqui va la contraseña que quieras encriptar";
 
         byte[] salt_del_usuario = GenerateSalt();
 
-        String hash1 = HashPassword(contraseña,salt_del_usuario);
-        String hash2 = HashPassword(contraseña,salt_del_usuario);
+        String hash1 = HashPassword(contrasenna,salt_del_usuario);
+        String hash2 = HashPassword(contrasenna,salt_del_usuario);
 
         System.out.println("Salt (Base64): " + Base64.getEncoder().encodeToString(salt_del_usuario));
         System.out.println("Hash (Base64): " + hash1);
         System.out.println("Hash (Base64): " + hash2);
 
-        if(CompararContraseñas(hash1, hash2))
+        if(CompararContrasennas(hash1, hash2))
             System.out.println("Funciona la mierda esta");
     }
-	// Prueba :)
 }
