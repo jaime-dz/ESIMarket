@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RequestMapping("/usuarios")
 @RestController
 public class UsuarioController {
 
@@ -17,7 +16,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping
+    @GetMapping("/usuarios")
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioRepository.findAll());
     }
