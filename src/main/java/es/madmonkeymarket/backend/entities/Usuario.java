@@ -3,7 +3,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Data;
 
 
 @Entity
@@ -18,7 +17,7 @@ public class Usuario {
     @Column(name = "contrasenna", nullable = false)
     private String contrasenna;
 
-    @Column(name="correo" , nullable = false)
+    @Column(name="correo")
     private String correo;
 
     @Column(name = "nombre")
@@ -36,13 +35,10 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario( String id, String contrasenna, String correo, String nombre, String apellidos)
+    public Usuario( String id, String contrasenna )
     {
 	    this.id = id;
         this.contrasenna = contrasenna;
-        this.correo = correo;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
 
     }
 

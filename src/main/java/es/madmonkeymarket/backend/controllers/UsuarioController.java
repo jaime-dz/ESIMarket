@@ -22,7 +22,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/signup")
-    public String signupG(@ModelAttribute Usuario user) {
+    public String signupG(@RequestBody Usuario user) {
         return usuarioService.registerUser(user); // Falta probarlo
     }
 
