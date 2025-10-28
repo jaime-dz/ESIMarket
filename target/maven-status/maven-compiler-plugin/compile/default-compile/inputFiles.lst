@@ -1,8 +1,0 @@
-/home/pinf/src/main/java/es/esimarket/backend/DatabaseCheck.java
-/home/pinf/src/main/java/es/esimarket/backend/MadMonkeyMarketBackendApplication.java
-/home/pinf/src/main/java/es/esimarket/backend/controllers/HomeController.java
-/home/pinf/src/main/java/es/esimarket/backend/controllers/UsuarioController.java
-/home/pinf/src/main/java/es/esimarket/backend/entities/Usuario.java
-/home/pinf/src/main/java/es/esimarket/backend/repositories/UsuarioRepository.java
-/home/pinf/src/main/java/es/esimarket/backend/services/LoginEncriptado.java
-/home/pinf/src/main/java/es/esimarket/backend/services/UsuarioService.java
