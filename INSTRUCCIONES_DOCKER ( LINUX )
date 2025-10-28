@@ -1,0 +1,10 @@
+1. Crea un fichero (nombrequesea).sh
+2. Copia esto en el fichero
+
+   #!bin/bash
+   sudo systemctl start docker.service
+   sudo docker run -it --rm -v "/ruta/de/tu/proyecto":/home/pinf -p 4444:4444 miguel7736/esimarket
+
+3. Cada vez que quieras abrirlo ejecuta el siguiente comando:
+
+   bash (nombrequesea).sh
