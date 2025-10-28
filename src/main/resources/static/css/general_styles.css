@@ -2,7 +2,7 @@
     text-align: center;
     margin-top: 40px;
     padding: 20px;
-    background-color: azure;
+    background-color: #00587C;
 }
 .menu-inferior ul {
     list-style: none;
@@ -16,13 +16,13 @@
 
 .menu-inferior a {
     text-decoration: none;
-    color: #333;
+    color: #ffffff;
     padding: 10px 15px;
     font-family: Arial, sans-serif;
 }
 
 .menu-inferior a:hover {
-    background-color: #ddd;
+    background-color: #E57200;
     border-radius: 5px;
 }
 
@@ -30,7 +30,7 @@
     text-align: center;
     margin-top: 40px;
     padding: 20px;
-    background-color: azure;
+    background-color: #00587C;
 }
 
 .menu-bar ul{
@@ -40,23 +40,20 @@
 }
 
 .menu-bar li{
+    
     display: inline-block;
 }
 
 .menu-bar a:hover{
-    background-color: #ddd;
+    background-color: #E57200;
     border-radius: 5px;
 }
 
 .menu-bar a{
     text-decoration: none;
-    color: #333;
+    color: #ffffff;
     padding: 10px 15px;
     font-family: Arial, sans-serif;
-}
-
-#login{
-    text-align: center;
 }
 
 h2{
@@ -64,14 +61,9 @@ h2{
     font-family: sans-serif;
 }
 
-#no-account{
-    text-align: center;
-}
-
 .submit-button{
     text-align: center;
 }
-
 
 p{
     text-align: center;
@@ -82,7 +74,7 @@ p{
     font-family: monospace;
 }
 
-#formulario, #signin, #signup{
+#formulario, #signin, #signup, #login, #no-account{
     text-align: center;
 }
 
