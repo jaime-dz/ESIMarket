@@ -29,16 +29,17 @@ public class Usuario {
     @Column(name = "saldoMoneda")
     private double saldoMoneda;
 
-    @Column(name = "salt")
+    @Column(name = "salt", nullable = false)
     private byte[] salt;
 
 
     public Usuario() {}
 
-    public Usuario( String id, String contrasenna )
+    public Usuario( String id, String contrasenna,byte[] salt )
     {
 	    this.id = id;
         this.contrasenna = contrasenna;
+        this.salt = salt;
 
     }
 
