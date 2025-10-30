@@ -6,30 +6,30 @@ import jakarta.persistence.Table;
 
 
 @Entity
-@Table(name="usuarios")
+@Table(name="usuario")
 public class Usuario {
 
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "uDNI", nullable = false)
     private String id;
 
-    @Column(name = "contrasenna", nullable = false)
+    @Column(name = "Contrasenna", nullable = false)
     private String contrasenna;
 
-    @Column(name="correo")
+    @Column(name="eMail")
     private String correo;
 
-    @Column(name = "nombre")
+    @Column(name = "Nombre")
     private String nombre;
 
-    @Column(name = "apellidos")
+    @Column(name = "Apellidos")
     private String apellidos;
 
-    @Column(name = "saldoMoneda")
+    @Column(name = "Saldo")
     private double saldoMoneda;
 
-    @Column(name = "salt", nullable = false)
+    @Column(name = "Salt", nullable = false)
     private byte[] salt;
 
 

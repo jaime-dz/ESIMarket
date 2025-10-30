@@ -19,7 +19,7 @@ public class DatabaseCheck implements CommandLineRunner {
             String currentDb = jdbcTemplate.queryForObject("SELECT DATABASE()", String.class);
             System.out.println("✅ Conectado a la base de datos real: " + currentDb);
 
-            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM usuarios", Integer.class);
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM usuario", Integer.class);
             System.out.println("📊 Usuarios encontrados en esa base: " + count);
         } catch (Exception e) {
             e.printStackTrace();
