@@ -1,8 +1,9 @@
 .menu-bar{
     text-align: center;
-    margin-top: 40px;
     padding: 20px;
     background-color: #00587C;
+    margin-left: -10px;
+    margin-right: -10px;
 }
 
 .menu-bar ul{
@@ -28,6 +29,14 @@
     font-family: Arial, sans-serif;
 }
 
+.menu-superior{
+    margin-top:-10px;
+}
+
+.menu-inferior{
+    margin-bottom: -10px;;
+}
+
 h2{
     text-align: center;
     font-family: sans-serif;
@@ -46,8 +55,9 @@ p{
     font-family: monospace;
 }
 
-#formulario, #signin, #signup, #login, #no-account{
+#formulario, #signup, #login, #no-account{
     text-align: center;
+    justify-content: center;
 }
 
 .links{
@@ -62,4 +72,20 @@ h1{
 label[for="message"],
 textarea#message {
   vertical-align: top;
+}
+
+#error-contraseña {
+    color: red;
+    font-size: 0.9em;
+    height: 1em; /* Reserva espacio para que el layout no "salte" */
+    margin-top: 5px;
+}
+
+#error-login {
+    color: red;
+    font-size: 0.9em;
+    height: 1em; /* Reserva espacio */
+    margin-top: 5px;
+    text-align: center;
+    font-weight: bold;
 }
