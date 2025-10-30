@@ -1,8 +1,13 @@
 package es.esimarket.backend.services;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 
 @Service
@@ -11,28 +16,38 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository userRepository;
 
-    public String registerUser(Usuario user) {
-        if (userRepository.existsById(user.getId())) {
-            return "El dni ya está registrado";
-        }
+    public ResponseEntity<String> registerUser( String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         byte[] salt = LoginEncriptado.GenerateSalt();
-        user.setSalt(salt);
 
-        try {
-            user.setContrasenna(LoginEncriptado.HashPassword(user.getContrasenna(), salt));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return "Error al registrar usuario";
+        Usuario user = new Usuario(username,LoginEncriptado.HashPassword(password, salt),salt);
+
+        if (userRepository.existsById(user.getId())) {
+            return ResponseEntity.ok("El dni ya está registrado");
         }
 
         userRepository.save(user);
 
-        return "Usuario registrado correctamente";
+        return ResponseEntity.ok("Usuario registrado correctamente");
     }
 
-    public String loginUser(Usuario user) {
-        return "Usuario registrado correctamente";
+    public ResponseEntity<String> loginUser(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException{
+
+        Usuario u = userRepository.getReferenceById(username);
+
+        if(u==null)
+        {
+            return ResponseEntity.ok("Usuario no encontrado");
+        }
+        
+        String CodedPassword = LoginEncriptado.HashPassword(password, u.getSalt());
+        if(u.getContrasenna()!=CodedPassword)
+        {
+            return ResponseEntity.ok("La contraseña incorrecta");
+        }
+
+
+        return ResponseEntity.ok("Usuario registrado correctamente");
     }
 
 
