@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Objects;
 
 
 @Service
@@ -41,7 +42,7 @@ public class UsuarioService {
         }
         
         String CodedPassword = LoginEncriptado.HashPassword(password, u.getSalt());
-        if(u.getContrasenna()!=CodedPassword)
+        if(!Objects.equals(u.getContrasenna(), CodedPassword))
         {
             return ResponseEntity.ok("La contraseña incorrecta");
         }
