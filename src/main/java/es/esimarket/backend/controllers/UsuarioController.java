@@ -28,7 +28,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signupG(@RequestParam String username,@RequestParam String password) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public ResponseEntity<String> signupG(@RequestParam String username,@RequestParam String password) throws NoSuchAlgorithmException, InvalidKeySpecException{
         return usuarioService.registerUser(username,password); // Falta probarlo
     }
 
@@ -37,8 +37,8 @@ public class UsuarioController {
 
 
     @PostMapping("/login")
-    public String loginP(@ModelAttribute Usuario user) {
-        return ""; // Falta
+    public ResponseEntity<String> loginP(@RequestParam String username, @RequestParam String password) throws NoSuchAlgorithmException, InvalidKeySpecException{
+        return usuarioService.loginUser(username,password); // Falta
     }
 
     @GetMapping("/login")

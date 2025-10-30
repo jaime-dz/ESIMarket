@@ -16,7 +16,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository userRepository;
 
-    public ResponseEntity<String> registerUser( String username, String password) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public ResponseEntity<String> registerUser( String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         byte[] salt = LoginEncriptado.GenerateSalt();
 
@@ -31,8 +31,23 @@ public class UsuarioService {
         return ResponseEntity.ok("Usuario registrado correctamente");
     }
 
-    public String loginUser(Usuario user) {
-        return "Usuario registrado correctamente";
+    public ResponseEntity<String> loginUser(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException{
+
+        Usuario u = userRepository.getReferenceById(username);
+
+        if(u==null)
+        {
+            return ResponseEntity.ok("Usuario no encontrado");
+        }
+        
+        String CodedPassword = LoginEncriptado.HashPassword(password, u.getSalt());
+        if(u.getContrasenna()!=CodedPassword)
+        {
+            return ResponseEntity.ok("La contraseña incorrecta");
+        }
+
+
+        return ResponseEntity.ok("Usuario registrado correctamente");
     }
 
 
