@@ -26,9 +26,11 @@ public class Chat{
 
     public Chat() {}
 
-    public Chat(String id)
+    public Chat(String id, String dni1, String dni2)
     {
         this.id = id;
+        this.uDNI1 = dni1;
+        this.uDNI2 = dni2;
     }
 
     public String getID() {return id;}
