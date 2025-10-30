@@ -5,11 +5,8 @@ import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Objects;
 
 
 @Service
@@ -43,11 +40,8 @@ public class UsuarioService {
         }
         
         String CodedPassword = LoginEncriptado.HashPassword(password, u.getSalt());
-        System.out.println(CodedPassword);
-        System.out.println(u.getContrasenna());
-        System.out.println(u.getSalt());
 
-        if(!CodedPassword.equals(u.getContrasenna()))
+        if(!LoginEncriptado.CompararContrasennas(CodedPassword,u.getContrasenna()))
         {
             return ResponseEntity.ok("La contraseña incorrecta");
         }
