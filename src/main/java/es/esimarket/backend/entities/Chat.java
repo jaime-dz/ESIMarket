@@ -10,7 +10,7 @@ public class Chat{
 
     @Id
     @Column(name = "ID", nullable=false)
-    private String id;
+    private Integer id;
 
     @Column(name = "uDNI1", nullable=false)
     private String uDNI1;
@@ -26,15 +26,15 @@ public class Chat{
 
     public Chat() {}
 
-    public Chat(String id, String dni1, String dni2)
+    public Chat(Integer id, String dni1, String dni2)
     {
         this.id = id;
         this.uDNI1 = dni1;
         this.uDNI2 = dni2;
     }
 
-    public String getID() {return id;}
-    public void SetID(String id) {this.id = id;}
+    public Integer getID() {return id;}
+    public void SetID(Integer id) {this.id = id;}
 
     public String getuDNI1() {return uDNI1;}
     public void setuDNI1(String uDNI1) {this.uDNI1=uDNI1;}
