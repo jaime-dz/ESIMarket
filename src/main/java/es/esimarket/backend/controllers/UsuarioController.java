@@ -28,8 +28,8 @@ public class UsuarioController {
     }
 
     @PostMapping("/signup")
-    public String signupG(@RequestBody String user) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
-        return usuarioService.registerUser(user); // Falta probarlo
+    public ResponseEntity<String> signupG(@RequestParam String username,@RequestParam String password) throws JsonProcessingException, NoSuchAlgorithmException, InvalidKeySpecException {
+        return usuarioService.registerUser(username,password); // Falta probarlo
     }
 
     @GetMapping("/signup")
