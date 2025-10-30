@@ -9,7 +9,7 @@
         <link rel="icon" href="Images/favicon.ico" type="image/x-icon">
     </head>
     <body>
-        <nav class="menu-bar">
+        <nav class="menu-bar menu-superior">
             <ul>
                 <li><a href="/">Inicio</a></li>
                 <li><a href="about">Sobre nosotros</a></li>
@@ -19,6 +19,7 @@
         </nav>
         <h2>Registrarse</h2>
         <form id="signup" method="post">
+            <div id="signup-message"></div>
             <div class="usuario">
                 <label for="usuario">Usuario*</label><br>
                 <input type="text" name="username" placeholder="Escribe tu usuario" required>
@@ -34,6 +35,8 @@
                 <input id="repcontraseña" type="password" name="password" placeholder="Repite tu contraseña" minlength="8" required><br><br>
             </div>
             <br>
+            <div id="error-contraseña"></div>
+            <br>
             <div class="tnc">
                 <input type="checkbox" required>
                 <label for="tnc">He leído y acepto los <a class="links" href="tnc.html">Términos y Condiciones</a> y la <a class="links" href="pp.html">Política de Privacidad</a></label>
@@ -44,13 +47,14 @@
             </div>
             <p id="have-account"><a class="links" href="login.html">¿Ya tienes una cuenta?</a></p>
         </form>
-        <nav class="menu-bar">
+        <nav class="menu-bar menu-inferior">
             <ul>
                 <li><a href="/">Inicio</a></li>
-                <li><a href="about">Sobre nosotros</a></li>
-                <li><a href="login">Iniciar sesión</a></li>
+                <li><a href="about.html">Sobre nosotros</a></li>
+                <li><a href="signup">Registrarse</a></li>
             </ul>
         </nav>
         <script src="/js/common.js" type="module"></script>
+        <script src="/js/signup.js" type="module"></script>
     </body>
 </html>
