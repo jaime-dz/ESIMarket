@@ -1,0 +1,4 @@
+#00587C --azul
+#E57200 --naranja
+#75787B --gris
+#efe308 --moneda
