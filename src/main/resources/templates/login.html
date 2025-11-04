@@ -1,0 +1,53 @@
+<!--Formulario de inicio de sesión-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iniciar sesión</title>
+        <link rel="stylesheet" href="css/general_styles.css">
+        <link rel="icon" href="Images/favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <nav class="menu-bar menu-superior">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="about">Sobre nosotros</a></li>
+                <li><a href="login">Iniciar sesión</a></li>
+                <li><a href="signup">Registrarse</a></li>
+            </ul>
+        </nav>
+        
+        <div class="square">
+            <h2>Iniciar sesión</h2>
+            <form id="login" method="post">
+                <div id="login-message"></div>
+                <div id="error-login"></div>
+                <div class="usuario">
+                    <label for="usuario">Usuario*</label><br>
+                    <input type="text" name="username" placeholder="Escribe tu usuario" required>
+                </div>
+                <br>
+                <div class="contraseña">
+                    <label for="contraseña">Contraseña*</label><br>
+                    <input type="password" name="password" placeholder="Escribe tu contraseña" required><br><br>
+                </div>
+                <div class="submit-button">
+                    <button type="submit">Acceder</button>
+                </div>
+                <p>¿No tienes una cuenta? <a class="links" href="signup">Regístrate</a></p>
+            </form>
+        </div>
+        
+        <nav class="menu-bar menu-inferior">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="about">Sobre nosotros</a></li>
+                <li><a href="login">Iniciar sesión</a></li>
+                <li><a href="signup">Registrarse</a></li>
+            </ul>
+        </nav>
+        <script src="/js/common.js" type="module"></script>
+        <script src="/js/login.js" type="module"></script>
+    </body>
+</html>
