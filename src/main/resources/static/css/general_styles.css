@@ -1,0 +1,120 @@
+.menu-bar{
+    text-align: center;
+    padding: 20px;
+    background-color: #00587C;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.menu-bar ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-bar li{
+    
+    display: inline-block;
+}
+
+.menu-bar a:hover{
+    background-color: #E57200;
+    border-radius: 5px;
+}
+
+.menu-bar a{
+    text-decoration: none;
+    color: #ffffff;
+    padding: 10px 15px;
+    font-family: Arial, sans-serif;
+}
+
+.menu-superior{
+    margin-top:-10px;
+}
+
+.menu-inferior{
+    margin-bottom: -10px;;
+}
+
+h2{
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.submit-button{
+    text-align: center;
+}
+
+p{
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#mail,#tlf{
+    font-family: monospace;
+}
+
+#formulario, #signup, #login, #no-account{
+    text-align: center;
+    justify-content: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.links{
+    color:blue;
+}
+
+h1{
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+label[for="message"],
+textarea#message {
+  vertical-align: top;
+}
+
+#error-contraseña {
+    color: red;
+    font-size: 0.9em;
+    height: 1em; /* Reserva espacio para que el layout no "salte" */
+    margin-top: 5px;
+}
+
+#error-login {
+    color: red;
+    font-size: 0.9em;
+    height: 1em; /* Reserva espacio */
+    margin-top: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+header{
+    display:grid;
+    justify-items: center;
+}
+
+#esim{
+    font-family: monospace;
+}
+
+/*Estilos para los recuadros de login/registro*/
+.square{
+    border: 1px solid black;
+    margin-bottom:30px;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
+}
+
+/*Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto*/
+button[type="submit"]{
+    background-color:#E57200;
+    border-radius: 20px;
+    color:#ffffff; /*color de la fuente, que se me olvida*/
+    padding: 15px;
+    border: solid #E57200;
+}
