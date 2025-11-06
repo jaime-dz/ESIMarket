@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function validarRegistro() {
 
             // 1. Seleccionamos los elementos del DOM
             const passwordInput = document.getElementById('contraseña');

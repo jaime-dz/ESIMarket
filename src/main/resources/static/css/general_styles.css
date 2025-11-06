@@ -1,40 +1,61 @@
-.menu-bar{
-    text-align: center;
+.menu-bar {
+    /* text-align: center; */ /* <-- YA NO NECESITAS ESTO AQUÍ */
     padding: 20px;
     background-color: #00587C;
     margin-left: -10px;
     margin-right: -10px;
 }
 
-.menu-bar ul{
+.menu-superior ul {
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-.menu-bar li{
     
-    display: inline-block;
+    display: flex;           /* Sigue siendo un contenedor flex */
+    align-items: center;     /* Para centrar verticalmente los enlaces */
+    justify-content: center; /* ¡CLAVE! Centra los enlaces en la página */
+    
+    /* ¡NUEVO! Hacemos que el <ul> sea el punto de anclaje del logo */
+    position: relative;
+    
+    /* ¡NUEVO! Damos "espacio" al <ul> para que los enlaces no 
+       se solapen con el logo cuando la pantalla sea pequeña. 
+       Ajusta "80px" según el tamaño de tu logo. */
+    padding-left: 80px;
+    padding-right: 80px; /* Opcional, pero da simetría */
 }
 
-.menu-bar a:hover{
+.menu-bar a:hover {
     background-color: #E57200;
     border-radius: 5px;
 }
 
-.menu-bar a{
+.menu-bar a {
     text-decoration: none;
     color: #ffffff;
     padding: 10px 15px;
     font-family: Arial, sans-serif;
+    display: block; /* Para un mejor área de clic */
 }
 
-.menu-superior{
-    margin-top:-10px;
+.menu-superior {
+    margin-top: -10px;
 }
 
 .menu-inferior{
-    margin-bottom: -10px;;
+    margin-bottom: -10px;
+}
+
+/* AÑADIDO: Asegurémonos de que el menú inferior se comporte como queremos */
+.menu-inferior ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center; /* Centramos los ítems del menú inferior */
+}
+
+.menu-inferior li {
+    display: inline-block; /* Los ítems del menú inferior como bloques en línea */
 }
 
 h2{
@@ -59,6 +80,10 @@ p{
     text-align: center;
     justify-content: center;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#formulario{
+    padding-top: 30px;
 }
 
 .links{
@@ -100,7 +125,7 @@ header{
     font-family: monospace;
 }
 
-/*Estilos para los recuadros de login/registro*/
+/*Estilos para los recuadros de login y registro*/
 .square{
     border: 1px solid black;
     margin-bottom:30px;
@@ -108,6 +133,8 @@ header{
     margin-left: auto;
     margin-right: auto;
     max-width: 500px;
+    padding: 30px;
+    box-sizing: border-box;
 }
 
 /*Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto*/
@@ -117,4 +144,99 @@ button[type="submit"]{
     color:#ffffff; /*color de la fuente, que se me olvida*/
     padding: 15px;
     border: solid #E57200;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  /* Ocupa como mínimo la altura de la ventana (viewport) */
+  min-height: 100vh;
+
+  /* Activa Flexbox */
+  display: flex;
+  flex-direction: column; /* Apila los elementos verticalmente */
+}
+
+main {
+  /* Esta es la magia:
+     Le dice a <main> (tu .square) que "crezca"
+     para ocupar todo el espacio sobrante. */
+  flex-grow: 1;
+}
+
+.logo-item{
+    margin-left: -1650px;
+    margin-bottom: -70px;
+    margin-top: -9px;
+}
+
+.form-grupo label,
+#formulario input[type="text"],
+#formulario input[type="email"],
+#formulario textarea {
+    display: block;
+    width: 100%;
+}
+
+.form-grupo label {
+    margin-bottom: 5px;
+}
+
+#formulario input[type="text"],
+#formulario input[type="email"],
+#formulario textarea,
+#signup input[type="text"],
+#signup input[type="email"],
+#signup input[type="password"],
+#login input[type="text"],
+#login input[type="password"] {
+    padding: 12px;
+
+    box-sizing: border-box; 
+
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+#formulario textarea {
+    resize: vertical;
+}
+
+/*Fuente para los placeholders*/
+#formulario input[type="text"]::placeholder,
+#formulario input[type="email"]::placeholder,
+#formulario textarea::placeholder,
+#signup input[type="text"]::placeholder,
+#signup input[type="email"]::placeholder,
+#signup input[type="password"]::placeholder,
+#login input[type="text"]::placeholder,
+#login input[type="password"]::placeholder {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+}
+
+.search-form{
+    position:relative;
+    max-width: 400px;
+}
+
+#search-input{
+    width:100%;
+    padding:10px;
+    padding-right: 30px;
+    box-sizing: border-box;
+}
+
+.clear-button{
+    position: absolute;
+    right:10px;
+    top:50%;
+    transform: translateY(-50%);
+    color:#888;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
 }

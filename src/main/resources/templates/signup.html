@@ -5,58 +5,94 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sign in</title>
-        <link rel="stylesheet" href="css/general_styles.css">
-        <link rel="icon" href="Images/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="/css/general_styles.css">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
     </head>
     <body>
-        <nav class="menu-bar menu-superior">
+        <header class="menu-bar menu-superior">
+            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="about">Sobre nosotros</a></li>
-                <li><a href="login">Iniciar sesión</a></li>
-                <li><a href="signup">Registrarse</a></li>
+                <li><a href="/home">Inicio</a></li>
+                <li><a href="/home/about">Sobre nosotros</a></li>
+                <li><a href="/auth/login">Iniciar sesión</a></li>
+                <li><a href="/auth/signup">Registrarse</a></li>
             </ul>
-        </nav>
-        <div class="square">
-            <h2>Registrarse</h2>
-            <form id="signup" method="post">
-                <div id="signup-message"></div>
-                <div class="usuario">
-                    <label for="usuario">Usuario*</label><br>
-                    <input type="text" name="username" placeholder="Escribe tu usuario" required>
-                </div>
-                <br>
-                <div class="contraseña">
-                    <label for="contraseña">Contraseña*</label><br>
-                    <input id="contraseña" type="password" name="password" placeholder="Escribe tu contraseña" minlength="8" required>
-                </div>
-                <br>
-                <div class="contraseña">
-                    <label for="repcontraseña">Confirme Contraseña*</label><br>
-                    <input id="repcontraseña" type="password" name="reppassword" placeholder="Repite tu contraseña" minlength="8" required><br><br>
-                </div>
-                <div id="error-contraseña"></div>
-                <br>
-                <div class="tnc">
-                    <input type="checkbox" required>
-                    <label for="tnc">He leído y acepto los <a class="links" href="ESIMarket_Terminos_y_condiciones.pdf">Términos y Condiciones</a> y la <a class="links" href="ESIMarket_Politica_Privacidad.pdf">Política de Privacidad</a></label>
-                </div>
-                <br>
-                <div>
-                    <button class="submit-button" type="submit">Acceder</button>
-                </div>
-                <p id="have-account">¿Ya tienes una cuenta? <a class="links" href="login.html">Inicia sesión</a></p>
-            </form>
-        </div>
+        </header>
+        <main>
+            <div class="square">
+                <h2>Registrarse</h2>
+                <form id="signup" method="post">
+                    <div id="signup-message"></div>
+                    <div class="correo">
+                        <label for="correo">Correo electrónico*</label><br>
+                        <input id="correo" type="email" name="email" placeholder="Escribe tu correo electrónico" required>
+                    </div>
+                    <br>
+                    <div class="nombre">
+                        <label for="nombre">Nombre*</label><br>
+                        <input id="nombre" type="text" name="name" placeholder="Escribe tu nombre" required>
+                    </div>
+                    <br>
+                    <div class="apellidos">
+                        <label for="apellidos">Apellidos*</label><br>
+                        <input id="apellidos" type="text" name="surname" placeholder="Escribe tus apellidos" required>
+                    </div>
+                    <br>
+                    <div class="usuario">
+                        <label for="usuario">Usuario*</label><br>
+                        <input id="usuario" type="text" name="username" placeholder="Escribe tu usuario" required>
+                    </div>
+                    <br>
+                    <div class="contraseña">
+                        <label for="contraseña">Contraseña*</label><br>
+                        <input id="contraseña" type="password" name="password" placeholder="Escribe tu contraseña" minlength="8" required>
+                    </div>
+                    <br>
+                    <div class="contraseña">
+                        <label for="repcontraseña">Confirme Contraseña*</label><br>
+                        <input id="repcontraseña" type="password" name="reppassword" placeholder="Repite tu contraseña" minlength="8" required><br><br>
+                    </div>
+                    <div id="error-contraseña"></div>
+                    <br>
+                    <div class="carrera">
+                        <label for="carrera">Carrera*</label><br>
+                        <select name="carrera-seleccionada" id="carrera">
+                            <option value="gia">Ingeniería Aeroespacial (GIA)</option>
+                            <option value="gididp">Ingeniería en Diseño Industrial y Desarrollo del Producto (GIDIDP)</option>
+                            <option value="gie">Ingeniería Eléctrica (GIE)</option>
+                            <option value="giei">Ingeniería Electrónica Industrial (GIEI)</option>
+                            <option value="gii">Ingeniería Informática (GII)</option>
+                            <option value="gim">Ingeniería Mecánica (GIM)</option>
+                            <option value="giti">Ingeniería en Tecnologías Industriales (GITI)</option>
+                            <option value="gieygiei">Doble Grado en Ingeniería Eléctrica e Ingeniería Electrónica Industrial (GIE+GIEI)</option>
+                            <option value="gimygie">Doble Grado en Ingeniería Mecánica e Ingeniería Eléctrica (GIM+GIE)</option>
+                            <option value="gimygididp">Doble Grado en Ingeniería Mecánica e Ingeniería en Diseño Industrial y Desarrollo del Producto (GIM+GIDIDP)</option>
+                            <option value="gmygii">Doble Grado en Matemáticas e Ingeniería Informática (GM+GII)</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="tnc">
+                        <input type="checkbox" required>
+                        <label for="tnc">He leído y acepto los <a class="links" href="ESIMarket_Terminos_y_condiciones.pdf">Términos y Condiciones</a> y la <a class="links" href="ESIMarket_Politica_Privacidad.pdf">Política de Privacidad</a></label>
+                    </div>
+                    <br>
+                    <div>
+                        <button onclick="validarRegistro()" class="submit-button" type="submit">Acceder</button>
+                    </div>
+                    <p id="have-account">¿Ya tienes una cuenta? <a class="links" href="login.html">Inicia sesión</a></p>
+                </form>
+            </div>
+        </main>
         
-        <nav class="menu-bar menu-inferior">
+        
+        <footer class="menu-bar menu-inferior">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="about">Sobre nosotros</a></li>
-                <li><a href="login">Iniciar sesión</a></li>
-                <li><a href="signup">Registrarse</a></li>
+                <li><a href="/home">Inicio</a></li>
+                <li><a href="/home/about">Sobre nosotros</a></li>
+                <li><a href="/auth/login">Iniciar sesión</a></li>
+                <li><a href="/auth/signup">Registrarse</a></li>
             </ul>
-        </nav>
+        </footer>
         <script src="/js/common.js" type="module"></script>
         <script src="/js/signup.js" type="module"></script>
     </body>
