@@ -38,7 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests( req ->
                         req.requestMatchers("/auth/**",
                                                      "/home/**",
-                                                     "/home/",
+                                                     "/home",
+                                                     "/home/"
                                                      "/css/**",
                                                      "/js/**",
                                                      "/Images/**")
