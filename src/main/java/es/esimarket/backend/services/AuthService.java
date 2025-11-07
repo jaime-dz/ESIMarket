@@ -49,6 +49,7 @@ public class AuthService {
                            request.email(),
                            request.name(),
                            request.apellidos(),
+                           request.carrera(),
                            salt);
 
         if (userRepository.existsById(user.getId())) {
@@ -72,15 +73,9 @@ public class AuthService {
             throw new IllegalArgumentException("Usuario o contraseña incorrectos ( USU NO EMCONTRADO ) ");
         }
 
-        System.out.println(Base64.getEncoder().encodeToString(u.getSalt()));
-        System.out.println(passwordEncoder.encode(Base64.getEncoder().encodeToString(u.getSalt()) + " " + request.password()));
-
-
         if (!passwordEncoder.matches(request.password(), Base64.getEncoder().encodeToString(u.getSalt()) + " " + u.getContrasenna())) {
             throw new IllegalArgumentException("Usuario o contraseña incorrectos");
         }
-
-        System.out.println("------------AUTENTICADO -------------");
 
         var jwtToken = jwtService.generateToken(u);
         var refreshToken = jwtService.generateRefreshToken(u);

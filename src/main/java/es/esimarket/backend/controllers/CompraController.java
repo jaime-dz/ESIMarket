@@ -12,6 +12,7 @@ import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.entities.Compra;
 
 @Controller
+@RequestMapping("/compras")
 public class CompraController
 {
     @Autowired
@@ -20,12 +21,12 @@ public class CompraController
     @Autowired
     public CompraService compraService;
 
-    @GetMapping("/compras")
+    @GetMapping("/")
     public ResponseEntity<List<Compra>> getComprasUsuario(@RequestParam String u){
         return ResponseEntity.ok(compraRepository.findByid_uDNIComprador(u));
     }
 
-    @PostMapping("/compras")
+    @PostMapping("/")
     public ResponseEntity<String> postCompra(@RequestParam String u, @RequestParam int idp)
     {
         return compraService.HacerCompra(u, idp);
