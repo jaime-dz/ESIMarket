@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@RequestMapping("/productos")
 public class ProductoController {
 
     @Autowired
@@ -18,17 +19,17 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    @GetMapping("/productos")
+    @GetMapping("/")
     public ResponseEntity<List<Producto>> getProductos() {
         return ResponseEntity.ok(productoRepository.findAll());
     }
 
-    @GetMapping("/productos/{tipo}")
+    @GetMapping("/{tipo}")
     public ResponseEntity<List<Producto>> getProductos(@PathVariable("tipo") String tipo) {
         return ResponseEntity.ok(productoRepository.findByTipo(tipo));
     }
 
-    @PostMapping("/productos")
+    @PostMapping("/")
     public ResponseEntity<String> createProducto(@RequestParam String v, @RequestParam int p,
                                                    @RequestParam String d, @RequestParam String n,
                                                    @RequestParam String t)

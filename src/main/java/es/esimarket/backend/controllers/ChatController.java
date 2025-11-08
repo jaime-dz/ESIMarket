@@ -8,6 +8,7 @@ import es.esimarket.backend.repositories.MensajeRepository;
 import es.esimarket.backend.services.ChatService;
 
 @Controller
+@RequestMapping("/chat")
 public class ChatController
 {
     @Autowired
@@ -19,7 +20,7 @@ public class ChatController
     @Autowired
     private ChatService chatSercice;
 
-    @PostMapping("/chat")
+    @PostMapping("/")
     public ResponseEntity<String> postChat(@RequestParam String uDNI1,@RequestParam String uDNI2)
     {
         //Falta poner los uDNI menores y mayores y la variable de autoincremento
