@@ -18,6 +18,9 @@ public class Chat{
     @Column(name = "uDNI2", nullable=false)
     private String uDNI2;
 
+    @Column(name = "IdProducto", nullable = false)
+    private int IdProducto;
+
     @Column(name = "uDNIMenor")
     private String uDNI_Menor;
 
@@ -26,11 +29,14 @@ public class Chat{
 
     public Chat() {}
 
-    public Chat(Integer id, String dni1, String dni2)
+    public Chat(Integer ID, String uDNI1, String uDNI2,int IdProducto, String uDNIMayor, String uDNIMenor)
     {
-        this.id = id;
-        this.uDNI1 = dni1;
-        this.uDNI2 = dni2;
+        this.id = ID;
+        this.uDNI1 = uDNI1;
+        this.uDNI2 = uDNI2;
+        this.IdProducto=IdProducto;
+        this.uDNI_Mayor=uDNIMayor;
+        this.uDNI_Menor=uDNIMenor;
     }
 
     public Integer getID() {return id;}
@@ -47,6 +53,9 @@ public class Chat{
 
     public String getuDNI_Mayor() {return uDNI_Mayor;}
     public void setuDNI_Mayor(String uDNI_Mayor) {this.uDNI_Mayor = uDNI_Mayor;}
+
+    public int getIdProducto() {return IdProducto;}
+    public void setIdProducto(int IdProducto) {this.IdProducto = IdProducto;}
 
 
 
