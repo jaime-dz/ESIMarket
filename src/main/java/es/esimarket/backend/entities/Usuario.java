@@ -1,6 +1,7 @@
 package es.esimarket.backend.entities;
 import jakarta.persistence.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -91,4 +92,18 @@ public class Usuario {
     @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
     private List<Token> tokens;
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id='" + id + '\'' +
+                ", contrasenna='" + contrasenna + '\'' +
+                ", correo='" + correo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", saldoMoneda=" + saldoMoneda +
+                ", carrera=" + carrera +
+                ", salt=" + Arrays.toString(salt) +
+                ", tokens=" + tokens +
+                '}';
+    }
 }
