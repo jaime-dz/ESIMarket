@@ -4,16 +4,17 @@ import es.esimarket.backend.controllers.autenticacion.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
 import es.esimarket.backend.entities.Token;
 import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.mappers.UserMapper;
 import es.esimarket.backend.repositories.TokenRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
-import org.hibernate.engine.transaction.jta.platform.internal.SynchronizationRegistryBasedSynchronizationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserMapper userMapper;
+
     public TokenResponse registerUser(RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         byte[] salt = LoginEncriptado.GenerateSalt();
@@ -49,6 +53,7 @@ public class AuthService {
                            request.email(),
                            request.name(),
                            request.apellidos(),
+                           request.carrera(),
                            salt);
 
         if (userRepository.existsById(user.getId())) {
@@ -72,15 +77,9 @@ public class AuthService {
             throw new IllegalArgumentException("Usuario o contraseña incorrectos ( USU NO EMCONTRADO ) ");
         }
 
-        System.out.println(Base64.getEncoder().encodeToString(u.getSalt()));
-        System.out.println(passwordEncoder.encode(Base64.getEncoder().encodeToString(u.getSalt()) + " " + request.password()));
-
-
         if (!passwordEncoder.matches(request.password(), Base64.getEncoder().encodeToString(u.getSalt()) + " " + u.getContrasenna())) {
             throw new IllegalArgumentException("Usuario o contraseña incorrectos");
         }
-
-        System.out.println("------------AUTENTICADO -------------");
 
         var jwtToken = jwtService.generateToken(u);
         var refreshToken = jwtService.generateRefreshToken(u);
@@ -139,6 +138,18 @@ public class AuthService {
 
         return new TokenResponse(accessToken,refreshToken);
 
+    }
+
+    public List<UsuarioDTO> mostrar_usuarios(){
+
+        List<Usuario> userEntities = userRepository.findAll();
+        List<UsuarioDTO> userDTOs = new ArrayList<>();
+
+        for( Usuario u : userEntities){
+            userDTOs.add(userMapper.toDTO(u));
+        }
+
+        return userDTOs;
     }
 }
 

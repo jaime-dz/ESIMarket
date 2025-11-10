@@ -15,6 +15,7 @@ import es.esimarket.backend.services.MensajeService;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Controller
+@RequestMapping("/mensajes")
 public class MensajeController
 {
     @Autowired
@@ -29,7 +30,7 @@ public class MensajeController
     @Autowired
     private JdbcTemplate jbdcTemplate;
 
-    @GetMapping("/mensajes/{chat}")
+    @GetMapping("/{chat}")
     public ResponseEntity<List<String>> getMensajes(@PathVariable("chat") int chat){
         //return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat));
 
@@ -37,7 +38,7 @@ public class MensajeController
         return ResponseEntity.ok(jbdcTemplate.queryForList(sql,String.class,chat));
     }
 
-    @PostMapping("/mensaje/{chat}/{uDNI}/{texto}")
+    @PostMapping("{chat}/{uDNI}/{texto}")
     public ResponseEntity<String> postMensajes(@RequestParam int chat,@RequestParam String uDNI,@RequestParam String texto){
         if(mensajeService.ContienePalabrasProhibidas(texto))
             return ResponseEntity.ok("Tu mensaje contiene palabras prohibidas, hijo de puta");

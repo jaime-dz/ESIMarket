@@ -5,8 +5,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sobre nosotros</title>
-        <link rel="stylesheet" href="css/general_styles.css">
-        <link rel="icon" href="Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
+        <link rel="stylesheet" href="/css/general_styles.css">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
         <style>
             .map-wrap{
@@ -22,60 +22,67 @@
     </head>
     <!--añadir enlaces redes sociales?-->
     <body>
-        <nav class="menu-bar menu-superior">
+        <header class="menu-bar menu-superior">
+            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="about">Sobre nosotros</a></li>
-                <li><a href="login">Iniciar sesión</a></li>
-                <li><a href="signup">Registrarse</a></li>
+                <li><a href="/home/">Inicio</a></li>
+                <li><a href="/home/about">Sobre nosotros</a></li>
+                <li><a href="/auth/login">Iniciar sesión</a></li>
+                <li><a href="/auth/signup">Registrarse</a></li>
             </ul>
-        </nav>
+        </header>
         <h1>Sobre nosotros</h1>
         <h2>Nuestro equipo</h2>
         <p>Somos una pequeña empresa creada con el objetivo de hacer más fácil para la gente encontrar servicios que necesitan u ofrecerlos ellos mismos. MadMonkeyMarket nace en la Escuela Superior de Ingeniería de la Universidad de Cádiz, gracias a 5 estudiantes que tuvieron una visión, siendo estos Luka Arana Aguilocho, Luis Castro Gabriel, Miguel Catalá Garrido, Julio Contioso Laínez y Jaime Díaz Segado.</p>
         <br><h2>Nuestra misión</h2>
         <p>En ESIMarket creemos que es posible el intercambio de servicios entre empresas y particulares sin que esto sea tedioso e inseguro.</p>
         <br><h2>¡Contacta con nosotros!</h2>
-        <p>Correo de atención al cliente:</p> <!--añadir tabulación-->
+        <p>Correo de atención al cliente:</p>
         <p id="mail">clientes@esimarket.es</p>
         <p>Teléfono de atención al cliente:</p>
-        <p id="tlf">+34 000 00 00 00</p><br> <!--añadir tabulación-->
+        <p id="tlf">+34 000 00 00 00</p><br>
         <p>O si lo prefieres, escríbenos directamente:</p>
-        <form id="formulario" method="post">
-            <div class="form-grupo">
-                <label for="name">Nombre Completo:</label>
-                <input type="text" id="name" name="name" placeholder="Escribe tu nombre" required>
+        <main>
+            <div class="square">
+                <h2>Contáctanos</h2>
+                <form id="formulario" method="post">
+                    <div class="form-grupo">
+                        <label for="name">Nombre Completo:</label>
+                        <input type="text" id="name" name="name" placeholder="Escribe tu nombre y apellido(s)" required>
+                    </div><br>
+                    <div class="form-grupo">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Escribe tu correo electrónico" required>
+                    </div><br>
+                    <div class="form-grupo">
+                        <label for="subject">Asunto:</label>
+                        <input type="text" id="subject" name="subject" placeholder="Escribe el motivo de tu consulta" required>
+                    </div><br>
+                    <div class="form-grupo">
+                        <label for="message">Mensaje:</label>
+                        <textarea id="message" name="message" rows="6" placeholder="Escribe detalladamente tu consulta" required></textarea>
+                    </div><br>
+                    <button type="submit">Enviar</button>
+                </form><br>
             </div>
-            <div class="form-grupo">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Escribe tu email" required>
-            </div>
-            <div class="form-grupo">
-                <label for="subject">Asunto:</label>
-                <input type="text" id="subject" name="subject" placeholder="Escribe tu motivo de consulta" required>
-            </div>
-            <div class="form-grupo">
-                <label for="message">Mensaje:</label>
-                <textarea id="message" name="message" rows="6" placeholder="Escribe detalladamente tu consulta" required></textarea>
-            </div>
-            <button type="submit">Enviar</button>
-        </form><br>
+        </main>
+        
+        
         <h2>¿Dónde estamos?</h2>
         <div class="map-wrap">
             <div id="map"></div><br>
         </div>
         
         
-        <footer>
-            <nav class="menu-bar menu-inferior">
-                <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="about">Sobre nosotros</a></li>
-                    <li><a href="login">Iniciar sesión</a></li>
-                    <li><a href="signup">Registrarse</a></li>
-                </ul>
-            </nav>
+        <footer class="menu-bar menu-inferior">
+            <ul>
+                <li><a href="/home/">Inicio</a></li>
+                <li><a href="/home/about">Sobre nosotros</a></li>
+                <li><a href="/auth/login">Iniciar sesión</a></li>
+                <li><a href="/auth/signup">Registrarse</a></li>
+            </ul>
         </footer>
+
         
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>

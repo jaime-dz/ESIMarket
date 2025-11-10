@@ -5,35 +5,35 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Inicio</title>
-        <link rel="stylesheet" href="css/general_styles.css">
-        <link rel="icon" href="Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
+        <link rel="stylesheet" href="/css/general_styles.css">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
     </head>
     <body>
         <h1 id="esim">ESIMarket</h1>
-        <nav class="menu-bar menu-superior">
+        <header class="menu-bar menu-superior">
+            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="about">Sobre nosotros</a></li>
-                <li><a href="login">Iniciar sesión</a></li>
-                <li><a href="signup">Registrarse</a></li>
+                <li><a href="/home/">Inicio</a></li>
+                <li><a href="/home/about">Sobre nosotros</a></li>
+                <li><a href="/auth/login">Iniciar sesión</a></li>
+                <li><a href="/auth/signup">Registrarse</a></li>
             </ul>
-        </nav>
+        </header>
         <header>
-            <form id="search-form">
+            <div class="search-form">
                 <label for="search-input">Buscar servicios:</label><br><br>
-                <input type="search" id="search-input" placeholder="Busca lo que quieras">
-            </form>
+                <input type="text" id="search-input" placeholder="Busca lo que quieras">
+                <span class="clear-button" id="clearBtn">&times;</span>
+            </div>
         </header>
         
-        <footer>
-            <nav class="menu-bar menu-inferior">
-                <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="about">Sobre nosotros</a></li>
-                    <li><a href="login">Iniciar sesión</a></li>
-                    <li><a href="signup">Registrarse</a></li>
-                </ul>
-            </nav>
+        <footer class="menu-bar menu-inferior">
+            <ul>
+                <li><a href="/home/">Inicio</a></li>
+                <li><a href="/home/about">Sobre nosotros</a></li>
+                <li><a href="/auth/login">Iniciar sesión</a></li>
+                <li><a href="/auth/signup">Registrarse</a></li>
+            </ul>
         </footer>
         <script src="/js/common.js" type="module"></script>
     </body>

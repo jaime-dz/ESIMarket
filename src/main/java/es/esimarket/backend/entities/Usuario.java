@@ -1,6 +1,7 @@
 package es.esimarket.backend.entities;
 import jakarta.persistence.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -8,7 +9,7 @@ import java.util.List;
 @Table(name="usuario")
 public class Usuario {
 
-    public enum carrera{
+    public enum Carrera{
         GIA,
         GIDIDP,
         GIE,
@@ -41,13 +42,17 @@ public class Usuario {
     @Column(name = "Saldo")
     private double saldoMoneda;
 
+    @Column(name = "Carrera")
+    @Enumerated(EnumType.STRING)
+    private Carrera carrera;
+
     @Column(name = "Salt", nullable = false)
     private byte [] salt;
 
 
     public Usuario() {}
 
-    public Usuario( String id, String contrasenna,String email, String nombre, String apellidos, byte[] salt )
+    public Usuario( String id, String contrasenna,String email, String nombre, String apellidos, Carrera carrera, byte[] salt )
     {
 	    this.id = id;
         this.contrasenna = contrasenna;
@@ -55,6 +60,7 @@ public class Usuario {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.saldoMoneda = 0;
+        this.carrera = carrera;
         this.salt = salt;
 
     }
@@ -74,6 +80,9 @@ public class Usuario {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
+    public Carrera getCarrera() { return carrera; }
+    public void setCarrera(Carrera ca ) { this.carrera = ca; }
+
     public byte[] getSalt() { return salt; }
     public void setSalt(byte[] salt) { this.salt = salt; }
 
@@ -83,4 +92,18 @@ public class Usuario {
     @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
     private List<Token> tokens;
 
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id='" + id + '\'' +
+                ", contrasenna='" + contrasenna + '\'' +
+                ", correo='" + correo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", saldoMoneda=" + saldoMoneda +
+                ", carrera=" + carrera +
+                ", salt=" + Arrays.toString(salt) +
+                ", tokens=" + tokens +
+                '}';
+    }
 }

@@ -40,8 +40,6 @@ public class LoginEncriptado implements PasswordEncoder {
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
 
         String[] parts = encodedPassword.split(" ");
-        System.out.println("--------------------------------");
-        System.out.println(Arrays.toString(parts));
 
         byte[] salt = Base64.getDecoder().decode(parts[0]);
         String passwd = parts[1];
