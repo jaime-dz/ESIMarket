@@ -1,7 +1,5 @@
 package es.esimarket.backend.dtos;
-
 import es.esimarket.backend.entities.Usuario;
-
 import java.io.Serializable;
 
 public class UsuarioDTO implements Serializable {

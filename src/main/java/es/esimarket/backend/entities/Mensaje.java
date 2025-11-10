@@ -10,13 +10,13 @@ public class Mensaje{
     private MensajeId id;
 
     @Column(name= "Texto")
-    private String Texto;
+    private String texto;
 
     public Mensaje(){}
 
-    public Mensaje(int id_chat, String uDNI_rem, String fecha, String Texto){
+    public Mensaje(int id_chat, String uDNI_rem, String fecha, String texto){
         this.id = new MensajeId(id_chat,uDNI_rem,fecha);
-        this.Texto = Texto;
+        this.texto = texto;
     }
 
     public int getIDChat(){return id.getIDChat();}
@@ -25,8 +25,8 @@ public class Mensaje{
     public String getuDNIremitente(){return id.getuDNIremitente();}
     public void setuDNIremitente(String uDNIremitente) {id.setuDNIremitente(uDNIremitente); }
 
-    public String getTexto(){return Texto;}
-    public void setTexto(String Texto) {this.Texto=Texto;}
+    public String getTexto(){return texto;}
+    public void setTexto(String texto) {this.texto=texto;}
 
     public String getFechaHora(){return id.getFechaHora();}
     public void setFechaHora(String FechaHora) {id.setFechaHora(FechaHora);}

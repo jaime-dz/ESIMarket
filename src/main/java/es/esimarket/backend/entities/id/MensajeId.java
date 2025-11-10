@@ -14,14 +14,14 @@ public class MensajeId implements Serializable {
     private String uDNIremitente;
 
     @Column(name = "FechaHora", nullable = false)
-    private String FechaHora;
+    private String fechaHora;
 
     public MensajeId() {}
 
-    public MensajeId(int IDChat, String uDNIremitente, String FechaHora) {
+    public MensajeId(int IDChat, String uDNIremitente, String fechaHora) {
         this.IDChat = IDChat;
         this.uDNIremitente = uDNIremitente;
-        this.FechaHora = FechaHora;
+        this.fechaHora = fechaHora;
     }
 
 
@@ -31,8 +31,8 @@ public class MensajeId implements Serializable {
     public String getuDNIremitente() { return uDNIremitente; }
     public void setuDNIremitente(String uDNI_remitente) {  this.uDNIremitente = uDNI_remitente; }
 
-    public String getFechaHora() { return FechaHora; }
-    public void setFechaHora(String FechaHora) { this.FechaHora = FechaHora; }
+    public String getFechaHora() { return fechaHora; }
+    public void setFechaHora(String fechaHora) { this.fechaHora = fechaHora; }
 
 
 
@@ -42,13 +42,13 @@ public class MensajeId implements Serializable {
         if (!(o instanceof MensajeId that)) return false;
         return Objects.equals(IDChat, that.IDChat) &&
                 Objects.equals(uDNIremitente, that.uDNIremitente) &&
-                Objects.equals(FechaHora, that.FechaHora);
+                Objects.equals(fechaHora, that.fechaHora);
 
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(IDChat, uDNIremitente, FechaHora);
+        return Objects.hash(IDChat, uDNIremitente, fechaHora);
     }
 }
