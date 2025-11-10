@@ -2,6 +2,7 @@ package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.autenticacion.LoginRequest;
 import es.esimarket.backend.controllers.autenticacion.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
+import es.esimarket.backend.dtos.UsuarioDTO;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.AuthService;
@@ -25,8 +26,8 @@ public class AuthTokenController {
     private AuthService authService;
 
     @GetMapping("/usuarios")
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
-        return ResponseEntity.ok(usuarioRepository.findAll());
+    public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
+        return ResponseEntity.ok(authService.mostrar_usuarios());
     }
 
     @GetMapping("/signup")
