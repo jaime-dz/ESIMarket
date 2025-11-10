@@ -1,5 +1,4 @@
 .menu-bar {
-    /* text-align: center; */ /* <-- YA NO NECESITAS ESTO AQUÍ */
     padding: 20px;
     background-color: #00587C;
     margin-left: -10px;
@@ -10,19 +9,10 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    
-    display: flex;           /* Sigue siendo un contenedor flex */
-    align-items: center;     /* Para centrar verticalmente los enlaces */
-    justify-content: center; /* ¡CLAVE! Centra los enlaces en la página */
-    
-    /* ¡NUEVO! Hacemos que el <ul> sea el punto de anclaje del logo */
-    position: relative;
-    
-    /* ¡NUEVO! Damos "espacio" al <ul> para que los enlaces no 
-       se solapen con el logo cuando la pantalla sea pequeña. 
-       Ajusta "80px" según el tamaño de tu logo. */
-    padding-left: 80px;
-    padding-right: 80px; /* Opcional, pero da simetría */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
 }
 
 .menu-bar a:hover {
@@ -35,18 +25,25 @@
     color: #ffffff;
     padding: 10px 15px;
     font-family: Arial, sans-serif;
-    display: block; /* Para un mejor área de clic */
+    display: block; /* Para un mejor area de click */
 }
 
 .menu-superior {
     margin-top: -10px;
+    padding: 20px;
+    background-color: #00587C;
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-top: -10px;
+
+    display: flex;
+    align-items: center;
 }
 
 .menu-inferior{
     margin-bottom: -10px;
 }
 
-/* AÑADIDO: Asegurémonos de que el menú inferior se comporte como queremos */
 .menu-inferior ul {
     list-style: none;
     padding: 0;
@@ -103,7 +100,7 @@ textarea#message {
 #error-contraseña {
     color: red;
     font-size: 0.9em;
-    height: 1em; /* Reserva espacio para que el layout no "salte" */
+    height: 1em; /* Reserva espacio para que el layout no salte */
     margin-top: 5px;
 }
 
@@ -151,7 +148,7 @@ html {
 }
 
 body {
-  /* Ocupa como mínimo la altura de la ventana (viewport) */
+  /* Ocupa como mínimo la altura de viewport */
   min-height: 100vh;
 
   /* Activa Flexbox */
@@ -160,16 +157,16 @@ body {
 }
 
 main {
-  /* Esta es la magia:
-     Le dice a <main> (tu .square) que "crezca"
+  /*Le dice a <main> que crezca
      para ocupar todo el espacio sobrante. */
   flex-grow: 1;
 }
 
 .logo-item{
-    margin-left: -1650px;
-    margin-bottom: -70px;
-    margin-top: -9px;
+    flex-shrink: 0;
+    margin-right: 20px;
+    width: 64px; 
+    height: 64px;
 }
 
 .form-grupo label,
@@ -184,6 +181,7 @@ main {
     margin-bottom: 5px;
 }
 
+/*Estilos comunes a los recuadros de input*/
 #formulario input[type="text"],
 #formulario input[type="email"],
 #formulario textarea,
@@ -191,7 +189,10 @@ main {
 #signup input[type="email"],
 #signup input[type="password"],
 #login input[type="text"],
-#login input[type="password"] {
+#login input[type="password"],
+#signup select {
+    width:100%;
+    display:block;
     padding: 12px;
 
     box-sizing: border-box; 
@@ -199,6 +200,7 @@ main {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 10px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 #formulario textarea {
