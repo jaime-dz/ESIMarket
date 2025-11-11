@@ -1,6 +1,6 @@
 <!--Esta será la home page-->
 <!DOCTYPE html>
-<html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +13,15 @@
         <header class="menu-bar menu-superior">
             <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
             <ul>
-                <li><a href="/home/">Inicio</a></li>
-                <li><a href="/home/about">Sobre nosotros</a></li>
-                <li><a href="/auth/login">Iniciar sesión</a></li>
-                <li><a href="/auth/signup">Registrarse</a></li>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
             </ul>
         </header>
         <header>
@@ -29,10 +34,14 @@
         
         <footer class="menu-bar menu-inferior">
             <ul>
-                <li><a href="/home/">Inicio</a></li>
-                <li><a href="/home/about">Sobre nosotros</a></li>
-                <li><a href="/auth/login">Iniciar sesión</a></li>
-                <li><a href="/auth/signup">Registrarse</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
             </ul>
         </footer>
         <script src="/js/common.js" type="module"></script>

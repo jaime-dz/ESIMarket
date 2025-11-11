@@ -1,6 +1,6 @@
 <!--Formulario de registro-->
 <!DOCTYPE html>
-<html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,10 +12,24 @@
         <header class="menu-bar menu-superior">
             <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
             <ul>
-                <li><a href="/home/">Inicio</a></li>
-                <li><a href="/home/about">Sobre nosotros</a></li>
-                <li><a href="/auth/login">Iniciar sesión</a></li>
-                <li><a href="/auth/signup">Registrarse</a></li>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+
+                <!--<li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/perfil}">Mi Perfil</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="logout-button">Cerrar Sesión</button>
+                    </form>
+                </li>-->
             </ul>
         </header>
         <main>
@@ -57,6 +71,7 @@
                     <div class="carrera">
                         <label for="carrera">Carrera*</label><br>
                         <select name="carrera-seleccionada" id="carrera">
+                            <option value="" selected disabled>--- Selecciona tu carrera ---</option>
                             <option value="gia">Ingeniería Aeroespacial (GIA)</option>
                             <option value="gididp">Ingeniería en Diseño Industrial y Desarrollo del Producto (GIDIDP)</option>
                             <option value="gie">Ingeniería Eléctrica (GIE)</option>
@@ -73,11 +88,11 @@
                     <br>
                     <div class="tnc">
                         <input type="checkbox" required>
-                        <label for="tnc">He leído y acepto los <a class="links" href="ESIMarket_Terminos_y_condiciones.pdf">Términos y Condiciones</a> y la <a class="links" href="ESIMarket_Politica_Privacidad.pdf">Política de Privacidad</a></label>
+                        <label for="tnc">He leído y acepto los <a class="links" href="/home/ESIMarket_Terminos_y_Condiciones.pdf">Términos y Condiciones</a> y la <a class="links" href="/home/ESIMarket_Politica_Privacidad.pdf">Política de Privacidad</a></label>
                     </div>
                     <br>
                     <div>
-                        <button onclick="validarRegistro()" class="submit-button" type="submit">Acceder</button>
+                        <button class="submit-button" type="submit">Acceder</button>
                     </div>
                     <p id="have-account">¿Ya tienes una cuenta? <a class="links" href="login.html">Inicia sesión</a></p>
                 </form>
@@ -87,10 +102,12 @@
         
         <footer class="menu-bar menu-inferior">
             <ul>
-                <li><a href="/home/">Inicio</a></li>
-                <li><a href="/home/about">Sobre nosotros</a></li>
-                <li><a href="/auth/login">Iniciar sesión</a></li>
-                <li><a href="/auth/signup">Registrarse</a></li>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
             </ul>
         </footer>
         <script src="/js/common.js" type="module"></script>

@@ -2,10 +2,10 @@ import { enviarFormularioComoJSON } from './common.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const loginForm = document.getElementById('login');
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', (evento) => {
+    const contactForm = document.getElementById('formulario');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', (evento) => {
             enviarFormularioComoJSON(evento);
         });
     }

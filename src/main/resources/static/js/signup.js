@@ -1,41 +1,33 @@
-document.addEventListener('DOMContentLoaded', function validarRegistro() {
+// Importamos la función genérica
+import { enviarFormularioComoJSON } from './common.js';
 
-            // 1. Seleccionamos los elementos del DOM
-            const passwordInput = document.getElementById('contraseña');
-            const confirmPasswordInput = document.getElementById('repcontraseña');
-            const errorSpan = document.getElementById('error-contraseña');
+// Esperamos a que el HTML esté cargado
+document.addEventListener('DOMContentLoaded', () => {
 
-            // 2. Creamos la función de validación
-            function validarContraseñas() {
-                const pass = passwordInput.value;
-                const confirmPass = confirmPasswordInput.value;
+    const signupForm = document.getElementById('signup');
+    if (!signupForm) return;
 
-                // 3. Comparamos los valores
-                if (pass !== confirmPass) {
-                    // Si no coinciden:
-                    // A. Mostramos un mensaje de error en tiempo real
-                    errorSpan.textContent = "Las contraseñas no coinciden.";
-                    // B. Usamos setCustomValidity para informar al navegador
-                    //    que el campo no es válido. Esto previene el envío.
-                    confirmPasswordInput.setCustomValidity("Las contraseñas no coinciden.");
-                } else {
-                    // Si coinciden:
-                    // A. Borramos el mensaje de error en tiempo real
-                    errorSpan.textContent = "";
-                    // B. Borramos el error de setCustomValidity.
-                    //    ¡Esto es crucial para permitir el envío del formulario!
-                    confirmPasswordInput.setCustomValidity("");
-                }
-            }
+    // 1. Añadimos el "listener" al evento 'submit'
+    signupForm.addEventListener('submit', (evento) => {
+        
+        // 2. ¡VALIDACIÓN PRIMERO!
+        // Aquí va tu lógica de 'validarRegistro()'
+        const pass = document.getElementById('contraseña').value;
+        const repPass = document.getElementById('repcontraseña').value;
+        const errorDiv = document.getElementById('error-contraseña');
 
-            // 4. Añadimos los "escuchadores" de eventos
-            // Queremos que la validación se ejecute cada vez que el usuario
-            // escribe en CUALQUIERA de los dos campos.
-            passwordInput.addEventListener('input', validarContraseñas);
-            confirmPasswordInput.addEventListener('input', validarContraseñas);
+        if (pass !== repPass) {
+            // Si la validación falla:
+            evento.preventDefault(); // Detenemos el envío
+            errorDiv.textContent = 'Las contraseñas no coinciden.';
+            return; // No continuamos
+        }
 
-            // Nota: No necesitamos un listener en el evento 'submit' del formulario
-            // porque al usar `setCustomValidity()`, el navegador gestionará
-            // automáticamente el bloqueo del envío y mostrará el mensaje de error
-            // si el campo 'confirm-password' es inválido.
-        });
+        // Si la validación SÍ pasa:
+        errorDiv.textContent = ''; // Limpiamos errores previos
+        
+        // 3. Llamamos a nuestra nueva función para enviar como JSON
+        // Le pasamos el 'evento' original
+        enviarFormularioComoJSON(evento);
+    });
+});
