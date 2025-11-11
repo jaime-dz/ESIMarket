@@ -8,6 +8,8 @@ import es.esimarket.backend.repositories.MensajeRepository;
 import es.esimarket.backend.services.ChatService;
 import es.esimarket.backend.entities.Chat;
 
+//a
+
 @Controller
 @RequestMapping("/chat")
 public class ChatController
