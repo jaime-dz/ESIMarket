@@ -7,15 +7,6 @@ import org.mapstruct.Mappings;
 
 @Mapper
 public interface MessageMapper {
-    @Mappings({
-            @Mapping(source = "fechaHora", target = "fechaHora"),
-            @Mapping(source = "texto", target = "texto")
-    })
     MensajeDTO toDto(Mensaje entity);
-
-    @Mappings({
-            @Mapping(source = "fechaHora", target = "fechaHora"),
-            @Mapping(source = "texto", target = "texto")
-    })
     Mensaje toEntity(MensajeDTO dto);
 }

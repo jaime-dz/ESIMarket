@@ -9,9 +9,12 @@ import es.esimarket.backend.mappers.UserMapper;
 import es.esimarket.backend.repositories.TokenRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -101,11 +104,11 @@ public class AuthService {
     private void RevokeAllUserTokens(Usuario u)
     {
         List<Token> validUserTokens = tokenRepository
-                .findAllValidoIsFalseOrRevocadoIsFalseByuser_id(u.getId());
+                .findAllExpiradoIsFalseOrRevocadoIsFalseByuser_id(u.getId());
         if ( !validUserTokens.isEmpty()) {
             for ( Token token : validUserTokens) {
-                token.setExpirado(false);
-                token.setRevocado(false);
+                token.setExpirado(true);
+                token.setRevocado(true);
             }
             tokenRepository.saveAll(validUserTokens);
         }
@@ -138,6 +141,12 @@ public class AuthService {
 
         return new TokenResponse(accessToken,refreshToken);
 
+    }
+
+    @Scheduled(fixedRate = 43200000)
+    @Transactional
+    public void eliminarTokensExpiradosORevocados() {
+        tokenRepository.deleteByExpiradoTrueOrRevocadoTrue();
     }
 
     public List<UsuarioDTO> mostrar_usuarios(){
