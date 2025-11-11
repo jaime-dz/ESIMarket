@@ -3,10 +3,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import org.hibernate.sql.ast.tree.from.CorrelatedPluralTableGroup;
 
 @Entity
 @Table(name = "producto")
 public class Producto{
+
+    public enum estado{
+        Precintado,
+        Nuevo,
+        Casi_Nuevo,
+        Correcto,
+        Desgastado
+    }
 
     @Id
     @Column(name="ID",nullable = false)
@@ -27,14 +36,18 @@ public class Producto{
     @Column(name="Tipo")
     private String tipo;
 
+    @Column(name="Estado")
+    private estado estado;
+
     public Producto(){}
 
-    public Producto( String uDNIVendedor, int Precio, String Descripcion, String Nombre, String tipo){
-        this.uDNI_Vendedor = uDNIVendedor;
-        this.Precio = Precio;
-        this.Descripcion = Descripcion;
-        this.Nombre = Nombre;
+    public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado) {
+        this.uDNI_Vendedor = uDNI_Vendedor;
+        this.Precio = precio;
+        this.Descripcion = descripcion;
+        this.Nombre = nombre;
         this.tipo = tipo;
+        this.estado = estado;
     }
 
     public int getID(){return ID;}
@@ -55,4 +68,6 @@ public class Producto{
     public String getTipo(){return tipo;}
     public void setTipo(String tipo){this.tipo=tipo;}
 
+    public estado getEstado() {return estado;}
+    public void setEstado(estado estado) {this.estado = estado;}
 }

@@ -8,6 +8,7 @@ public class ProductoDTO implements Serializable {
     private String Descripcion;
     private String Nombre;
     private String tipo;
+    private Producto.estado estado;
 
     public ProductoDTO() {}
 
@@ -18,11 +19,12 @@ public class ProductoDTO implements Serializable {
         this.tipo = p.getTipo();
     }
 
-    public ProductoDTO(int precio, String descripcion, String nombre, String tipo) {
-        Precio = precio;
-        Descripcion = descripcion;
-        Nombre = nombre;
+    public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado) {
+        this.Precio = precio;
+        this.Descripcion = descripcion;
+        this.Nombre = nombre;
         this.tipo = tipo;
+        this.estado = estado;
     }
 
 
@@ -30,11 +32,13 @@ public class ProductoDTO implements Serializable {
     public String getDescripcion() {return Descripcion;}
     public String getNombre() {return Nombre;}
     public String getTipo() {return tipo;}
+    public Producto.estado getEstado() {return estado;}
 
     public void setPrecio(int precio) {Precio = precio;}
     public void setDescripcion(String descripcion) {Descripcion = descripcion;}
     public void setNombre(String nombre) {Nombre = nombre;}
     public void setTipo(String tipo) {this.tipo = tipo;}
+    public void setEstado(Producto.estado estado) {this.estado = estado;}
 
     @Override
     public String toString() {
