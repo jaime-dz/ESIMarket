@@ -32,9 +32,9 @@ public class ProductoController {
     @PostMapping("/")
     public ResponseEntity<String> createProducto(@RequestParam String v, @RequestParam int p,
                                                    @RequestParam String d, @RequestParam String n,
-                                                   @RequestParam String t)
+                                                   @RequestParam String t, @RequestParam Producto.estado e)
     {
 
-        return productoService.nuevoProducto(v, p, d, n, t);
+        return productoService.nuevoProducto(v, p, d, n, t, e);
     }
 }

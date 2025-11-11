@@ -1,6 +1,8 @@
 package es.esimarket.backend.controllers;
 
+import es.esimarket.backend.dtos.MensajeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +33,13 @@ public class MensajeController
     private JdbcTemplate jbdcTemplate;
 
     @GetMapping("/{chat}")
-    public ResponseEntity<List<String>> getMensajes(@PathVariable("chat") int chat){
-        //return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat));
+    public ResponseEntity<List<MensajeDTO>> getMensajes(@PathVariable("chat") int chat){
 
-        String sql = new String("SELECT Texto FROM Mensajes WHERE IDChat= ? ORDER BY FechaHora ASC ");
-        return ResponseEntity.ok(jbdcTemplate.queryForList(sql,String.class,chat));
+        return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat,Sort.by(Sort.Direction.ASC, "id.fechaHora")));
+
+        //String sql = new String("SELECT Texto FROM Mensajes WHERE IDChat= ? ORDER BY FechaHora ASC ");
+        //return ResponseEntity.ok(jbdcTemplate.queryForList(sql,String.class,chat));
+
     }
 
     @PostMapping("{chat}/{uDNI}/{texto}")
