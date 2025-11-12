@@ -1,4 +1,6 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.dtos.ChatDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -7,6 +9,8 @@ import es.esimarket.backend.repositories.ChatRepository;
 import es.esimarket.backend.repositories.MensajeRepository;
 import es.esimarket.backend.services.ChatService;
 import es.esimarket.backend.entities.Chat;
+
+import java.util.List;
 
 //a
 
@@ -31,11 +35,10 @@ public class ChatController
     }
 
     @GetMapping("/")
-    public ResponseEntity<Chat> getChat(@RequestParam String uDNI1,@RequestParam String uDNI2,@RequestParam int IdProducto)
+    public ResponseEntity<List<ChatDTO>> getChats(HttpServletRequest request)
     {
-        return ResponseEntity.ok(chatSercice.getChat(uDNI1,uDNI2,IdProducto).getBody());
+        return ResponseEntity.ok(chatSercice.getChatsUsu(request));
     }
-
 
     
 }
