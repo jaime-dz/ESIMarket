@@ -1,4 +1,4 @@
-package es.esimarket.backend.controllers.autenticacion;
+package es.esimarket.backend.controllers.requests;
 import es.esimarket.backend.entities.Usuario;
 
 public record  RegisterRequest(

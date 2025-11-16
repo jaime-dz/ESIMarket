@@ -1,9 +1,8 @@
 package es.esimarket.backend.controllers;
-import es.esimarket.backend.controllers.autenticacion.LoginRequest;
-import es.esimarket.backend.controllers.autenticacion.RegisterRequest;
+import es.esimarket.backend.controllers.requests.LoginRequest;
+import es.esimarket.backend.controllers.requests.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
 import es.esimarket.backend.dtos.UsuarioDTO;
-import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;

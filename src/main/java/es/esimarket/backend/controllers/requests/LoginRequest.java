@@ -1,3 +1,3 @@
-package es.esimarket.backend.controllers.autenticacion;
+package es.esimarket.backend.controllers.requests;
 
 public record LoginRequest(String username, String password) {}

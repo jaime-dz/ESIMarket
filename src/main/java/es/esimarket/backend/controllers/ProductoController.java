@@ -29,6 +29,12 @@ public class ProductoController {
         return ResponseEntity.ok(productoRepository.findByTipo(tipo));
     }
 
+    @GetMapping("/patata")
+    public ResponseEntity<List<Producto>> getProductosFiltroGenerico(@RequestParam String json)
+    {
+        return ResponseEntity.ok(productoService.FiltroProductosGenerico(json));
+    }
+
     @PostMapping("/")
     public ResponseEntity<String> createProducto(@RequestParam String v, @RequestParam int p,
                                                    @RequestParam String d, @RequestParam String n,
