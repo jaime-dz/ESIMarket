@@ -1,0 +1,9 @@
+package es.esimarket.backend.controllers.requests;
+
+import es.esimarket.backend.entities.Producto;
+
+public record CompraRequest (
+        int idProd,
+        Producto.PagoAceptado tipoPago
+)
+{}

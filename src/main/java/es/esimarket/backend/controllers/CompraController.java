@@ -1,4 +1,5 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.controllers.requests.CompraRequest;
 import es.esimarket.backend.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,11 @@ public class CompraController
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> postCompra(HttpServletRequest request, @RequestParam int idp)
+    public ResponseEntity<String> postCompra(HttpServletRequest request, @RequestBody final CompraRequest Crequest)
     {
         String token = request.getHeader("Authorization").substring(7);
         String dni = jwtService.extraerDNI(token);
 
-        return compraService.HacerCompra(dni, idp);
+        return compraService.HacerCompra(dni, Crequest);
     }
 }

@@ -1,4 +1,5 @@
 package es.esimarket.backend.services;
+import es.esimarket.backend.controllers.requests.CompraRequest;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,15 @@ public class CompraService {
         return u.getSaldoMoneda() > p.getPrecio();
     }
 
-    public ResponseEntity<String> HacerCompra(String uDNI, int prod)
+    public ResponseEntity<String> HacerCompra(String uDNI, CompraRequest request)
     {
-        Producto p = productoRepository.findByid(prod);
+        Producto p = productoRepository.findByid(request.idProd());
 
         if ( p.getuDNI_Vendedor().equals(uDNI) ){
             return ResponseEntity.ok("No puedes comprar tu propio producto ;)");
         }
 
-        Compra c = new Compra(uDNI,prod,variosService.ObtenerFecha());
+        Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha());
 
         compraRepository.save(c);
 
