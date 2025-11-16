@@ -42,7 +42,6 @@ public class ChatService{
     public ResponseEntity<String> CrearChat(String uDNI1,String uDNI2,int IdProducto)
     {
 
-
         Chat c = new Chat();
 
         if(uDNI1.compareTo(uDNI2) != 0)  //se puede hacer un poco mas eficiente

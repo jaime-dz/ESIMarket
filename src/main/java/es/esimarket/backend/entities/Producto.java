@@ -17,6 +17,12 @@ public class Producto{
         Desgastado
     }
 
+    public enum PagoAceptado{
+        Monedas,
+        Trueque,
+        Ambos
+    }
+
     @Id
     @Column(name="ID",nullable = false)
     private int ID;
@@ -39,15 +45,20 @@ public class Producto{
     @Column(name="Estado")
     private estado estado;
 
+    private PagoAceptado pagoAceptado;
+
+
+
     public Producto(){}
 
-    public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado) {
+    public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado) {
         this.uDNI_Vendedor = uDNI_Vendedor;
         this.Precio = precio;
         this.Descripcion = descripcion;
         this.Nombre = nombre;
         this.tipo = tipo;
         this.estado = estado;
+        this.pagoAceptado = pagoAceptado;
     }
 
     public int getID(){return ID;}
@@ -70,4 +81,7 @@ public class Producto{
 
     public estado getEstado() {return estado;}
     public void setEstado(estado estado) {this.estado = estado;}
+
+    public PagoAceptado getPagoAceptado() {return pagoAceptado;}
+    public void setPagoAceptado(PagoAceptado pagoAceptado) {this.pagoAceptado = pagoAceptado;}
 }

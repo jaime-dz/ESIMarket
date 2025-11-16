@@ -1,5 +1,8 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.controllers.requests.ChatRequest;
 import es.esimarket.backend.dtos.ChatDTO;
+import es.esimarket.backend.services.AuthService;
+import es.esimarket.backend.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +30,17 @@ public class ChatController
     @Autowired
     private ChatService chatSercice;
 
+    @Autowired
+    private JwtService jwtService;
+
     @PostMapping("/")
-    public ResponseEntity<String> postChat(@RequestParam String uDNI1,@RequestParam String uDNI2,@RequestParam int IdProducto)
+    public ResponseEntity<String> postChat(HttpServletRequest request , @RequestBody final ChatRequest Crequest)
     {
+        String token = request.getHeader("Authorization").substring(7);
+        String dniComp = jwtService.extraerDNI(token);
+
         //Falta poner los uDNI menores y mayores y la variable de autoincremento
-        return chatSercice.CrearChat(uDNI1, uDNI2,IdProducto);
+        return chatSercice.CrearChat(dniComp, Crequest.dni(),Crequest.idProd());
     }
 
     @GetMapping("/")
