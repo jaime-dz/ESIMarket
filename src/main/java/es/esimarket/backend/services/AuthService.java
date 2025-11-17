@@ -1,6 +1,6 @@
 package es.esimarket.backend.services;
-import es.esimarket.backend.controllers.autenticacion.LoginRequest;
-import es.esimarket.backend.controllers.autenticacion.RegisterRequest;
+import es.esimarket.backend.controllers.requests.LoginRequest;
+import es.esimarket.backend.controllers.requests.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
 import es.esimarket.backend.entities.Token;
 import es.esimarket.backend.entities.Usuario;
@@ -47,9 +47,6 @@ public class AuthService {
 
         byte[] salt = LoginEncriptado.GenerateSalt();
         String password = passwordEncoder.encode(Base64.getEncoder().encodeToString(salt) + " " + request.password());
-
-        System.out.println(Base64.getEncoder().encodeToString(salt));
-        System.out.println(password);
 
         Usuario user = new Usuario(request.username(),
                            password.split(" ")[1],

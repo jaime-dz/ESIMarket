@@ -1,6 +1,9 @@
 package es.esimarket.backend.controllers;
 
+import es.esimarket.backend.controllers.requests.MessageRequest;
 import es.esimarket.backend.dtos.MensajeDTO;
+import es.esimarket.backend.services.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +33,9 @@ public class MensajeController
     private MensajeService mensajeService;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private JdbcTemplate jbdcTemplate;
 
     @GetMapping("/{chat}")
@@ -37,17 +43,18 @@ public class MensajeController
 
         return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat,Sort.by(Sort.Direction.ASC, "id.fechaHora")));
 
-        //String sql = new String("SELECT Texto FROM Mensajes WHERE IDChat= ? ORDER BY FechaHora ASC ");
-        //return ResponseEntity.ok(jbdcTemplate.queryForList(sql,String.class,chat));
-
     }
 
-    @PostMapping("{chat}/{uDNI}/{texto}")
-    public ResponseEntity<String> postMensajes(@RequestParam int chat,@RequestParam String uDNI,@RequestParam String texto){
-        if(mensajeService.ContienePalabrasProhibidas(texto))
+    @PostMapping("/")
+    public ResponseEntity<String> postMensajes(HttpServletRequest request, @RequestBody final MessageRequest Mrequest){
+
+        String token = request.getHeader("Authorization").substring(7);
+        String dni = jwtService.extraerDNI(token);
+
+        if(mensajeService.ContienePalabrasProhibidas(Mrequest.Texto()))
             return ResponseEntity.ok("Tu mensaje contiene palabras prohibidas, hijo de puta");
         
-        return mensajeService.CrearMensaje(chat, uDNI, texto);
+        return mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto());
     }
 
 }
