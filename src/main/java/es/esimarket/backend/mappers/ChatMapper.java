@@ -6,10 +6,10 @@ import es.esimarket.backend.entities.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ChatMapper {
 
-    @Mapping(target = "nombreProducto", source = "producto.Nombre")
+    @Mapping(target = "nombreProducto", source = "producto.nombre")
     @Mapping(target = "nombre", source = "otroUsuario.nombre")
     @Mapping(target = "apellidos", source = "otroUsuario.apellidos")
     @Mapping(target = "carrera", source = "otroUsuario.carrera")

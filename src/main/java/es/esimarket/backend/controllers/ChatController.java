@@ -39,7 +39,6 @@ public class ChatController
         String token = request.getHeader("Authorization").substring(7);
         String dniComp = jwtService.extraerDNI(token);
 
-        //Falta poner los uDNI menores y mayores y la variable de autoincremento
         return chatSercice.CrearChat(dniComp, Crequest.dni(),Crequest.idProd());
     }
 
