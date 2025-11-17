@@ -31,7 +31,7 @@ public class CompraService {
 
     public ResponseEntity<String> HacerCompra(String uDNI, CompraRequest request)
     {
-        Producto p = productoRepository.findByid(request.idProd());
+        Producto p = productoRepository.findByID(request.idProd());
 
         if ( p.getuDNI_Vendedor().equals(uDNI) ){
             return ResponseEntity.ok("No puedes comprar tu propio producto ;)");

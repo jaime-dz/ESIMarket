@@ -116,7 +116,7 @@ public class ChatService{
             }
 
             Usuario u = usuarioRepository.findByid(otroDni);
-            Producto p = productoRepository.findByid(chatEntity.getIdProducto());
+            Producto p = productoRepository.findByID(chatEntity.getIdProducto());
 
             chatDTOs.add(chatMapper.toDTO(chatEntity,u,p));
         }
