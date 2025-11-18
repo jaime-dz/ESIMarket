@@ -118,17 +118,18 @@ header{
     justify-items: center;
 }
 
-.rojo{
-    color:crimson;
-}
-
 .naranja{
-    color:#E57200
+    color:#E57200;
 }
 
-#esim{
-    font-family: monospace;
+.blanco{
+    color:#ffffff;
 }
+
+.naranja, .blanco{
+    font-family:monospace;
+}
+
 
 /*Estilos para los recuadros de login y registro*/
 .square{
