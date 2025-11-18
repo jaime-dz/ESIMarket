@@ -31,9 +31,10 @@ public class MensajeController
     @Autowired
     private MensajeRepository mensajeRepository;
 
+    /*
     @Autowired
     private OpenAIService openAIService;
-
+    */
     @Autowired
     private MensajeService mensajeService;
 
@@ -49,7 +50,7 @@ public class MensajeController
         return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat,Sort.by(Sort.Direction.ASC, "id.fechaHora")));
 
     }
-
+    /*
     @PostMapping("/")
     public ResponseEntity<String> postMensajes(HttpServletRequest request, @RequestBody final MessageRequest Mrequest){
 
@@ -62,5 +63,7 @@ public class MensajeController
         
         return mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto());
     }
+
+     */
 
 }
