@@ -10,9 +10,9 @@
     padding: 0;
     margin: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
+    position:absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .menu-bar a:hover {
@@ -29,6 +29,7 @@
 }
 
 .menu-superior {
+    position:relative;
     margin-top: -10px;
     padding: 20px 104px 20px 20px;
     background-color: #00587C;
