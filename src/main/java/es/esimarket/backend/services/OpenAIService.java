@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpenAIService {
 
+    /*
     private final OpenAIClient client;
 
     public OpenAIService(OpenAIClient client) {
@@ -27,4 +28,8 @@ public class OpenAIService {
 
         return result.flagged();
     }
+
+     */
 }
+
+
