@@ -10,9 +10,9 @@
     padding: 0;
     margin: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
+    position:absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .menu-bar a:hover {
@@ -29,12 +29,12 @@
 }
 
 .menu-superior {
+    position:relative;
     margin-top: -10px;
-    padding: 20px;
+    padding: 20px 104px 20px 20px;
     background-color: #00587C;
     margin-left: -10px;
     margin-right: -10px;
-    margin-top: -10px;
 
     display: flex;
     align-items: center;
@@ -116,10 +116,6 @@ textarea#message {
 header{
     display:grid;
     justify-items: center;
-}
-
-#esim{
-    font-family: monospace;
 }
 
 /*Estilos para los recuadros de login y registro*/
@@ -230,6 +226,7 @@ main {
     padding:10px;
     padding-right: 30px;
     box-sizing: border-box;
+    border-radius: 10px;
 }
 
 .clear-button{
@@ -302,6 +299,7 @@ main {
     font-weight: bold;
     color: #333;
     margin: 0 0 5px 0; /* Sin margen arriba, poco abajo */
+    justify-content: center;
 }
 
 .product-price {
