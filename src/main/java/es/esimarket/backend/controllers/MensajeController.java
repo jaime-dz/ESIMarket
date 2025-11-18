@@ -1,8 +1,10 @@
 package es.esimarket.backend.controllers;
 
+import com.openai.client.OpenAIClient;
 import es.esimarket.backend.controllers.requests.MessageRequest;
 import es.esimarket.backend.dtos.MensajeDTO;
 import es.esimarket.backend.services.JwtService;
+import es.esimarket.backend.services.OpenAIService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -30,6 +32,9 @@ public class MensajeController
     private MensajeRepository mensajeRepository;
 
     @Autowired
+    private OpenAIService openAIService;
+
+    @Autowired
     private MensajeService mensajeService;
 
     @Autowired
@@ -51,8 +56,9 @@ public class MensajeController
         String token = request.getHeader("Authorization").substring(7);
         String dni = jwtService.extraerDNI(token);
 
-        if(mensajeService.ContienePalabrasProhibidas(Mrequest.Texto()))
-            return ResponseEntity.ok("Tu mensaje contiene palabras prohibidas, hijo de puta");
+        if(openAIService.isToxic(Mrequest.Texto()))
+            return ResponseEntity.badRequest()
+                    .body("Tu mensaje contiene palabras prohibidas, hijo de puta");
         
         return mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto());
     }
