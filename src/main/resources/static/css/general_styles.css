@@ -118,6 +118,14 @@ header{
     justify-items: center;
 }
 
+.rojo{
+    color:crimson;
+}
+
+.naranja{
+    color:#E57200
+}
+
 #esim{
     font-family: monospace;
 }
