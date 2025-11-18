@@ -242,3 +242,78 @@ main {
     cursor: pointer;
     display: none;
 }
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 20px;
+}
+
+.filter-sidebar {
+    flex: 1;
+    min-width: 200px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+.filter-group { margin-bottom: 20px; }
+.filter-group label { display: block; font-weight: bold; margin-bottom: 10px; }
+.filter-group select, .checkbox-group { width: 100%; margin-bottom: 5px; }
+
+
+/* --- NUEVOS ESTILOS PARA LA REJILLA Y TARJETAS --- */
+
+/* Contenedor de la Rejilla */
+.product-grid-container {
+    flex: 3; /* Ocupa el espacio restante */
+    display: grid;
+    /* * Crea columnas automáticas:
+     * - 'auto-fill': Llena el espacio con tantas columnas como quepan.
+     * - 'minmax(220px, 1fr)': Cada columna tiene un mínimo de 220px
+     * y un máximo de 1 fracción (se reparten el espacio).
+     */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px; /* Espacio entre las tarjetas */
+}
+
+/* Estilo de cada Tarjeta de Producto */
+.product-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 15px;
+    text-align: left; /* Alineamos el texto a la izquierda */
+    display: flex; /* Usamos flexbox para la estructura interna */
+    flex-direction: column; /* Apila el contenido verticalmente */
+}
+
+.product-image {
+    width: 100%;
+    height: 150px; /* Altura fija para la imagen */
+    object-fit: cover; /* La imagen cubre el espacio sin deformarse */
+    border-radius: 4px;
+    margin-bottom: 15px; /* Espacio debajo de la imagen */
+}
+
+.product-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 5px 0; /* Sin margen arriba, poco abajo */
+}
+
+.product-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007BFF; /* Precio en color azul */
+    margin: 0 0 10px 0; /* Espacio antes del vendedor */
+}
+
+.product-seller {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0;
+    margin-top: auto; /* Empuja el vendedor al fondo de la tarjeta */
+}
