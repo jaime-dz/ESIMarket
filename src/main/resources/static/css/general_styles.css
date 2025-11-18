@@ -118,19 +118,6 @@ header{
     justify-items: center;
 }
 
-.naranja{
-    color:#E57200;
-}
-
-.blanco{
-    color:#ffffff;
-}
-
-.naranja, .blanco{
-    font-family:monospace;
-}
-
-
 /*Estilos para los recuadros de login y registro*/
 .square{
     border: 1px solid black;
