@@ -11,7 +11,7 @@
     <body>
         <header class="menu-bar menu-superior">
             <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
-            <h1 id="esim">ESIMarket</h1>
+            <h1 style="color:#E57200; font-family: monospace; font-weight: bold;">ESI</h1><h1 style="color:#ffffff; font-family: monospace;">Market</h1>
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
@@ -28,7 +28,7 @@
             <div class="search-form">
                 <label for="search-input">Buscar servicios/productos:</label><br><br>
                 <input type="text" id="search-input" placeholder="Busca lo que quieras">
-                <span class="clear-button" id="clearBtn">&times;</span>
+                <span class="clear-button" id="clearBtn">&times;</span><br><br>
             </div>
         </header>
         <div class="product-container">
@@ -46,56 +46,44 @@
             </div>
             
             <div class="filter-group">
-                <label>Vendedor</label>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="seller-a" value="vendedorA" name="seller">
-                    <label for="seller-a">Vendedor A</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="seller-b" value="vendedorB" name="seller">
-                    <label for="seller-b">Vendedor B</p>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="seller-c" value="vendedorC" name="seller">
-                    <label for="seller-c">Vendedor C</label>
-                </div>
+                
             </div>
         </div>
 
         <div class="product-grid-container" id="product-grid">
             
             <div class="product-card" data-category="objects" data-seller="vendedorA">
-                <img src="https://via.placeholder.com/200x150" alt="Apuntes MP" class="product-image">
+                <img src="/Images/gato.jpg" alt="Apuntes MP" class="product-image">
                 <h4 class="product-name">Apuntes MP</h4>
-                <p class="product-price">6€</p>
+                <p class="product-price">6🪙</p>
                 <p class="product-seller">Vendido por: Vendedor A</p>
             </div>
 
             <div class="product-card" data-category="services" data-seller="vendedorB">
-                <img src="https://via.placeholder.com/200x150" alt="Clases AAED" class="product-image">
+                <img src="/Images/gato.jpg" alt="Clases AAED" class="product-image">
                 <h4 class="product-name">Clases de AAED</h4>
-                <p class="product-price">25€/h</p>
+                <p class="product-price">25🪙/h</p>
                 <p class="product-seller">Vendido por: Vendedor B</p>
             </div>
 
             <div class="product-card" data-category="objects" data-seller="vendedorC">
-                <img src="https://via.placeholder.com/200x150" alt="Libro" class="product-image">
+                <img src="/Images/gato.jpg" alt="Libro" class="product-image">
                 <h4 class="product-name">Guía de HTML</h4>
-                <p class="product-price">20€</p>
+                <p class="product-price">20🪙</p>
                 <p class="product-seller">Vendido por: Vendedor C</p>
             </div>
 
             <div class="product-card" data-category="objects" data-seller="vendedorA">
-                <img src="https://via.placeholder.com/200x150" alt="Ejercicios POO" class="product-image">
+                <img src="/Images/gato.jpg" alt="Ejercicios POO" class="product-image">
                 <h4 class="product-name">Ejercicios POO</h4>
-                <p class="product-price">15€</p>
+                <p class="product-price">15🪙</p>
                 <p class="product-seller">Vendido por: Vendedor A</p>
             </div>
 
             <div class="product-card" data-category="services" data-seller="vendedorB">
-                <img src="https://via.placeholder.com/200x150" alt="Cesped" class="product-image">
+                <img src="/Images/gato.jpg" alt="Cesped" class="product-image">
                 <h4 class="product-name">Cortar césped</h4>
-                <p class="product-price">20€</p>
+                <p class="product-price">20🪙</p>
                 <p class="product-seller">Vendido por: Vendedor B</p>
             </div>
 
