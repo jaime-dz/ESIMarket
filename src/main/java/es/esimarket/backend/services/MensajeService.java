@@ -41,6 +41,7 @@ public class MensajeService
         
     }*/
 
+    /*
     public Boolean ContienePalabrasProhibidas(String txt)
     {
         List<String> PalabrasProhibidas = List.of("idiota", "imbecil", "imbécil", "estupido", "estupido", "tonto", "tarado", "bobo", "burro",
@@ -83,7 +84,7 @@ public class MensajeService
         return contiene;
     }
 
-
+    */
 
 
 }
