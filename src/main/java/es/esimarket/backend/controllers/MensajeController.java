@@ -1,6 +1,4 @@
 package es.esimarket.backend.controllers;
-
-import com.openai.client.OpenAIClient;
 import es.esimarket.backend.controllers.requests.MessageRequest;
 import es.esimarket.backend.dtos.MensajeDTO;
 import es.esimarket.backend.services.JwtService;
@@ -11,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
+import java.security.Principal;
 import es.esimarket.backend.repositories.ChatRepository;
 import es.esimarket.backend.repositories.MensajeRepository;
 
@@ -52,10 +50,12 @@ public class MensajeController
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> postMensajes(HttpServletRequest request, @RequestBody final MessageRequest Mrequest){
+    public ResponseEntity<String> postMensajes(Principal principal, @RequestBody final MessageRequest Mrequest){
 
-        String token = request.getHeader("Authorization").substring(7);
-        String dni = jwtService.extraerDNI(token);
+        //String token = request.getHeader("Authorization").substring(7);
+        //String dni = jwtService.extraerDNI(token);
+
+        String dni = principal.getName();
 
         if(openAIService.isToxic(Mrequest.Texto()))
             return ResponseEntity.badRequest()
