@@ -23,14 +23,14 @@ public class MensajeService
     @Autowired
     private MensajeRepository mensajeRepository;
 
-    public ResponseEntity<String> CrearMensaje(int chat, String uDNI, String texto)
+    public String CrearMensaje(int chat, String uDNI, String texto)
     {
         VariosService v = new VariosService();
         Mensaje m = new Mensaje(chat,uDNI,v.ObtenerFecha(),texto);
 
         mensajeRepository.save(m);
 
-        return ResponseEntity.ok("Mensaje añadido correctamente");
+        return "Mensaje añadido correctamente";
     }
 
     /*public ResponseEntity<List<Mensaje>> MostrarChat(int chat)
