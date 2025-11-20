@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Seleccionar controles de filtro
     const categoryFilter = document.getElementById("category-filter");
-    const sellerFilters = document.querySelectorAll('input[name="seller"]'); 
-    
+    const stateFilter = document.getElementById("product-state");
+
     // CAMBIO: Seleccionamos las tarjetas de producto, no las filas
     const productCards = document.querySelectorAll(".product-card");
 
@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function filterProducts() {
         // 1. Obtener valores actuales de los filtros
         const selectedCategory = categoryFilter.value;
-        const selectedSellers = [];
-        sellerFilters.forEach(checkbox => {
+        const selectedStates = [];
+        stateFilters.forEach(checkbox => {
             if (checkbox.checked) {
-                selectedSellers.push(checkbox.value);
+                selectedStates.push(checkbox.value);
             }
         });
 
@@ -21,14 +21,14 @@ document.addEventListener("DOMContentLoaded", () => {
         for (const card of productCards) { // CAMBIO: 'card' en vez de 'row'
             // Obtener los datos de la tarjeta
             const cardCategory = card.dataset.category; // CAMBIO
-            const cardSeller = card.dataset.seller;     // CAMBIO
+            const cardState = card.dataset.state;     // CAMBIO
 
             // 3. Comprobar si la tarjeta debe ser visible
             const categoryMatch = (selectedCategory === "all") || (selectedCategory === cardCategory);
-            const sellerMatch = (selectedSellers.length === 0) || selectedSellers.includes(cardSeller);
+            const stateMatch = (selectedStates.length === 0) || selectedStates.includes(cardState);
 
             // 4. Mostrar u ocultar la tarjeta
-            if (categoryMatch && sellerMatch) {
+            if (categoryMatch && stateMatch) {
                 card.style.display = ""; // CAMBIO: Mostrar tarjeta
             } else {
                 card.style.display = "none"; // CAMBIO: Ocultar tarjeta
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     categoryFilter.addEventListener("change", filterProducts);
-    sellerFilters.forEach(checkbox => {
+    stateFilters.forEach(checkbox => {
         checkbox.addEventListener("change", filterProducts);
     });
 });
