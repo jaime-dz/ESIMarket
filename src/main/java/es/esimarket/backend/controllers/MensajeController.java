@@ -6,6 +6,7 @@ import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.OllamaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,8 @@ import java.util.*;
 import es.esimarket.backend.services.MensajeService;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/mensajes")
@@ -49,7 +52,7 @@ public class MensajeController
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes(/*Principal principal*/ @RequestBody final MessageRequest Mrequest){
+    public ResponseEntity<HashMap<String, String>> postMensajes(@RequestHeader(HttpHeaders.AUTHORIZATION) String request, @RequestBody final MessageRequest Mrequest){
 
         //String token = request.getHeader("Authorization").substring(7);
         //String dni = jwtService.extraerDNI(token);
@@ -74,7 +77,7 @@ public class MensajeController
         boolean isToxic = Boolean.parseBoolean(respuestaIA);
 
         if ( isToxic ){
-            response.put("error", "Tu mensaje contiene toxicidad" );
+            response.put("error", "Tu mensaje contiene toxicidad, perro" );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 

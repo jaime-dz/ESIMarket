@@ -7,6 +7,7 @@ import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import es.esimarket.backend.entities.Chat;
 import es.esimarket.backend.repositories.ChatRepository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,10 +99,10 @@ public class ChatService{
 
     }
 
-    public List<ChatDTO> getChatsUsu(HttpServletRequest request){
+    public List<ChatDTO> getChatsUsu(@RequestHeader(HttpHeaders.AUTHORIZATION) String request){
         List<ChatDTO> chatDTOs = new ArrayList<>();
 
-        String token = request.getHeader("Authorization").substring(7);
+        String token = request.substring(7);
         String dni = jwtService.extraerDNI(token);
 
         List<Chat> chatEntities = chatRepository.findByUDNI1OrUDNI2(dni,dni);
