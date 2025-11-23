@@ -3,6 +3,8 @@ import es.esimarket.backend.controllers.requests.LoginRequest;
 import es.esimarket.backend.controllers.requests.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
 import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.exceptions.CannotCreateTokenError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,21 +38,21 @@ public class AuthTokenController {
     public String loginG() { return "login"; }
 
     @PostMapping("/signup")
-    public ResponseEntity<TokenResponse> signup(@RequestBody final RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public ResponseEntity<TokenResponse> signup(@RequestBody final RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError
     {
         final TokenResponse token = authService.registerUser(request);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody final LoginRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public ResponseEntity<TokenResponse> login(@RequestBody final LoginRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError
     {
         final TokenResponse token = authService.loginUser(request);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader)
+    public ResponseEntity<TokenResponse> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) throws CannotCreateTokenError
     {
         final TokenResponse token = authService.refreshToken(authHeader);
         return ResponseEntity.ok(token);
