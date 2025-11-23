@@ -77,7 +77,7 @@ public class MensajeController
         boolean isToxic = Boolean.parseBoolean(respuestaIA);
 
         if ( isToxic ){
-            response.put("error", "Tu mensaje contiene toxicidad, perro" );
+            response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 

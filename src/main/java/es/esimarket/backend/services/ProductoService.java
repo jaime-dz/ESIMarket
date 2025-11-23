@@ -23,9 +23,9 @@ public class ProductoService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa){
+    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada){
 
-        Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa);
+        Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada);
 
         productoRepository.save(p);
 
