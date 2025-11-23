@@ -53,7 +53,7 @@ public class JwtService {
 
     public boolean isTokenValid( final String token , final Usuario user ) {
         final String dni = extraerDNI(token);
-        return (dni.equals(user.getId())) && isTokenExpired(token);
+        return (dni.equals(user.getId())) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired( final String token ){

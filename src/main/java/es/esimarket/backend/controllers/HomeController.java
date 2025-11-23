@@ -14,4 +14,10 @@ public class HomeController {
     @GetMapping("/about")
     public String about() { return "about"; }
 
+    @GetMapping("/PrivacyAndPolicy")
+    public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad"; }
+
+    @GetMapping("/TermsAndConditions")
+    public String termsAndConditions() { return "forward:/ESIMarket_Terminos_y_Condiciones"; }
+
 }
