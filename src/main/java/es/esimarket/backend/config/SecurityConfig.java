@@ -43,6 +43,7 @@ public class SecurityConfig {
                                                      "/usuarios/**",
                                                      "/compras/**",
                                                      "/mensajes/**",
+                                                     "/mensajes/",
                                                      "/css/**",
                                                      "/js/**",
                                                      "/Images/**")

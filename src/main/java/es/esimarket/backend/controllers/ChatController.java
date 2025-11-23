@@ -5,6 +5,7 @@ import es.esimarket.backend.services.AuthService;
 import es.esimarket.backend.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,16 +35,16 @@ public class ChatController
     private JwtService jwtService;
 
     @PostMapping("/")
-    public ResponseEntity<String> postChat(HttpServletRequest request , @RequestBody final ChatRequest Crequest)
+    public ResponseEntity<String> postChat(@RequestHeader(HttpHeaders.AUTHORIZATION) String request , @RequestBody final ChatRequest Crequest)
     {
-        String token = request.getHeader("Authorization").substring(7);
+        String token = request.substring(7);
         String dniComp = jwtService.extraerDNI(token);
 
         return chatSercice.CrearChat(dniComp, Crequest.dni(),Crequest.idProd());
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ChatDTO>> getChats(HttpServletRequest request)
+    public ResponseEntity<List<ChatDTO>> getChats(@RequestHeader(HttpHeaders.AUTHORIZATION) String request)
     {
         return ResponseEntity.ok(chatSercice.getChatsUsu(request));
     }
