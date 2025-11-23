@@ -2,6 +2,8 @@ package es.esimarket.backend.services;
 import es.esimarket.backend.dtos.ChatDTO;
 import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.exceptions.CannotCreateChatError;
+import es.esimarket.backend.exceptions.CannotCreateTokenError;
 import es.esimarket.backend.mappers.ChatMapper;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
@@ -18,6 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -41,9 +44,8 @@ public class ChatService{
     @Autowired
     private ChatMapper chatMapper;
 
-    public ResponseEntity<String> CrearChat(String uDNI1,String uDNI2,int IdProducto)
+    public String CrearChat(String uDNI1, String uDNI2, int IdProducto)
     {
-
         Chat c = new Chat();
 
         if(uDNI1.compareTo(uDNI2) != 0)  //se puede hacer un poco mas eficiente
@@ -66,16 +68,13 @@ public class ChatService{
             String sql = "Select Exists (Select 1 from Chat where uDNIMayor = ? and uDNIMenor = ? and IdProducto = ?)";
             boolean existe = Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class,c.getuDNI_Mayor(),c.getuDNI_Menor(),IdProducto)); //el boolean.true.equals es por si devuelve un null que no se ralle por que la clase Boolean no es lo mismo que boolean, es la que lo enmascara
 
-            if(!existe)
-            {
-                chatRepository.save(c);
-                return ResponseEntity.ok("Chat creado exitosamente");
-            }
-            else
-                return ResponseEntity.ok("Ya existe un chat con dichos usuarios y producto");
+            if(existe) throw new CannotCreateChatError("Ya existe un chat con estos usuarios y producto");
+            chatRepository.save(c);
+            return "Chat creado exitosamente";
+
         }
         else
-            return ResponseEntity.ok("No se puede crear un chat contigo mismo");
+            return "No se puede crear un chat contigo mismo";
     }
 
     public ResponseEntity<Chat> getChat(String uDNI1,String uDNI2,int IdProducto)
@@ -99,13 +98,15 @@ public class ChatService{
 
     }
 
-    public List<ChatDTO> getChatsUsu(@RequestHeader(HttpHeaders.AUTHORIZATION) String request){
+    public List<ChatDTO> getChatsUsu(@RequestHeader(HttpHeaders.AUTHORIZATION) String request) throws CannotCreateChatError{
         List<ChatDTO> chatDTOs = new ArrayList<>();
 
         String token = request.substring(7);
         String dni = jwtService.extraerDNI(token);
 
         List<Chat> chatEntities = chatRepository.findByUDNI1OrUDNI2(dni,dni);
+
+        if (chatEntities.isEmpty()) throw new CannotCreateChatError("No tienes ningun chat iniciado");
 
         for(Chat chatEntity : chatEntities)
         {
