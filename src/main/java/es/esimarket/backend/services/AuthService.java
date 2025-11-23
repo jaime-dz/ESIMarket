@@ -47,6 +47,8 @@ public class AuthService {
 
     public TokenResponse registerUser(RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError {
 
+        if ( !request.username().matches("^[uU]\\d{8}$")) throw new CannotCreateUserError("Usuario invalido, debe de ser u + nºdni");
+
         byte[] salt = LoginEncriptado.GenerateSalt();
         String password = passwordEncoder.encode(Base64.getEncoder().encodeToString(salt) + " " + request.password());
 
