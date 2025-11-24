@@ -1,4 +1,5 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.services.ProductoService;
@@ -21,13 +22,16 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Producto>> getProductos() {
-        return ResponseEntity.ok(productoRepository.findAll());
+    public ResponseEntity<List<ProductoDTO>> getProductos() {
+
+        List<Producto> productEntities = productoRepository.findAll();
+        return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
     @GetMapping("/{tipo}")
-    public ResponseEntity<List<Producto>> getProductos(@PathVariable("tipo") String tipo) {
-        return ResponseEntity.ok(productoRepository.findByTipo(tipo));
+    public ResponseEntity<List<ProductoDTO>> getProductos(@PathVariable("tipo") String tipo) {
+        List<Producto> productEntities = productoRepository.findByTipo(tipo);
+        return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
     @GetMapping("/patata")
@@ -45,6 +49,6 @@ public class ProductoController {
     //@RequestParam Producto.PagoAceptado pa)
     {
 
-        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago());
+        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada());
     }
 }

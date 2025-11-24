@@ -5,6 +5,8 @@ import es.esimarket.backend.controllers.autenticacion.TokenResponse;
 import es.esimarket.backend.entities.Token;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.exceptions.CannotCreateTokenError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.mappers.UserMapper;
 import es.esimarket.backend.repositories.TokenRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
@@ -43,7 +45,9 @@ public class AuthService {
     @Autowired
     private UserMapper userMapper;
 
-    public TokenResponse registerUser(RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public TokenResponse registerUser(RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError {
+
+        if ( !request.username().matches("^[uU]\\d{8}$")) throw new CannotCreateUserError("Usuario invalido, debe de ser u + nºdni");
 
         byte[] salt = LoginEncriptado.GenerateSalt();
         String password = passwordEncoder.encode(Base64.getEncoder().encodeToString(salt) + " " + request.password());
@@ -57,7 +61,7 @@ public class AuthService {
                            salt);
 
         if (userRepository.existsById(user.getId())) {
-            throw new IllegalStateException("El usuario ya existe");
+            throw new CannotCreateUserError("El usuario ya existe");
         }
 
         var savedUser = userRepository.save(user);
@@ -69,16 +73,18 @@ public class AuthService {
         return new TokenResponse(jwtToken,refreshToken);
     }
 
-    public TokenResponse loginUser(LoginRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException{
+    public TokenResponse loginUser(LoginRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError{
 
         Usuario u = userRepository.findByid(request.username());
 
+        // SOLO PARA DESARROLLO. MODIFCAR AL FINAL
+
         if(u==null) {
-            throw new IllegalArgumentException("Usuario o contraseña incorrectos ( USU NO EMCONTRADO ) ");
+            throw new CannotCreateUserError("Usuario o contraseña incorrectos ( USU NO EMCONTRADO ) ");
         }
 
         if (!passwordEncoder.matches(request.password(), Base64.getEncoder().encodeToString(u.getSalt()) + " " + u.getContrasenna())) {
-            throw new IllegalArgumentException("Usuario o contraseña incorrectos");
+            throw new CannotCreateUserError("Usuario o contraseña incorrectos");
         }
 
         var jwtToken = jwtService.generateToken(u);
@@ -113,22 +119,22 @@ public class AuthService {
     }
 
 
-    public TokenResponse refreshToken(final String authHeader) {
+    public TokenResponse refreshToken(final String authHeader) throws CannotCreateTokenError {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Token Invalido");
+            throw new CannotCreateTokenError("Token Invalido");
         }
 
         final String refreshToken = authHeader.substring(7);
         final String userDNI = jwtService.extraerDNI(refreshToken);
 
         if ( userDNI == null ) {
-            throw new IllegalArgumentException("Token de refresco invalido");
+            throw new CannotCreateTokenError("Token de refresco invalido");
         }
 
         final Usuario usuario = userRepository.findByid(userDNI);
 
         if (!jwtService.isTokenValid(refreshToken,usuario)){
-            throw new IllegalArgumentException("Token de refresco invalido");
+            throw new CannotCreateTokenError("Token de refresco invalido");
         }
 
         final String accessToken = jwtService.generateToken(usuario);

@@ -48,7 +48,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    text-align: center; /* Centramos los ítems del menú inferior */
+    text-align: center;
 }
 
 .menu-inferior li {

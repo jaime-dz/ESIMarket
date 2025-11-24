@@ -24,72 +24,89 @@
                 </li>
             </ul>
         </header>
-        <header>
-            <div class="search-form">
-                <label for="search-input">Buscar servicios/productos:</label><br><br>
-                <input type="text" id="search-input" placeholder="Busca lo que quieras">
-                <span class="clear-button" id="clearBtn">&times;</span><br><br>
-            </div>
-        </header>
-        <div class="product-container">
+        <main>
+            <header>
+                <div class="search-form">
+                    <label for="search-input">Buscar servicios/productos:</label><br><br>
+                    <input type="text" id="search-input" placeholder="Busca lo que quieras">
+                    <span class="clear-button" id="clearBtn">&times;</span><br><br>
+                </div>
+            </header>
+            <div class="product-container">
 
-        <div class="filter-sidebar">
-            <h3>Filtros</h3>
-            
-            <div class="filter-group">
-                <label for="category-filter">Categoría</label>
-                <select id="category-filter">
-                    <option value="all" selected>Todo</option>
-                    <option value="services">Servicios</option>
-                    <option value="objects">Objetos</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                
-            </div>
-        </div>
+                <div class="filter-sidebar">
+                    <h3>Filtros</h3>
+                    
+                    <div class="filter-group">
+                        <label for="category-filter">Categoría</label>
+                        <select id="category-filter">
+                            <option value="all" selected>Todo</option>
+                            <option value="services">Servicios</option>
+                            <option value="objects">Objetos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <!--Añadir otros filtros-->
+                        <label for="state-filter">Estado</label>
+                        <input type="checkbox" selected>
+                        <label for="todos">Todos</label>
+                        <input type="checkbox">
+                        <label for="muy bueno">Muy Bueno</label>
+                        <input type="checkbox">
+                        <label for="bueno">Bueno</label>
+                        <input type="checkbox">
+                        <label for="decente">Decente</label>
+                        <input type="checkbox">
+                        <label for="desgastado">Desgastado</label>
+                    </div>
+                </div>
 
-        <div class="product-grid-container" id="product-grid">
-            
-            <div class="product-card" data-category="objects" data-seller="vendedorA">
-                <img src="/Images/gato.jpg" alt="Apuntes MP" class="product-image">
-                <h4 class="product-name">Apuntes MP</h4>
-                <p class="product-price">6🪙</p>
-                <p class="product-seller">Vendido por: Vendedor A</p>
+                <div class="product-grid-container" id="product-grid">
+                    
+                    <div class="product-card" data-category="objects" data-seller="vendedorA">
+                        <img src="/Images/gato.jpg" alt="Apuntes MP" class="product-image">
+                        <h4 class="product-name">Apuntes MP</h4>
+                        <p class="product-state">Bueno</p>
+                        <p class="product-price">6🪙</p>
+                        <p class="product-seller">Vendido por: Vendedor A</p>
+                    </div>
+
+                    <div class="product-card" data-category="services" data-seller="vendedorB">
+                        <img src="/Images/gato.jpg" alt="Clases AAED" class="product-image">
+                        <h4 class="product-name">Clases de AAED</h4>
+                        <p class="product-price">25🪙/h</p>
+                        <p class="product-seller">Vendido por: Vendedor B</p>
+                    </div>
+
+                    <div class="product-card" data-category="objects" data-seller="vendedorC">
+                        <img src="/Images/gato.jpg" alt="Libro" class="product-image">
+                        <h4 class="product-name">Guía de HTML</h4>
+                        <p class="product-state">Muy Bueno</p>
+                        <p class="product-price">20🪙</p>
+                        <p class="product-seller">Vendido por: Vendedor C</p>
+                    </div>
+
+                    <div class="product-card" data-category="objects" data-seller="vendedorA">
+                        <img src="/Images/gato.jpg" alt="Ejercicios POO" class="product-image">
+                        <h4 class="product-name">Ejercicios POO</h4>
+                        <p class="product-state">Decente</p>
+                        <p class="product-price">15🪙</p>
+                        <p class="product-seller">Vendido por: Vendedor A</p>
+                    </div>
+
+                    <div class="product-card" data-category="services" data-seller="vendedorB">
+                        <img src="/Images/gato.jpg" alt="Cesped" class="product-image">
+                        <h4 class="product-name">Cortar césped</h4>
+                        <p class="product-price">20🪙</p>
+                        <p class="product-seller">Vendido por: Vendedor B</p>
+                    </div>
+
+                </div>
+
             </div>
-
-            <div class="product-card" data-category="services" data-seller="vendedorB">
-                <img src="/Images/gato.jpg" alt="Clases AAED" class="product-image">
-                <h4 class="product-name">Clases de AAED</h4>
-                <p class="product-price">25🪙/h</p>
-                <p class="product-seller">Vendido por: Vendedor B</p>
-            </div>
-
-            <div class="product-card" data-category="objects" data-seller="vendedorC">
-                <img src="/Images/gato.jpg" alt="Libro" class="product-image">
-                <h4 class="product-name">Guía de HTML</h4>
-                <p class="product-price">20🪙</p>
-                <p class="product-seller">Vendido por: Vendedor C</p>
-            </div>
-
-            <div class="product-card" data-category="objects" data-seller="vendedorA">
-                <img src="/Images/gato.jpg" alt="Ejercicios POO" class="product-image">
-                <h4 class="product-name">Ejercicios POO</h4>
-                <p class="product-price">15🪙</p>
-                <p class="product-seller">Vendido por: Vendedor A</p>
-            </div>
-
-            <div class="product-card" data-category="services" data-seller="vendedorB">
-                <img src="/Images/gato.jpg" alt="Cesped" class="product-image">
-                <h4 class="product-name">Cortar césped</h4>
-                <p class="product-price">20🪙</p>
-                <p class="product-seller">Vendido por: Vendedor B</p>
-            </div>
-
-        </div>
-
-    </div>
+        </main>
+        
         <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>

@@ -9,5 +9,6 @@ public record ProductoRequest(
     String Nombre,
     String Tipo,
     Producto.estado estado,
-    Producto.PagoAceptado pago 
+    Producto.PagoAceptado pago,
+    Producto.RecepcionAceptada recepcionAceptada
 ) {}

@@ -1,7 +1,9 @@
 package es.esimarket.backend.services;
 import es.esimarket.backend.controllers.requests.CompraRequest;
 import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
 import es.esimarket.backend.repositories.ProductoRepository;
+import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class CompraService {
     public ProductoRepository productoRepository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
     public CompraRepository compraRepository;
 
     @Autowired
@@ -29,19 +34,26 @@ public class CompraService {
         return u.getSaldoMoneda() > p.getPrecio();
     }
 
-    public ResponseEntity<String> HacerCompra(String uDNI, CompraRequest request)
+    public String HacerCompra(String uDNI, CompraRequest request)
     {
         Producto p = productoRepository.findByID(request.idProd());
+        Usuario u = usuarioRepository.findByid(uDNI);
 
-        if ( p.getuDNI_Vendedor().equals(uDNI) ){
-            return ResponseEntity.ok("No puedes comprar tu propio producto ;)");
+        if ( p != null && u != null) {
+
+            if ( p.getuDNI_Vendedor().equals(uDNI) ){
+                throw new CannotCompletePurchaseError("No puedes comprar tu propio producto ;)");
+            }
+
+            Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha());
+
+            compraRepository.save(c);
+
+            return "Compra realizada correctamente";
         }
 
-        Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha());
+        throw new CannotCompletePurchaseError("No se pudo encontrar el usuario o producto");
 
-        compraRepository.save(c);
-
-        return ResponseEntity.ok("Compra realizada correctamente");
     }
 
 }
