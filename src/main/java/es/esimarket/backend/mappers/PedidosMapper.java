@@ -6,8 +6,10 @@ import org.mapstruct.Mappings;
 import es.esimarket.backend.dtos.PedidosDTO;
 import es.esimarket.backend.entities.Pedidos;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface  PedidosMapper{
+    /*
     PedidosDTO toDto(Pedidos entity);
     Pedidos toEntity(PedidosDTO dto);
+     */
 }

@@ -3,7 +3,6 @@ package es.esimarket.backend.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-@Entity
 public class Pedidos{
 
     public enum Estado{

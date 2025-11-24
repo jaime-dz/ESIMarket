@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 import es.esimarket.backend.dtos.PedidosDTO;
 import es.esimarket.backend.entities.Pedidos;
-import es.esimarket.backend.repositories.PedidosRepository;
+//import es.esimarket.backend.repositories.PedidosRepository;
 import es.esimarket.backend.mappers.PedidosMapper;
 
 @Service
 public class PedidosService{
-    
+    /*
     @Autowired
     private PedidosRepository pedidosRepository;
 
@@ -33,4 +33,6 @@ public class PedidosService{
 
         return PedidosDTOs;
     }
+
+     */
 }
