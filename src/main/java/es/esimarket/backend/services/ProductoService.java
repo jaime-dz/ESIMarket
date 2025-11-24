@@ -1,4 +1,8 @@
 package es.esimarket.backend.services;
+import es.esimarket.backend.dtos.ProductoDTO;
+import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.mappers.ProductMapper;
 import es.esimarket.backend.repositories.ProductoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +22,18 @@ public class ProductoService {
     private ProductoRepository productoRepository;
 
     @Autowired
-    private VariosService variosService;
+    private ProductMapper productMapper;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa){
+    @Autowired
+    private VariosService variosService;
 
-        Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa);
+
+    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada){
+
+        Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada);
 
         productoRepository.save(p);
 
@@ -90,6 +98,17 @@ public class ProductoService {
 
         return jdbcTemplate.queryForList(sql, Producto.class, ValoresParametros.toArray());
 
+    }
+
+    public List<ProductoDTO> mostrar_productos( List<Producto> productEntities ){
+
+        List<ProductoDTO> productDTOs = new ArrayList<>();
+
+        for( Producto p : productEntities){
+            productDTOs.add(productMapper.toDTO(p));
+        }
+
+        return productDTOs;
     }
 }
 

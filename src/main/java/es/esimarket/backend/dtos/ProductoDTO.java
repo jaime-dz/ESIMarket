@@ -9,6 +9,7 @@ public class ProductoDTO implements Serializable {
     private String Nombre;
     private String tipo;
     private Producto.estado estado;
+    private Producto.RecepcionAceptada recepcionAceptada;
 
     public ProductoDTO() {}
 
@@ -17,14 +18,16 @@ public class ProductoDTO implements Serializable {
         this.Descripcion = p.getDescripcion();
         this.Nombre = p.getNombre();
         this.tipo = p.getTipo();
+        this.recepcionAceptada=p.getRecepcionAceptada();
     }
 
-    public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado) {
+    public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada) {
         this.Precio = precio;
         this.Descripcion = descripcion;
         this.Nombre = nombre;
         this.tipo = tipo;
         this.estado = estado;
+        this.recepcionAceptada = recepcionAceptada;
     }
 
 
@@ -33,12 +36,14 @@ public class ProductoDTO implements Serializable {
     public String getNombre() {return Nombre;}
     public String getTipo() {return tipo;}
     public Producto.estado getEstado() {return estado;}
+    public Producto.RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
 
     public void setPrecio(int precio) {Precio = precio;}
     public void setDescripcion(String descripcion) {Descripcion = descripcion;}
     public void setNombre(String nombre) {Nombre = nombre;}
     public void setTipo(String tipo) {this.tipo = tipo;}
     public void setEstado(Producto.estado estado) {this.estado = estado;}
+    public void setRecepcionAceptada(Producto.RecepcionAceptada recepcionAceptada) {this.recepcionAceptada=recepcionAceptada;}
 
     @Override
     public String toString() {
@@ -47,6 +52,7 @@ public class ProductoDTO implements Serializable {
                 ", Descripcion='" + Descripcion + '\'' +
                 ", Nombre='" + Nombre + '\'' +
                 ", tipo='" + tipo + '\'' +
+                ", RecepcionAceptada='" + recepcionAceptada + '\'' +
                 '}';
     }
 }
