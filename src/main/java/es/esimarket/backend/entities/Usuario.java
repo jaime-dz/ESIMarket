@@ -40,7 +40,7 @@ public class Usuario {
     private String apellidos;
 
     @Column(name = "Saldo")
-    private double saldoMoneda;
+    private long saldoMoneda;
 
     @Column(name = "Carrera")
     @Enumerated(EnumType.STRING)
@@ -86,8 +86,8 @@ public class Usuario {
     public byte[] getSalt() { return salt; }
     public void setSalt(byte[] salt) { this.salt = salt; }
 
-    public Double getSaldoMoneda() { return saldoMoneda; }
-    public void setSaldoMoneda(Double saldoMoneda) { this.saldoMoneda = saldoMoneda; }
+    public long getSaldoMoneda() { return saldoMoneda; }
+    public void setSaldoMoneda(long saldoMoneda) { this.saldoMoneda = saldoMoneda; }
 
     @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
     private List<Token> tokens;
