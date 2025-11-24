@@ -7,6 +7,8 @@ import es.esimarket.backend.dtos.PedidosDTO;
 import es.esimarket.backend.entities.Pedidos;
 
 import java.util.*;
-
+/*
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer>{
 }
+*
+ */
