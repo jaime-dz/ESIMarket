@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface MessageMapper {
     MensajeDTO toDto(Mensaje entity);
     Mensaje toEntity(MensajeDTO dto);
