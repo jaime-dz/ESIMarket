@@ -20,7 +20,6 @@
             }
         </style>
     </head>
-    <!--añadir enlaces redes sociales?-->
     <body>
         <header class="menu-bar menu-superior">
             <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
@@ -41,10 +40,10 @@
             <h2>Nuestro equipo</h2>
             <p>Somos una pequeña empresa creada con el objetivo de hacer más fácil para la gente encontrar servicios que necesitan u ofrecerlos ellos mismos. MadMonkeyMarket nace en la Escuela Superior de Ingeniería de la Universidad de Cádiz, gracias a 5 estudiantes que tuvieron una visión, siendo estos Luka Arana Aguilocho, Luis Castro Gabriel, Miguel Catalá Garrido, Julio Contioso Laínez y Jaime Díaz Segado.</p>
             <br><h2>Nuestra misión</h2>
-            <p>En ESIMarket creemos que es posible el intercambio de servicios entre empresas y particulares sin que esto sea tedioso e inseguro.</p>
+            <p>En ESIMarket creemos que es posible el intercambio de servicios y productos entre estudiantes de la ESI sin que esto sea tedioso e inseguro.</p>
             <br><h2>¡Contacta con nosotros!</h2>
             <p>Correo de atención al cliente:</p>
-            <p id="mail">clientes@esimarket.es</p>
+            <p id="mail">esimarket2@gmail.com</p>
             <p>Teléfono de atención al cliente:</p>
             <p id="tlf">+34 000 00 00 00</p><br>
             <p>O si lo prefieres, escríbenos directamente:</p>
@@ -89,6 +88,11 @@
                 <li sec:authorize="!isAuthenticated()">
                     <a th:href="@{/auth/signup}">Registrarse</a>
                 </li>
+                <li class="sn">
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png"></a>
+                </li>
+                
             </ul>
         </footer>
 
