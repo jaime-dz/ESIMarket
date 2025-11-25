@@ -1,8 +1,13 @@
 package es.esimarket.backend.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jdk.jfr.Timestamp;
 
+@Entity
+@Table(name="pedido")
 public class Pedidos{
 
     public enum Estado{
@@ -11,14 +16,20 @@ public class Pedidos{
         Recogido
     }
 
+    @Id
+    @Column(name="IdPedido")
     private int IdPedido;
 
+    @Column(name="IdCompra")
     private int IdCompra;
 
+    @Column(name="NumTaquilla")
     private int NTaquilla;
 
+    @Column(name="EnTaquilla")
     private boolean EnTaquilla;
 
+    @Column(name="Estado")
     private Estado Estado;
 
     public Pedidos() {}

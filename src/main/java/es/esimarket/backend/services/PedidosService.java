@@ -1,21 +1,16 @@
 package es.esimarket.backend.services;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import org.hibernate.annotations.AttributeBinderType;
+import es.esimarket.backend.repositories.PedidosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import es.esimarket.backend.dtos.PedidosDTO;
 import es.esimarket.backend.entities.Pedidos;
-//import es.esimarket.backend.repositories.PedidosRepository;
 import es.esimarket.backend.mappers.PedidosMapper;
 
 @Service
 public class PedidosService{
-    /*
+
     @Autowired
     private PedidosRepository pedidosRepository;
 
@@ -34,5 +29,5 @@ public class PedidosService{
         return PedidosDTOs;
     }
 
-     */
+
 }
