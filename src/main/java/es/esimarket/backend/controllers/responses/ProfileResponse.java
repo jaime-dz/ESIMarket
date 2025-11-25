@@ -19,6 +19,20 @@ public class ProfileResponse{
         this.saldo = saldo;
     }
 
+    public String getNombre() {return Nombre;}
+    public String getApellidos() {return Apellidos;}
+    public String getUsuario() {return usuario;}
+    public String getEmail() {return email;}
+    public Usuario.Carrera getCarrera() {return carrera;}
+    public long getSaldo() {return saldo;}
+
+    public void setNombre(String nombre) {Nombre = nombre;}
+    public void setApellidos(String apellidos) {Apellidos = apellidos;}
+    public void setUsuario(String usuario) {this.usuario = usuario;}
+    public void setEmail(String email) {this.email = email;}
+    public void setCarrera(Usuario.Carrera carrera) {this.carrera = carrera;}
+    public void setSaldo(long saldo) {this.saldo = saldo;}
+
     @Override
     public String toString() {
         return "ProfileResponse{" +

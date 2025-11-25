@@ -22,5 +22,7 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.mostrar_perfil(authHeader.substring(7)));
     }
 
+    @GetMapping("/edit")
+    public String modProfile() { return "profile-edit"; }
 
 }

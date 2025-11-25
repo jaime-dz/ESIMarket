@@ -22,6 +22,9 @@
                 <li sec:authorize="!isAuthenticated()">
                     <a th:href="@{/auth/signup}">Registrarse</a>
                 </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile/}"></a>
+                </li>
             </ul>
         </header>
         <main>
@@ -47,58 +50,67 @@
                     </div>
                     
                     <div class="filter-group">
-                        <!--Añadir otros filtros-->
-                        <label for="state-filter">Estado</label>
-                        <input type="checkbox" selected>
-                        <label for="todos">Todos</label>
-                        <input type="checkbox">
-                        <label for="muy bueno">Muy Bueno</label>
-                        <input type="checkbox">
-                        <label for="bueno">Bueno</label>
-                        <input type="checkbox">
-                        <label for="decente">Decente</label>
-                        <input type="checkbox">
-                        <label for="desgastado">Desgastado</label>
+                        <label>Estado</label>
+                        
+                        <div class="filter-option">
+                            <input type="checkbox" class="state-filter" value="muy bueno" id="state-mb">
+                            <label for="state-mb">Muy Bueno</label>
+                        </div>
+
+                        <div class="filter-option">
+                            <input type="checkbox" class="state-filter" value="bueno" id="state-b">
+                            <label for="state-b">Bueno</label>
+                        </div>
+
+                        <div class="filter-option">
+                            <input type="checkbox" class="state-filter" value="decente" id="state-d">
+                            <label for="state-d">Decente</label>
+                        </div>
+
+                        <div class="filter-option">
+                            <input type="checkbox" class="state-filter" value="desgastado" id="state-deg">
+                            <label for="state-deg">Desgastado</label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="product-grid-container" id="product-grid">
                     
-                    <div class="product-card" data-category="objects" data-seller="vendedorA">
-                        <img src="/Images/gato.jpg" alt="Apuntes MP" class="product-image">
+                   <div class="product-card" data-category="objects" data-seller="vendedorA" data-state="bueno">
+                        <img src="/Images/placeholder.png" alt="Apuntes MP" class="product-image">
                         <h4 class="product-name">Apuntes MP</h4>
+                        <p class="product-price">6⚙️</p>
                         <p class="product-state">Bueno</p>
-                        <p class="product-price">6🪙</p>
                         <p class="product-seller">Vendido por: Vendedor A</p>
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorB">
-                        <img src="/Images/gato.jpg" alt="Clases AAED" class="product-image">
+                        <img src="/Images/placeholder.png" alt="Clases AAED" class="product-image">
                         <h4 class="product-name">Clases de AAED</h4>
-                        <p class="product-price">25🪙/h</p>
+                        <p class="product-price">25⚙️/h</p>
                         <p class="product-seller">Vendido por: Vendedor B</p>
                     </div>
 
-                    <div class="product-card" data-category="objects" data-seller="vendedorC">
-                        <img src="/Images/gato.jpg" alt="Libro" class="product-image">
+                    <div class="product-card" data-category="objects" data-seller="vendedorC" data-state="muy bueno">
+                        <img src="/Images/placeholder.png" alt="Libro" class="product-image">
                         <h4 class="product-name">Guía de HTML</h4>
+                        <p class="product-price">20⚙️</p>
                         <p class="product-state">Muy Bueno</p>
-                        <p class="product-price">20🪙</p>
                         <p class="product-seller">Vendido por: Vendedor C</p>
                     </div>
 
-                    <div class="product-card" data-category="objects" data-seller="vendedorA">
-                        <img src="/Images/gato.jpg" alt="Ejercicios POO" class="product-image">
+                    <div class="product-card" data-category="objects" data-seller="vendedorA" data-state="decente">
+                        <img src="/Images/placeholder.png" alt="Ejercicios POO" class="product-image">
                         <h4 class="product-name">Ejercicios POO</h4>
+                        <p class="product-price">15⚙️</p>
                         <p class="product-state">Decente</p>
-                        <p class="product-price">15🪙</p>
                         <p class="product-seller">Vendido por: Vendedor A</p>
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorB">
-                        <img src="/Images/gato.jpg" alt="Cesped" class="product-image">
+                        <img src="/Images/placeholder.png" alt="Cesped" class="product-image">
                         <h4 class="product-name">Cortar césped</h4>
-                        <p class="product-price">20🪙</p>
+                        <p class="product-price">20⚙️</p>
                         <p class="product-seller">Vendido por: Vendedor B</p>
                     </div>
 
@@ -116,6 +128,10 @@
                 </li>
                 <li sec:authorize="!isAuthenticated()">
                     <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+                <li class="sn">
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png"></a>
                 </li>
             </ul>
         </footer>
