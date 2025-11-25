@@ -1,5 +1,8 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.responses.ProfileResponse;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
+import es.esimarket.backend.services.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/profile")
 public class ProfileController {
 
-    @GetMapping
-    public ResponseEntity<ProfileResponse> getProfile( @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader ){
-        return null;
+    @Autowired
+    private ProfileService profileService;
+
+    @GetMapping("/")
+    public ResponseEntity<ProfileResponse> getProfile( @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader ) throws CannotCreateUserError {
+        return ResponseEntity.ok(profileService.mostrar_perfil(authHeader.substring(7)));
     }
 
 
