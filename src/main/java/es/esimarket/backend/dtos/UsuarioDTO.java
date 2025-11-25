@@ -8,7 +8,7 @@ public class UsuarioDTO implements Serializable {
     private String correo;
     private String nombre;
     private String apellidos;
-    private double saldoMoneda;
+    private long saldoMoneda;
     private Usuario.Carrera carrera;
 
     public UsuarioDTO(){}
@@ -22,7 +22,7 @@ public class UsuarioDTO implements Serializable {
         this.carrera = usuario.getCarrera();
     }
 
-    public UsuarioDTO(String id, String correo, String nombre, String apellidos, double saldoMoneda ,Usuario.Carrera carrera) {
+    public UsuarioDTO(String id, String correo, String nombre, String apellidos, long saldoMoneda ,Usuario.Carrera carrera) {
         this.id = id;
         this.correo = correo;
         this.nombre = nombre;
@@ -35,14 +35,14 @@ public class UsuarioDTO implements Serializable {
     public String getCorreo() {return correo;}
     public String getNombre() {return nombre;}
     public String getApellidos() {return apellidos;}
-    public double getSaldoMoneda() {return saldoMoneda;}
+    public long getSaldoMoneda() {return saldoMoneda;}
     public Usuario.Carrera getCarrera() {return carrera;}
 
     public void setId(String id) {this.id = id;}
     public void setCorreo(String correo) {this.correo = correo;}
     public void setNombre(String nombre) {this.nombre = nombre;}
     public void setApellidos(String apellidos) {this.apellidos = apellidos;}
-    public void setSaldoMoneda(double saldoMoneda) {this.saldoMoneda = saldoMoneda;}
+    public void setSaldoMoneda(long saldoMoneda) {this.saldoMoneda = saldoMoneda;}
     public void setCarrera(Usuario.Carrera carrera) {this.carrera = carrera;}
 
     @Override
