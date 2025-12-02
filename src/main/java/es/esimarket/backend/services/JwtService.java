@@ -4,7 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -20,6 +23,9 @@ public class JwtService {
 
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     public String generateToken ( final Usuario user )
     {
@@ -62,9 +68,12 @@ public class JwtService {
 
 
     private String buildToken( final Usuario user, final long expiration ){
+
+
         return Jwts.builder()
                 .claim("Nombre",user.getId())
                 .claim("Apellidos",user.getApellidos())
+                .claim("Roles", userDetailsService.loadUserByUsername(user.getId()).getAuthorities())
                 .setSubject(user.getId())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))

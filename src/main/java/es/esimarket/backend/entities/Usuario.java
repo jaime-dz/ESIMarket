@@ -1,6 +1,5 @@
 package es.esimarket.backend.entities;
 import jakarta.persistence.*;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,6 +48,9 @@ public class Usuario {
     @Column(name = "Salt", nullable = false)
     private byte [] salt;
 
+    @Column(name = "Rol")
+    private String rol;
+
 
     public Usuario() {}
 
@@ -91,6 +93,9 @@ public class Usuario {
 
     @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
     private List<Token> tokens;
+
+    @OneToMany(mappedBy = "product",fetch =FetchType.LAZY)
+    private List<Producto> productos;
 
     @Override
     public String toString() {
