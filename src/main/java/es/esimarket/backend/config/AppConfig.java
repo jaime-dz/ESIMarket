@@ -34,7 +34,7 @@ public class AppConfig {
             final Usuario user = usuarioRepository.findByid(username);
             if(user==null) throw new UsernameNotFoundException("Usuario no encontrado");
 
-            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRol()));
 
             return org.springframework.security.core.userdetails.User.builder()
                     .username(user.getId())

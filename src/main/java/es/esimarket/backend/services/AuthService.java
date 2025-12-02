@@ -58,7 +58,8 @@ public class AuthService {
                            request.name(),
                            request.apellidos(),
                            request.carrera(),
-                           salt);
+                           salt,
+                           "ROLE_USER");
 
         if (userRepository.existsById(user.getId())) {
             throw new CannotCreateUserError("El usuario ya existe");

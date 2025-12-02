@@ -54,7 +54,7 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario( String id, String contrasenna,String email, String nombre, String apellidos, Carrera carrera, byte[] salt )
+    public Usuario( String id, String contrasenna,String email, String nombre, String apellidos, Carrera carrera, byte[] salt , String rol )
     {
 	    this.id = id;
         this.contrasenna = contrasenna;
@@ -64,6 +64,7 @@ public class Usuario {
         this.saldoMoneda = 0;
         this.carrera = carrera;
         this.salt = salt;
+        this.rol = rol;
 
     }
 
@@ -90,6 +91,9 @@ public class Usuario {
 
     public long getSaldoMoneda() { return saldoMoneda; }
     public void setSaldoMoneda(long saldoMoneda) { this.saldoMoneda = saldoMoneda; }
+
+    public String getRol() {return rol;}
+    public void setRol(String rol) {this.rol = rol;}
 
     @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
     private List<Token> tokens;

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -69,11 +70,12 @@ public class JwtService {
 
     private String buildToken( final Usuario user, final long expiration ){
 
+        String rol = (user.getRol() != null) ? user.getRol() : "ROLE_USER";
 
         return Jwts.builder()
                 .claim("Nombre",user.getId())
                 .claim("Apellidos",user.getApellidos())
-                .claim("Roles", userDetailsService.loadUserByUsername(user.getId()).getAuthorities())
+                .claim("Roles", List.of(rol))
                 .setSubject(user.getId())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
