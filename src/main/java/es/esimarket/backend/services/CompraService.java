@@ -57,7 +57,6 @@ public class CompraService {
             Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha(),request.recepcion());
 
             compraRepository.save(c);
-            productoRepository.deleteById(request.idProd());
             c = compraRepository.findByuDNICompradorAndIDProducto(uDNI,request.idProd());
 
             if(request.recepcion()==Producto.RecepcionAceptada.Taquilla)

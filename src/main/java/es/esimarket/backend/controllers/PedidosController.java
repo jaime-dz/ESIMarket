@@ -26,6 +26,12 @@ public class PedidosController{
         return ResponseEntity.ok(pedidosService.mostrar_pedidos());
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<PedidosDTO>> getPedidosVendedor(String uDNI)
+    {
+        return ResponseEntity.ok(pedidosService.mostrar_pedidos_comprador(uDNI));
+    }
+
     //El post de pedido va dentro de al funcion hacer compra
 
 }
