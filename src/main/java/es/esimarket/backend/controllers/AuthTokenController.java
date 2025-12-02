@@ -56,8 +56,7 @@ public class AuthTokenController {
         ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration );
         ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration);
 
-        return ResponseEntity.status(HttpStatus.SEE_OTHER) // Código 303: Redirección después de POST
-                .location(URI.create("/home/"))            // La URL destino
+        return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                 .build();
@@ -71,8 +70,7 @@ public class AuthTokenController {
         ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration);
         ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration);
 
-        return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .location(URI.create("/home/"))
+        return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                 .build();
@@ -85,9 +83,11 @@ public class AuthTokenController {
         final TokenResponse token = authService.refreshToken(refreshToken);
 
         ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
                 .build();
 
     }
