@@ -45,9 +45,14 @@ public class CompraService {
                 throw new CannotCompletePurchaseError("No puedes comprar tu propio producto ;)");
             }
 
+            if ( u.getSaldoMoneda() < p.getPrecio() ) {
+                throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
+            }
+
             Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha());
 
             compraRepository.save(c);
+            productoRepository.deleteById(request.idProd());
 
             return "Compra realizada correctamente";
         }

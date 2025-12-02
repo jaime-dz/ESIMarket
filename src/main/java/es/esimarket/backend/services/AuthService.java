@@ -119,12 +119,12 @@ public class AuthService {
     }
 
 
-    public TokenResponse refreshToken(final String authHeader) throws CannotCreateTokenError {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new CannotCreateTokenError("Token Invalido");
+    public TokenResponse refreshToken(final String refreshToken) throws CannotCreateTokenError {
+
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new CannotCreateTokenError("Token de refresco vacío o no presente");
         }
 
-        final String refreshToken = authHeader.substring(7);
         final String userDNI = jwtService.extraerDNI(refreshToken);
 
         if ( userDNI == null ) {
@@ -133,16 +133,21 @@ public class AuthService {
 
         final Usuario usuario = userRepository.findByid(userDNI);
 
+        if (usuario == null) {
+            throw new CannotCreateTokenError("Usuario no encontrado");
+        }
+
         if (!jwtService.isTokenValid(refreshToken,usuario)){
             throw new CannotCreateTokenError("Token de refresco invalido");
         }
 
         final String accessToken = jwtService.generateToken(usuario);
+        final String new_refreshToken = jwtService.generateRefreshToken(usuario);
         RevokeAllUserTokens(usuario);
 
         saveUserToken(usuario,accessToken);
 
-        return new TokenResponse(accessToken,refreshToken);
+        return new TokenResponse(accessToken,new_refreshToken);
 
     }
 
