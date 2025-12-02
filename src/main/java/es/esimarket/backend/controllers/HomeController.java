@@ -11,6 +11,11 @@ public class HomeController {
     @GetMapping("/")
     public String index() { return "index"; }
 
+    @GetMapping("/user")
+    public String user() {
+
+    }
+
     @GetMapping("/about")
     public String about() { return "about"; }
 
