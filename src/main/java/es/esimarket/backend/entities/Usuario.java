@@ -98,7 +98,7 @@ public class Usuario {
     @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "product",fetch =FetchType.LAZY)
+    @OneToMany(mappedBy = "uDNI_Vendedor",fetch =FetchType.LAZY)
     private List<Producto> productos;
 
     @Override

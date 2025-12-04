@@ -2,10 +2,7 @@ package es.esimarket.backend.entities;
 
 import java.math.BigInteger;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 
 @Entity
@@ -19,6 +16,7 @@ public class Pedidos{
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IdPedido")
     private int IdPedido;
 

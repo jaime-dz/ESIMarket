@@ -1,8 +1,5 @@
 package es.esimarket.backend.entities;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.sql.ast.tree.from.CorrelatedPluralTableGroup;
 
 @Entity
@@ -29,6 +26,7 @@ public class Producto{
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID",nullable = false)
     private int ID;
 
@@ -54,7 +52,6 @@ public class Producto{
     private PagoAceptado pagoAceptado;
 
     private RecepcionAceptada recepcionAceptada;
-
 
 
     public Producto(){}
