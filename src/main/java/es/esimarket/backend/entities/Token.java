@@ -28,14 +28,13 @@ public class Token {
     @Column(name="Expirado")
     private boolean expirado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="uDNI")
-    private Usuario user;
+    @Column(name="uDNI")
+    private String user;
 
 
     public Token() {}
 
-    public Token(String token, TokenType type, boolean revocado, boolean expirado, Usuario user) {
+    public Token(String token, TokenType type, boolean revocado, boolean expirado, String user) {
         this.token = token;
         this.type = type;
         this.revocado = revocado;
@@ -57,8 +56,8 @@ public class Token {
     public boolean getExpirado() { return expirado; }
     public void setExpirado(boolean expirado) { this.expirado = expirado; }
 
-    public Usuario getUser() { return user; }
-    public void setUser(Usuario user) { this.user = user; }
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
 
 
 }

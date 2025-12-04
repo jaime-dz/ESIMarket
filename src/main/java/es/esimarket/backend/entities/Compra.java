@@ -8,44 +8,44 @@ import jakarta.persistence.*;
 @Table(name = "compra")
 public class Compra {
 
-    @EmbeddedId
-    private CompraId id;
+    @Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigInteger IDCompra;
 
+    @Column(name = "uDNIComprador", nullable = false)
     private String uDNIComprador;
 
+    @Column(name = "IDProducto", nullable = false)
     private int IDProducto;
 
+    @Column(name = "Fecha", nullable = false)
     private String Fecha;
-
-    
-    private BigInteger iDCompra;
 
     private Producto.RecepcionAceptada recepcion;
 
     public Compra() {}
 
     public Compra( String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion) {
-        //this.id = new CompraId(uDNIComprador,IDProducto,Fecha);
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
         this.recepcion = recepcion;
     }
 
-    public String getuDNIComprador() {return id.getuDNIComprador();}
-    public void setuDNIComprador(String uDNIComprador) { id.setuDNIComprador(uDNIComprador); }
+    public String getuDNIComprador() {return uDNIComprador;}
+    public void setuDNIComprador(String uDNIComprador) { this.uDNIComprador = uDNIComprador; }
 
-    public int getIDProducto(){return id.getIDProducto();}
-    public void setIDProducto(int IDProducto) {id.setIDProducto(IDProducto); }
+    public int getIDProducto(){return IDProducto;}
+    public void setIDProducto(int IDProducto) {this.IDProducto = IDProducto; }
 
-    public String getFecha() {return id.getFecha();}
-    public void setFecha(String Fecha) {id.setFecha(Fecha);}
+    public String getFecha() {return Fecha;}
+    public void setFecha(String Fecha) {this.Fecha = Fecha; }
 
     public Producto.RecepcionAceptada getRecepcion() {return recepcion;}
     public void setRecepcion(Producto.RecepcionAceptada recepcion) {this.recepcion=recepcion;}
 
-    public BigInteger getidCompra() {return iDCompra;}
-    public void setiDCompra(BigInteger iDCompra) {this.iDCompra=iDCompra;}
+    public BigInteger getidCompra() {return IDCompra;}
+    public void setiDCompra(BigInteger IDCompra) {this.IDCompra=IDCompra;}
 
 
 }

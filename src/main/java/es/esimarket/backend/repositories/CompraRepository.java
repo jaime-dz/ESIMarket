@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public interface CompraRepository extends JpaRepository<Compra, CompraId> {
+public interface CompraRepository extends JpaRepository<Compra, Integer> {
 
-    List<Compra> findByid_uDNIComprador(String id);
+    List<Compra> findByuDNIComprador(String id);
     Compra findByuDNICompradorAndIDProducto(String uDNIComprador,int IDProducto);
 }
