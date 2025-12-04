@@ -26,8 +26,6 @@ public class AppConfig {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-
-
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
