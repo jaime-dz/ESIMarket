@@ -77,6 +77,22 @@ public class AuthTokenController {
 
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @CookieValue(name = "accessToken", required = false) String accessToken) throws  CannotCreateUserError, CannotCreateTokenError
+    {
+
+        authService.logout_user(refreshToken);
+
+        ResponseCookie jwtCookie = crearCookie("accessToken", "", 0);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", "", 0);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .build();
+
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) throws CannotCreateTokenError
     {
