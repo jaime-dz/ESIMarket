@@ -38,7 +38,7 @@ public class CompraController
         String token = request.substring(7);
         String dni = jwtService.extraerDNI(token);
 
-        return ResponseEntity.ok(compraRepository.findByid_uDNIComprador(dni));
+        return ResponseEntity.ok(compraRepository.findByuDNIComprador(dni));
     }
 
     @PostMapping("/")

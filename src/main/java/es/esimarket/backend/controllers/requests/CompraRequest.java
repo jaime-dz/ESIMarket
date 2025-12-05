@@ -4,6 +4,8 @@ import es.esimarket.backend.entities.Producto;
 
 public record CompraRequest (
         int idProd,
-        Producto.PagoAceptado tipoPago
+        Producto.PagoAceptado tipoPago,
+        Producto.RecepcionAceptada recepcion,
+        int taquilla
 )
 {}

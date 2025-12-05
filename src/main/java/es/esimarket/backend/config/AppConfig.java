@@ -11,12 +11,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class AppConfig {
@@ -29,10 +31,13 @@ public class AppConfig {
         return username -> {
             final Usuario user = usuarioRepository.findByid(username);
             if(user==null) throw new UsernameNotFoundException("Usuario no encontrado");
+
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRol()));
+
             return org.springframework.security.core.userdetails.User.builder()
                     .username(user.getId())
                     .password(user.getContrasenna())
-                    .authorities(Collections.emptyList())
+                    .authorities(authorities)
                     .build();
         };
     }

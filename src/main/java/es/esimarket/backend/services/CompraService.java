@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.repositories.CompraRepository;
+import es.esimarket.backend.repositories.PedidosRepository;
 import es.esimarket.backend.entities.Compra;
+import es.esimarket.backend.entities.Pedidos;
 
 import java.util.*;
 
@@ -19,6 +21,9 @@ public class CompraService {
 
     @Autowired
     public ProductoRepository productoRepository;
+
+    @Autowired
+    public PedidosRepository pedidosRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -49,10 +54,17 @@ public class CompraService {
                 throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
             }
 
-            Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha());
+            Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha(),request.recepcion());
 
             compraRepository.save(c);
-            productoRepository.deleteById(request.idProd());
+            c = compraRepository.findByuDNICompradorAndIDProducto(uDNI,request.idProd());
+
+            if(request.recepcion()==Producto.RecepcionAceptada.Taquilla)
+            {
+                Pedidos pe = new Pedidos(c.getidCompra(),request.taquilla(),Pedidos.Estado.PorEntregar);
+                pedidosRepository.save(pe);
+            }
+            
 
             return "Compra realizada correctamente";
         }

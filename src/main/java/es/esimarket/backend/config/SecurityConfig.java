@@ -67,7 +67,7 @@ public class SecurityConfig {
 
 
     private void logout(final String token) {
-        if ( token == null | !token.startsWith("Bearer ") ) {
+        if ( token == null || !token.startsWith("Bearer ") ) {
             throw new IllegalArgumentException("Token Invalido");
         }
 
@@ -85,5 +85,3 @@ public class SecurityConfig {
 
 
 }
-
-// HOLA
