@@ -105,6 +105,7 @@ public class AuthService {
 
     }
 
+    @Transactional
     public void logout_user( String refreshToken ){
 
         tokenRepository.deleteByToken(refreshToken);
