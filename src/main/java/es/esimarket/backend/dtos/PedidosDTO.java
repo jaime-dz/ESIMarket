@@ -6,6 +6,8 @@ import es.esimarket.backend.entities.Pedidos;
 
 public class PedidosDTO implements Serializable{
 
+    private int IdPedido;
+
     private int NTaquilla;
 
     private boolean EnTaquilla;
@@ -14,12 +16,16 @@ public class PedidosDTO implements Serializable{
 
     public PedidosDTO() {}
 
-    public PedidosDTO(int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
+    public PedidosDTO(int IdPedido, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
     {
+        this.IdPedido = IdPedido;
         this.NTaquilla=NTaquilla;
         this.EnTaquilla=EnTaquilla;
         this.Estado=Estado;
     }
+
+    public int getIdPedido() {return IdPedido;}
+    public void setIdPedido(int IdPedido) {this.IdPedido = IdPedido;}
 
     public int getNTaquilla() {return NTaquilla;}
     public void setIdTaquilla(int NTaquilla) {this.NTaquilla=NTaquilla;}
