@@ -35,12 +35,12 @@ public class PedidosService{
         return PedidosDTOs;
     }
 
-    public List<PedidosDTO> mostrar_pedidos_comprador(String uDNI)
+    public List<PedidosDTO> mostrar_pedidos_vendedor(String uDNI)
     {
         List<Pedidos> pedidosNormales;
         List<PedidosDTO> pedidosDTO = new ArrayList<>();
 
-        String sql = "Select * from Pedidos where IdCompra in(select iDCompra from Compra where IDProducto in (select ID from Producto where uDNIVendedor = ?))";
+        String sql = "Select * from Pedidos where Estado = 'PorEntregar' and IdCompra in(select iDCompra from Compra where IDProducto in (select ID from Producto where uDNIVendedor = '?'))";
 
         pedidosNormales = jdbcTemplate.queryForList(sql,Pedidos.class,uDNI);
 
@@ -51,6 +51,48 @@ public class PedidosService{
 
         return pedidosDTO;
 
+    }
+
+    public List<PedidosDTO> mostrar_pedidos_comprador(String uDNI)
+    {
+
+        List<Pedidos> pedidosNormales;
+        List<PedidosDTO> pedidosDTO = new ArrayList<>();
+
+        String sql = "Select * from Pedidos where Estado = 'Entregado' and IdCompra in(select iDCompra from Compra where uDNIComprador = '?')";
+
+        pedidosNormales = jdbcTemplate.queryForList(sql,Pedidos.class,uDNI);
+
+        for(Pedidos p: pedidosNormales)
+        {
+            pedidosDTO.add(pedidosMapper.toDto(p));
+        }
+
+        return pedidosDTO;
+
+    }
+
+    public String entregarPedido(int IdPedido,int NTaquilla)
+    {
+        Pedidos p = pedidosRepository.findById(IdPedido).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        p.setEstado(Pedidos.Estado.Entregado);
+        p.setIdTaquilla(NTaquilla);
+
+        pedidosRepository.save(p);
+
+        return "Se ha entregado su pedido con exito";
+    }
+
+    public String recogerPedido(int IdPedido)
+    {
+        Pedidos p = pedidosRepository.findById(IdPedido).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        p.setEstado(Pedidos.Estado.Recogido);
+
+        pedidosRepository.save(p);
+
+        return "Se ha recogido el pedido con exito";
     }
 
 
