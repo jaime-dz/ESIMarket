@@ -51,12 +51,18 @@ public class Producto{
     @Column(name="pagoAceptado")
     private PagoAceptado pagoAceptado;
 
+    @Column(name="recepcionAceptada")
     private RecepcionAceptada recepcionAceptada;
+
+    @Lob
+    @Column(name="Foto", columnDefinition = "MEDIUMBLOB")
+    private byte[] foto;
+
 
 
     public Producto(){}
 
-    public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado,RecepcionAceptada recepcionAceptada) {
+    public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado,RecepcionAceptada recepcionAceptada, byte[] foto) {
         this.uDNI_Vendedor = uDNI_Vendedor;
         this.Precio = precio;
         this.Descripcion = descripcion;
@@ -65,6 +71,7 @@ public class Producto{
         this.estado = estado;
         this.pagoAceptado = pagoAceptado;
         this.recepcionAceptada=recepcionAceptada;
+        this.foto = foto;
     }
 
     public int getID(){return ID;}
@@ -93,4 +100,8 @@ public class Producto{
 
     public RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
     public void setRecepcionAceptada(RecepcionAceptada recepcionAceptada) {this.recepcionAceptada=recepcionAceptada;}
+
+    public byte[] getFoto() {return foto;}
+    public void setFoto(byte[] foto) {this.foto = foto;}
+
 }

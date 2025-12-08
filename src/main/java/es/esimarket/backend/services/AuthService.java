@@ -114,7 +114,7 @@ public class AuthService {
 
     public void saveUserToken( String user , String jwtToken ){
 
-        var token = new Token(jwtToken,Token.TokenType.BEARER,false,false,user);
+        var token = new Token(jwtToken,Token.TokenType.BEARER,false,false,user,jwtService.extraerExpiracion(jwtToken));
 
         tokenRepository.save(token);
     }

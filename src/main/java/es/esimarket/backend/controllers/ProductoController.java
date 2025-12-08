@@ -49,6 +49,6 @@ public class ProductoController {
     //@RequestParam Producto.PagoAceptado pa)
     {
 
-        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada());
+        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
     }
 }

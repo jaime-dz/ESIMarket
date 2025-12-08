@@ -47,7 +47,7 @@ public class MensajeController
     @GetMapping("/{chat}")
     public ResponseEntity<List<MensajeDTO>> getMensajes(@PathVariable("chat") int chat){
 
-        return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat,Sort.by(Sort.Direction.ASC, "id.fechaHora")));
+        return ResponseEntity.ok(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora")));
 
     }
 

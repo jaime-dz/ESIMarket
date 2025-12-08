@@ -9,7 +9,8 @@ import jakarta.persistence.*;
 public class Compra {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="IdCompra")
     private BigInteger IDCompra;
 
     @Column(name = "uDNIComprador", nullable = false)
@@ -21,6 +22,7 @@ public class Compra {
     @Column(name = "Fecha", nullable = false)
     private String Fecha;
 
+    @Column(name="TipoPago")
     private Producto.RecepcionAceptada recepcion;
 
     public Compra() {}
