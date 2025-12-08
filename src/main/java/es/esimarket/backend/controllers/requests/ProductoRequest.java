@@ -10,5 +10,6 @@ public record ProductoRequest(
     String Tipo,
     Producto.estado estado,
     Producto.PagoAceptado pago,
-    Producto.RecepcionAceptada recepcionAceptada
+    Producto.RecepcionAceptada recepcionAceptada,
+    byte[] foto
 ) {}

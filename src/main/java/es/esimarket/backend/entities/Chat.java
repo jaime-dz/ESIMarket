@@ -1,14 +1,12 @@
 package es.esimarket.backend.entities;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="chat")
 public class Chat{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable=false)
     private Integer id;
 
@@ -29,9 +27,8 @@ public class Chat{
 
     public Chat() {}
 
-    public Chat(Integer ID, String uDNI1, String uDNI2,int IdProducto, String uDNIMayor, String uDNIMenor)
+    public Chat( String uDNI1, String uDNI2,int IdProducto, String uDNIMayor, String uDNIMenor)
     {
-        this.id = ID;
         this.uDNI1 = uDNI1;
         this.uDNI2 = uDNI2;
         this.IdProducto=IdProducto;

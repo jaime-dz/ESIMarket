@@ -1,6 +1,7 @@
 package es.esimarket.backend.dtos;
 import es.esimarket.backend.entities.Producto;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class ProductoDTO implements Serializable {
 
@@ -10,6 +11,7 @@ public class ProductoDTO implements Serializable {
     private String tipo;
     private Producto.estado estado;
     private Producto.RecepcionAceptada recepcionAceptada;
+    private byte[] Foto;
 
     public ProductoDTO() {}
 
@@ -19,15 +21,17 @@ public class ProductoDTO implements Serializable {
         this.Nombre = p.getNombre();
         this.tipo = p.getTipo();
         this.recepcionAceptada=p.getRecepcionAceptada();
+        this.Foto = p.getFoto();
     }
 
-    public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada) {
+    public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto) {
         this.Precio = precio;
         this.Descripcion = descripcion;
         this.Nombre = nombre;
         this.tipo = tipo;
         this.estado = estado;
         this.recepcionAceptada = recepcionAceptada;
+        this.Foto = foto;
     }
 
 
@@ -37,6 +41,7 @@ public class ProductoDTO implements Serializable {
     public String getTipo() {return tipo;}
     public Producto.estado getEstado() {return estado;}
     public Producto.RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
+    public byte[] getFoto() {return Foto;}
 
     public void setPrecio(int precio) {Precio = precio;}
     public void setDescripcion(String descripcion) {Descripcion = descripcion;}
@@ -44,6 +49,7 @@ public class ProductoDTO implements Serializable {
     public void setTipo(String tipo) {this.tipo = tipo;}
     public void setEstado(Producto.estado estado) {this.estado = estado;}
     public void setRecepcionAceptada(Producto.RecepcionAceptada recepcionAceptada) {this.recepcionAceptada=recepcionAceptada;}
+    public void setFoto(byte[] foto) {Foto = foto;}
 
     @Override
     public String toString() {
@@ -52,7 +58,10 @@ public class ProductoDTO implements Serializable {
                 ", Descripcion='" + Descripcion + '\'' +
                 ", Nombre='" + Nombre + '\'' +
                 ", tipo='" + tipo + '\'' +
-                ", RecepcionAceptada='" + recepcionAceptada + '\'' +
+                ", estado=" + estado +
+                ", recepcionAceptada=" + recepcionAceptada +
+                ", Foto=" + Arrays.toString(Foto) +
                 '}';
     }
+
 }
