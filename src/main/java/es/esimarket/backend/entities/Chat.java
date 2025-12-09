@@ -11,10 +11,10 @@ public class Chat{
     private Integer id;
 
     @Column(name = "uDNIcomprador", nullable=false)
-    private String uDNIcomprador;
+    private String UDNIcomprador;
 
     @Column(name = "uDNIvendedor", nullable=false)
-    private String uDNIvendedor;
+    private String UDNIvendedor;
 
     @Column(name = "IdProducto", nullable = false)
     private int IdProducto;
@@ -24,19 +24,19 @@ public class Chat{
 
     public Chat( String DNIcomprador, String DNIvendedor ,int IdProducto)
     {
-        this.uDNIcomprador = DNIcomprador;
-        this.uDNIvendedor = DNIvendedor;
+        this.UDNIcomprador = DNIcomprador;
+        this.UDNIvendedor = DNIvendedor;
         this.IdProducto = IdProducto;
     }
 
     public Integer getId() {return id;}
     public void SetId(Integer id) {this.id = id;}
 
-    public String getuDNIcomprador() {return uDNIcomprador;}
-    public void setuDNIcomprador(String uDNIcomprador) {this.uDNIcomprador = uDNIcomprador;}
+    public String getuDNIcomprador() {return UDNIcomprador;}
+    public void setuDNIcomprador(String uDNIcomprador) {this.UDNIcomprador = uDNIcomprador;}
 
-    public String getuDNIvendedor() {return uDNIvendedor;}
-    public void setuDNIvendedor(String uDNIvendedor) {this.uDNIvendedor = uDNIvendedor;}
+    public String getUDNIvendedor() {return UDNIvendedor;}
+    public void setUDNIvendedor(String UDNIvendedor) {this.UDNIvendedor = UDNIvendedor;}
 
     public int getIdProducto() {return IdProducto;}
     public void setIdProducto(int IdProducto) {this.IdProducto = IdProducto;}
