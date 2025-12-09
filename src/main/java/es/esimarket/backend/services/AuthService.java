@@ -16,11 +16,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 
 
@@ -45,6 +48,11 @@ public class AuthService {
     @Autowired
     private UserMapper userMapper;
 
+    @Scheduled(cron = "0 0 * * * ?") // Cada hora
+    public void actualizarTokens() {
+        tokenRepository.actualizarTokensExpirados(LocalDateTime.now());
+    }
+
     public TokenResponse registerUser(RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError {
 
         if ( !request.username().matches("^[uU]\\d{8}$")) throw new CannotCreateUserError("Usuario invalido, debe de ser u + nºdni");
@@ -58,7 +66,8 @@ public class AuthService {
                            request.name(),
                            request.apellidos(),
                            request.carrera(),
-                           salt);
+                           salt,
+                           "ROLE_USER");
 
         if (userRepository.existsById(user.getId())) {
             throw new CannotCreateUserError("El usuario ya existe");
@@ -68,7 +77,7 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
 
-        saveUserToken(savedUser, jwtToken);
+        saveUserToken(savedUser.getId(), refreshToken);
 
         return new TokenResponse(jwtToken,refreshToken);
     }
@@ -90,16 +99,22 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(u);
         var refreshToken = jwtService.generateRefreshToken(u);
 
-        RevokeAllUserTokens(u);
-        saveUserToken(u,jwtToken);
+        saveUserToken(u.getId(),refreshToken);
 
         return new TokenResponse(jwtToken,refreshToken);
 
     }
 
-    public void saveUserToken( Usuario user , String jwtToken ){
+    @Transactional
+    public void logout_user( String refreshToken ){
 
-        var token = new Token(jwtToken,Token.TokenType.BEARER,false,false,user);
+        tokenRepository.deleteByToken(refreshToken);
+
+    }
+
+    public void saveUserToken( String user , String jwtToken ){
+
+        var token = new Token(jwtToken,Token.TokenType.BEARER,false,false,user,jwtService.extraerExpiracion(jwtToken));
 
         tokenRepository.save(token);
     }
@@ -107,7 +122,7 @@ public class AuthService {
     private void RevokeAllUserTokens(Usuario u)
     {
         List<Token> validUserTokens = tokenRepository
-                .findAllExpiradoIsFalseOrRevocadoIsFalseByuser_id(u.getId());
+                .findAllExpiradoIsFalseOrRevocadoIsFalseByuser(u.getId());
         if ( !validUserTokens.isEmpty()) {
             for ( Token token : validUserTokens) {
                 token.setExpirado(true);
@@ -118,38 +133,49 @@ public class AuthService {
 
     }
 
+    private void RevokeToken(String token)
+    {
+        Token userToken = tokenRepository.findByToken(token);
+        if ( userToken != null ){
+            userToken.setExpirado(true);
+            userToken.setRevocado(true);
 
-    public TokenResponse refreshToken(final String authHeader) throws CannotCreateTokenError {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new CannotCreateTokenError("Token Invalido");
+            tokenRepository.save(userToken);
         }
+    }
 
-        final String refreshToken = authHeader.substring(7);
+
+    public TokenResponse refreshToken(final String refreshToken) throws CannotCreateTokenError {
+
+        if (refreshToken == null || refreshToken.isEmpty()){
+            throw new CannotCreateTokenError("Token de refresco vacío o no presente");}
+
         final String userDNI = jwtService.extraerDNI(refreshToken);
-
-        if ( userDNI == null ) {
+        if ( userDNI == null )
             throw new CannotCreateTokenError("Token de refresco invalido");
-        }
 
         final Usuario usuario = userRepository.findByid(userDNI);
+        if (usuario == null)
+            throw new CannotCreateTokenError("Usuario no encontrado");
 
-        if (!jwtService.isTokenValid(refreshToken,usuario)){
+
+        if (!jwtService.isTokenValid(refreshToken,usuario))
             throw new CannotCreateTokenError("Token de refresco invalido");
-        }
 
         final String accessToken = jwtService.generateToken(usuario);
-        RevokeAllUserTokens(usuario);
+        final String new_refreshToken = jwtService.generateRefreshToken(usuario);
+        RevokeToken(refreshToken);
 
-        saveUserToken(usuario,accessToken);
+        saveUserToken(usuario.getId(),new_refreshToken);
 
-        return new TokenResponse(accessToken,refreshToken);
+        return new TokenResponse(accessToken,new_refreshToken);
 
     }
 
-    @Scheduled(fixedRate = 43200000)
+    @Scheduled(cron = "0 0 4 * * ?")
     @Transactional
     public void eliminarTokensExpiradosORevocados() {
-        tokenRepository.deleteByExpiradoTrueOrRevocadoTrue();
+        tokenRepository.deleteTokensAntiguos();
     }
 
     public List<UsuarioDTO> mostrar_usuarios(){

@@ -8,8 +8,6 @@ import es.esimarket.backend.entities.Pedidos;
 
 @Mapper(componentModel = "spring")
 public interface  PedidosMapper{
-    /*
     PedidosDTO toDto(Pedidos entity);
     Pedidos toEntity(PedidosDTO dto);
-     */
 }

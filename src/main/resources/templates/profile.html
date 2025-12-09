@@ -15,27 +15,30 @@
                 <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
 
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/login}">Iniciar sesión</a>
                 </li>
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/signup}">Registrarse</a>
                 </li>
 
-                <!--<li sec:authorize="isAuthenticated()">
-                    <a th:href="@{/perfil}">Mi Perfil</a>
+                <li class="user-view" style="display: none;"> <div class="profile-container">
+                        <div class="coins-info">
+                            <span>150</span> <span>⚙️</span> </div>
+                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        
+                        <div class="dropdown-content">
+                            <a th:href="@{/profile/}">Mi Perfil</a>
+                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                        </div>
+                    </div>
                 </li>
-                <li sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <button type="submit" class="logout-button">Cerrar Sesión</button>
-                    </form>
-                </li>-->
             </ul>
         </header>
         <main>
             <!--mostrar nombre,apellidos,usuario,email,carrera,saldo,imagen perfil-->
             <div class="imagen-left">
-
+                <img src="/Images/huevoverde.jpeg"/>
             </div>
             <div class="square">
                 <h1>Mis Datos</h1><br><br>
@@ -46,6 +49,7 @@
                 <p id="show-degree">Carrera: </p>
 
             </div>
+            <button id="edit-profile"></button>
         </main>
         
         
@@ -54,12 +58,16 @@
                 <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
 
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/login}">Iniciar sesión</a>
                 </li>
+                <li class="guest-view">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+
                 <li class="sn">
-                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png"></a>
-                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png"></a>
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
                 </li>
             </ul>
         </footer>

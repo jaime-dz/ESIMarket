@@ -33,19 +33,16 @@ public class CompraController
     private CompraService compraService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Compra>> getComprasUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION) String request){
+    public ResponseEntity<List<Compra>> getComprasUsuario(@CookieValue(name = "accessToken", required = false) String accessToken){
 
-        String token = request.substring(7);
-        String dni = jwtService.extraerDNI(token);
-
-        return ResponseEntity.ok(compraRepository.findByid_uDNIComprador(dni));
+        String dni = jwtService.extraerDNI(accessToken);
+        return ResponseEntity.ok(compraRepository.findByuDNIComprador(dni));
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String,String>> postCompra(@RequestHeader(HttpHeaders.AUTHORIZATION) String request, @RequestBody final CompraRequest Crequest)
+    public ResponseEntity<HashMap<String,String>> postCompra(@CookieValue(name = "accessToken", required = false) String accessToken, @RequestBody final CompraRequest Crequest)
     {
-        String token = request.substring(7);
-        String dni = jwtService.extraerDNI(token);
+        String dni = jwtService.extraerDNI(accessToken);
 
         HashMap<String,String> response = new HashMap<>();
         String respuestaService;

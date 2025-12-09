@@ -1,27 +1,60 @@
 package es.esimarket.backend.entities;
-import es.esimarket.backend.entities.id.CompraId;
+import java.math.BigInteger;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "compra")
 public class Compra {
 
-    @EmbeddedId
-    private CompraId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="IdCompra")
+    private BigInteger IDCompra;
+
+    @Column(name = "uDNIComprador", nullable = false)
+    private String uDNIComprador;
+
+    @Column(name = "IDProducto", nullable = false)
+    private int IDProducto;
+
+    @Column(name = "Fecha", nullable = false)
+    private String Fecha;
+
+    @Column(name = "TipoPago")
+    private Producto.PagoAceptado TipoPago;
+
+    //@Column(name = "RecepcionAceptada")
+    private Producto.RecepcionAceptada recepcion;
+
+    //@Column(name = "IdProdTrueque")
+    private int idProdTrueque;
 
     public Compra() {}
 
-    public Compra( String uDNIComprador, int IDProducto, String Fecha) {
-        this.id = new CompraId(uDNIComprador,IDProducto,Fecha);
+    public Compra( String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
+        this.uDNIComprador = uDNIComprador;
+        this.IDProducto = IDProducto;
+        this.Fecha = Fecha;
+        this.recepcion = recepcion;
+        this.TipoPago = TipoPago;
     }
 
-    public String getuDNIComprador() {return id.getuDNIComprador();}
-    public void setuDNIComprador(String uDNIComprador) { id.setuDNIComprador(uDNIComprador); }
+    public String getuDNIComprador() {return uDNIComprador;}
+    public void setuDNIComprador(String uDNIComprador) { this.uDNIComprador = uDNIComprador; }
 
-    public int getIDProducto(){return id.getIDProducto();}
-    public void setIDProducto(int IDProducto) {id.setIDProducto(IDProducto); }
+    public int getIDProducto(){return IDProducto;}
+    public void setIDProducto(int IDProducto) {this.IDProducto = IDProducto; }
 
-    public String getFecha() {return id.getFecha();}
-    public void setFecha(String Fecha) {id.setFecha(Fecha);}
+    public String getFecha() {return Fecha;}
+    public void setFecha(String Fecha) {this.Fecha = Fecha; }
 
+    public Producto.RecepcionAceptada getRecepcion() {return recepcion;}
+    public void setRecepcion(Producto.RecepcionAceptada recepcion) {this.recepcion=recepcion;}
+
+    public BigInteger getIDCompra() {return IDCompra;}
+    public void setIDCompra(BigInteger IDCompra) {this.IDCompra=IDCompra;}
+
+    public Producto.PagoAceptado getTipoPago() {return TipoPago;}
+    public void setTipoPago(Producto.PagoAceptado tipoPago) {TipoPago = tipoPago;}
 }

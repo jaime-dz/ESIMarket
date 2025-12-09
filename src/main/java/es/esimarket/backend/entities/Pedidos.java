@@ -1,8 +1,12 @@
 package es.esimarket.backend.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import java.math.BigInteger;
 
+import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
+
+@Entity
+@Table(name="pedido")
 public class Pedidos{
 
     public enum Estado{
@@ -11,38 +15,43 @@ public class Pedidos{
         Recogido
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="IdPedido")
     private int IdPedido;
 
-    private int IdCompra;
+    @Column(name="IdCompra")
+    private BigInteger IdCompra;
 
-    private int NTaquilla;
-
+    @Column(name="EnTaquilla")
     private boolean EnTaquilla;
 
+    @Column(name="NumTaquilla")
+    private int NTaquilla;
+
+    @Column(name="Estado")
     private Estado Estado;
 
     public Pedidos() {}
 
-    public Pedidos(int IdPedido,int IdCompra, int NTaquilla, boolean EnTaquilla,Estado Estado)
+    public Pedidos(BigInteger IdCompra, int NTaquilla,Estado Estado)
     {
-        this.IdPedido=IdPedido;
-        this.IdCompra=IdCompra;
+        this.IdCompra = IdCompra;
         this.NTaquilla=NTaquilla;
-        this.EnTaquilla=EnTaquilla;
         this.Estado=Estado;
     }
 
     public int getIdPedido() {return IdPedido;}
     public void setIdPedido(int IdPedido) {this.IdPedido=IdPedido;}
 
-    public int getIdCompra() {return IdCompra;}
-    public void setIdCompra(int IdCompra) {this.IdCompra=IdCompra;}
+    public BigInteger getIdCompra() {return IdCompra;}
+    public void setIdCompra(BigInteger IdCompra) {this.IdCompra = IdCompra;}
+
+    public boolean isEnTaquilla() {return EnTaquilla;}
+    public void setEnTaquilla(boolean enTaquilla) {EnTaquilla = enTaquilla;}
 
     public int getNTaquilla() {return NTaquilla;}
-    public void setIdTaquilla(int NTaquilla) {this.NTaquilla=NTaquilla;}
-
-    public boolean getEnTaquilla() {return EnTaquilla;}
-    public void setEnTaquilla(boolean EnTaquilla) {this.EnTaquilla=EnTaquilla;}
+    public void setNTaquilla(int NTaquilla) {this.NTaquilla = NTaquilla;}
 
     public Estado getEstado() {return Estado;}
     public void setEstado(Estado Estado) {this.Estado=Estado;}

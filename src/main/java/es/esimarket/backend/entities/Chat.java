@@ -1,64 +1,45 @@
 package es.esimarket.backend.entities;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="chat")
 public class Chat{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable=false)
     private Integer id;
 
-    @Column(name = "uDNI1", nullable=false)
-    private String uDNI1;
+    @Column(name = "uDNIcomprador", nullable=false)
+    private String UDNIcomprador;
 
-    @Column(name = "uDNI2", nullable=false)
-    private String uDNI2;
+    @Column(name = "uDNIvendedor", nullable=false)
+    private String UDNIvendedor;
 
     @Column(name = "IdProducto", nullable = false)
     private int IdProducto;
 
-    @Column(name = "uDNIMenor")
-    private String uDNI_Menor;
-
-    @Column(name = "uDNIMayor")
-    private String uDNI_Mayor;
 
     public Chat() {}
 
-    public Chat(Integer ID, String uDNI1, String uDNI2,int IdProducto, String uDNIMayor, String uDNIMenor)
+    public Chat( String DNIcomprador, String DNIvendedor ,int IdProducto)
     {
-        this.id = ID;
-        this.uDNI1 = uDNI1;
-        this.uDNI2 = uDNI2;
-        this.IdProducto=IdProducto;
-        this.uDNI_Mayor=uDNIMayor;
-        this.uDNI_Menor=uDNIMenor;
+        this.UDNIcomprador = DNIcomprador;
+        this.UDNIvendedor = DNIvendedor;
+        this.IdProducto = IdProducto;
     }
 
-    public Integer getID() {return id;}
-    public void SetID(Integer id) {this.id = id;}
+    public Integer getId() {return id;}
+    public void SetId(Integer id) {this.id = id;}
 
-    public String getuDNI1() {return uDNI1;}
-    public void setuDNI1(String uDNI1) {this.uDNI1=uDNI1;}
+    public String getuDNIcomprador() {return UDNIcomprador;}
+    public void setuDNIcomprador(String uDNIcomprador) {this.UDNIcomprador = uDNIcomprador;}
 
-    public String getuDNI2() {return uDNI2;}
-    public void setuDNI2(String uDNI2) {this.uDNI2=uDNI2;}
-
-    public String getuDNI_Menor() {return uDNI_Menor;}
-    public void setuDNI_Menor(String uDNI_Menor) {this.uDNI_Menor = uDNI_Menor;}
-
-    public String getuDNI_Mayor() {return uDNI_Mayor;}
-    public void setuDNI_Mayor(String uDNI_Mayor) {this.uDNI_Mayor = uDNI_Mayor;}
+    public String getUDNIvendedor() {return UDNIvendedor;}
+    public void setUDNIvendedor(String UDNIvendedor) {this.UDNIvendedor = UDNIvendedor;}
 
     public int getIdProducto() {return IdProducto;}
     public void setIdProducto(int IdProducto) {this.IdProducto = IdProducto;}
-
-
-
 
 
 }

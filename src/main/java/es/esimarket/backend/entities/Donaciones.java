@@ -1,14 +1,12 @@
 package es.esimarket.backend.entities;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="donaciones")
 public class Donaciones {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IDUsuario",nullable = false)
     private String IDUsuario;
 
