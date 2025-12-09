@@ -1,7 +1,6 @@
 package es.esimarket.backend.entities;
 import java.math.BigInteger;
 
-import es.esimarket.backend.entities.id.CompraId;
 import jakarta.persistence.*;
 
 @Entity
@@ -22,16 +21,20 @@ public class Compra {
     @Column(name = "Fecha", nullable = false)
     private String Fecha;
 
-    @Column(name="TipoPago")
+    @Column(name = "TipoPago")
+    private Producto.PagoAceptado TipoPago;
+
+    //@Column(name = "RecepcionAceptada")
     private Producto.RecepcionAceptada recepcion;
 
     public Compra() {}
 
-    public Compra( String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion) {
+    public Compra( String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
         this.recepcion = recepcion;
+        this.TipoPago = TipoPago;
     }
 
     public String getuDNIComprador() {return uDNIComprador;}
@@ -46,8 +49,9 @@ public class Compra {
     public Producto.RecepcionAceptada getRecepcion() {return recepcion;}
     public void setRecepcion(Producto.RecepcionAceptada recepcion) {this.recepcion=recepcion;}
 
-    public BigInteger getidCompra() {return IDCompra;}
-    public void setiDCompra(BigInteger IDCompra) {this.IDCompra=IDCompra;}
+    public BigInteger getIDCompra() {return IDCompra;}
+    public void setIDCompra(BigInteger IDCompra) {this.IDCompra=IDCompra;}
 
-
+    public Producto.PagoAceptado getTipoPago() {return TipoPago;}
+    public void setTipoPago(Producto.PagoAceptado tipoPago) {TipoPago = tipoPago;}
 }

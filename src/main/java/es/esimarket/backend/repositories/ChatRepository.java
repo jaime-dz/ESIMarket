@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat,Integer> {
     Chat findByID(Integer ID);
-    List<Chat> findByUDNI1OrUDNI2(String uDNI1, String uDNI2);
+    List<Chat> findByuDNIcompradorOruDNIvendedor(String uDNI1, String uDNI2);
 }

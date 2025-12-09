@@ -9,9 +9,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ChatMapper {
 
+    @Mapping(target = "id", source = "chat.id")
     @Mapping(target = "nombreProducto", source = "producto.nombre")
-    @Mapping(target = "nombre", source = "otroUsuario.nombre")
-    @Mapping(target = "apellidos", source = "otroUsuario.apellidos")
-    @Mapping(target = "carrera", source = "otroUsuario.carrera")
+    @Mapping(target = "nombreVendedor", source = "otroUsuario.nombre")
+    @Mapping(target = "apellidosVendedor", source = "otroUsuario.apellidos")
+    @Mapping(target = "carreraVendedor", source = "otroUsuario.carrera")
     ChatDTO toDTO(Chat chat, Usuario otroUsuario, Producto producto);
+    Chat toEntity( ChatDTO chat );
 }
