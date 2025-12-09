@@ -10,5 +10,4 @@ import java.util.*;
 public interface CompraRepository extends JpaRepository<Compra, Integer> {
 
     List<Compra> findByuDNIComprador(String id);
-    Compra findByuDNICompradorAndIDProducto(String uDNIComprador,int IDProducto);
 }

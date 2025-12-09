@@ -43,6 +43,8 @@ public class CompraService {
     {
         Producto p = productoRepository.findByID(request.idProd());
         Usuario u = usuarioRepository.findByid(uDNI);
+        Compra c = new Compra();
+        String FechaAct = variosService.ObtenerFecha();
 
         if ( p != null && u != null) {
 
@@ -50,18 +52,30 @@ public class CompraService {
                 throw new CannotCompletePurchaseError("No puedes comprar tu propio producto ;)");
             }
 
-            if ( u.getSaldoMoneda() < p.getPrecio() ) {
-                throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
-            }
+            if ( request.tipoPago() == Producto.PagoAceptado.Monedas){
 
-            Compra c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha(),request.recepcion());
+                if ( u.getSaldoMoneda() < p.getPrecio() ) {
+                    throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
+                }
+
+                u.setSaldoMoneda(u.getSaldoMoneda() -  p.getPrecio());
+                usuarioRepository.save(u);
+
+                c = new Compra(uDNI,request.idProd(),FechaAct,request.recepcion(),request.tipoPago());
+
+
+            }else if ( request.tipoPago() == Producto.PagoAceptado.Trueque ){
+
+                //c = new Compra(uDNI,request.idProd(),variosService.ObtenerFecha(),request.recepcion(),request.tipoPago(), p.getID(), request.idProdOfrecido());
+
+
+            }else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
 
             compraRepository.save(c);
-            c = compraRepository.findByuDNICompradorAndIDProducto(uDNI,request.idProd());
 
             if(request.recepcion()==Producto.RecepcionAceptada.Taquilla)
             {
-                Pedidos pe = new Pedidos(c.getidCompra(),request.taquilla(),Pedidos.Estado.PorEntregar);
+                Pedidos pe = new Pedidos(c.getIDCompra(),request.taquilla(),Pedidos.Estado.PorEntregar);
                 pedidosRepository.save(pe);
             }
             

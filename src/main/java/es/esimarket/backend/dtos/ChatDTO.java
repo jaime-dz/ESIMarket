@@ -5,37 +5,44 @@ import java.io.Serializable;
 
 public class ChatDTO implements Serializable {
 
+    private int id;
     private String nombreProducto;
-    private String nombre;
-    private String apellidos;
-    private Usuario.Carrera carrera;
+    private String nombreVendedor;
+    private String apellidosVendedor;
+    private Usuario.Carrera carreraVendedor;
 
-    public ChatDTO(String nombreProducto, String nombre, String apellidos, Usuario.Carrera carrera) {
+    public ChatDTO() {}
+
+    public ChatDTO(int id, String nombreProducto, String nombreVendedor, String apellidosVendedor, Usuario.Carrera carreraVendedor) {
+        this.id = id;
         this.nombreProducto = nombreProducto;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.carrera = carrera;
+        this.nombreVendedor = nombreVendedor;
+        this.apellidosVendedor = apellidosVendedor;
+        this.carreraVendedor = carreraVendedor;
     }
 
-    public String getNombreProducto() { return nombreProducto; }
-    public void setNombreProducto(String nombreProducto) { this.nombreProducto = nombreProducto; }
+    public int getId() {return id;}
+    public String getNombreProducto() {return nombreProducto;}
+    public String getNombreVendedor() {return nombreVendedor;}
+    public String getApellidosVendedor() {return apellidosVendedor;}
+    public Usuario.Carrera getCarreraVendedor() {return carreraVendedor;}
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getApellidos() { return apellidos; }
-    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
-
-    public Usuario.Carrera getCarrera() { return carrera; }
-    public void setCarrera(Usuario.Carrera carrera) { this.carrera = carrera; }
+    public void setId(int id) {this.id = id;}
+    public void setNombreProducto(String nombreProducto) {this.nombreProducto = nombreProducto;}
+    public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
+    public void setApellidosVendedor(String apellidosVendedor) {this.apellidosVendedor = apellidosVendedor;}
+    public void setCarreraVendedor(Usuario.Carrera carreraVEndedor) {this.carreraVendedor = carreraVEndedor;}
 
     @Override
     public String toString() {
         return "ChatDTO{" +
-                "nombreProducto='" + nombreProducto + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", apellidos='" + apellidos + '\'' +
-                ", carrera=" + carrera +
+                "id=" + id +
+                ", nombreProducto='" + nombreProducto + '\'' +
+                ", nombreVendedor='" + nombreVendedor + '\'' +
+                ", apellidosVendedor='" + apellidosVendedor + '\'' +
+                ", carreraVendedor=" + carreraVendedor +
                 '}';
     }
+
 }
