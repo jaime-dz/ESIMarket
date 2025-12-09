@@ -351,8 +351,80 @@ main {
     margin-top: auto; /* Empuja el vendedor al fondo de la tarjeta */
 }
 
-.sn{
-    margin-left: auto;
+.sn {
     display: flex;
-    gap:15px
+    gap: 10px;
+    align-items: center;
 }
+
+/* Hacemos que el enlace solo ocupe lo que mide la imagen, no todo el ancho */
+.sn a {
+    display: inline-block; 
+    width: auto;
+    padding: 5px; /* Un poco de aire para el hover */
+}
+
+/* --- ESTILOS PERFIL Y DESPLEGABLE (PUNTO 4) --- */
+.user-view {
+    /* Por defecto oculto, JS lo mostrará */
+    display: none; 
+}
+
+.profile-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.coins-info {
+    color: white;
+    font-weight: bold;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+/* El menú desplegable */
+.dropdown-content {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    top: 100%; /* Justo debajo del contenedor */
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 5px;
+}
+
+/* Estilos de los enlaces dentro del dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Mostrar el menú al pasar el ratón por encima del contenedor */
+.profile-container:hover .dropdown-content {
+    display: block;
+}
+

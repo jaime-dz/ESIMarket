@@ -2,7 +2,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 1. Verificamos el estado visual y redirecciones basado en LocalStorage
     verificarSesionLocal();
+    if (typeof actualizarBarraNavegacion === 'function') {
+        actualizarBarraNavegacion();
+    }
 
+    // 2. NUEVO: Gestionar visibilidad por Página Actual (Footer)
+    ocultarEnlacePaginaActual();
     const inputBusqueda = document.getElementById("search-input");
     const botonBorrar = document.getElementById("clearBtn");
 
@@ -19,6 +24,15 @@ document.addEventListener("DOMContentLoaded", function() {
             inputBusqueda.value = "";
             botonBorrar.style.display = "none";
             inputBusqueda.focus();
+        });
+    }
+
+        // Dentro del evento DOMContentLoaded en common.js
+    const botonLogout = document.getElementById('btn-logout');
+    if (botonLogout) {
+        botonLogout.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita comportamientos por defecto si es un link <a>
+            cerrarSesion();
         });
     }
 });
@@ -71,7 +85,7 @@ export async function enviarFormularioComoJSON(evento) {
             }
 
             // c. Redirigimos
-            window.location.href = "/home/";
+            window.location.href = "/";
             
             return; // ¡IMPORTANTE! Salimos de la función aquí.
         }
@@ -121,18 +135,23 @@ export async function enviarFormularioComoJSON(evento) {
 }
 
 function actualizarBarraNavegacion() {
-    const loginLinks = document.querySelector('.login'); 
-    const profileSquare = document.querySelector('.profile-square'); 
-
-    // Confiamos en la variable local ya que no hay endpoint de check
+    // 1. Obtenemos estado
     const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
 
+    // 2. Seleccionamos elementos por CLASE
+    // guest-view: Elementos que solo ve el invitado (Login, Registro)
+    const guestElements = document.querySelectorAll('.guest-view');
+    
+    // user-view: Elementos que solo ve el usuario (Perfil, Monedas, Logout)
+    const userElements = document.querySelectorAll('.user-view');
+
+    // 3. Aplicamos visibilidad
     if (estaLogueado) {
-        if(loginLinks) loginLinks.style.display = "none";
-        if(profileSquare) profileSquare.style.display = "block"; 
+        guestElements.forEach(el => el.style.display = 'none');  // Oculta Login/Registro
+        userElements.forEach(el => el.style.display = 'block');  // Muestra Perfil/Monedas
     } else {
-        if(loginLinks) loginLinks.style.display = "block"; 
-        if(profileSquare) profileSquare.style.display = "none";
+        guestElements.forEach(el => el.style.display = 'block'); // Muestra Login/Registro
+        userElements.forEach(el => el.style.display = 'none');   // Oculta Perfil/Monedas
     }
 }
 
@@ -161,8 +180,64 @@ function verificarSesionLocal() {
     // Nota: Sin endpoint de check, no podemos saber si la cookie expiró hasta que el usuario intente hacer algo en /home/
 }
 
-/* Función auxiliar para cerrar sesión (conéctala a tu botón de Logout) */
-export function cerrarSesion() {
-    localStorage.removeItem('isLoggedIn');
-    window.location.href = "/home/";
+/* Función para cerrar sesión en Backend y Frontend */
+export async function cerrarSesion() {
+    try {
+        // 1. Petición al Backend para destruir la cookie de sesión
+        // Ajusta el método ('POST' o 'GET') según lo requiera tu backend.
+        // Lo estándar suele ser POST.
+        const respuesta = await fetch('/auth/logout', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include' // ¡CRUCIAL! Para enviar la cookie que se va a borrar
+        });
+
+        if (respuesta.ok) {
+            console.log("Sesión cerrada en el servidor correctamente.");
+        } else {
+            console.warn("El servidor respondió error al logout, pero cerraremos localmente.");
+        }
+
+    } catch (error) {
+        console.error("Error de red al intentar cerrar sesión:", error);
+    } finally {
+        // 2. Limpieza Local y Redirección
+        // Usamos 'finally' para asegurar que, aunque falle el servidor o la red,
+        // al usuario se le cierre la sesión visualmente y se le redirija.
+        
+        localStorage.removeItem('isLoggedIn'); // Borramos la bandera local
+        window.location.href = "/";            // Redirigimos a la raíz
+    }
+}
+
+function ocultarEnlacePaginaActual() {
+    // 1. Obtenemos la ruta actual (ej: "/home/" o "/home/about")
+    const currentPath = window.location.pathname;
+
+    // 2. Seleccionamos todos los enlaces del menú inferior
+    const footerLinks = document.querySelectorAll('.menu-inferior ul li a');
+
+    footerLinks.forEach(link => {
+        // Ignoramos los botones de redes sociales (que tienen imágenes dentro)
+        if (link.querySelector('img')) return;
+
+        // 3. Obtenemos la ruta del enlace limpio (sin dominio)
+        // Usamos new URL para asegurar que comparamos rutas absolutas
+        const linkPath = new URL(link.href, window.location.origin).pathname;
+
+        // 4. Normalizamos (quitamos la barra final para comparar mejor)
+        // Ejemplo: "/home/" se convierte en "/home"
+        const cleanCurrent = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
+        const cleanLink = linkPath.endsWith('/') ? linkPath.slice(0, -1) : linkPath;
+
+        // Comparamos. También manejamos el caso especial de la raíz "/"
+        if (cleanCurrent === cleanLink || (cleanCurrent === "" && cleanLink === "/home")) {
+            // Si coinciden, ocultamos el elemento de la lista (LI) entero
+            if (link.parentElement.tagName === 'LI') {
+                link.parentElement.style.display = 'none';
+            }
+        }
+    });
 }
