@@ -24,15 +24,24 @@ public class Compra {
     @Column(name = "TipoPago")
     private Producto.PagoAceptado TipoPago;
 
-    //@Column(name = "RecepcionAceptada")
+    @Column(name = "Recepcion")
     private Producto.RecepcionAceptada recepcion;
 
-    //@Column(name = "IdProdTrueque")
+    @Column(name = "IdProdTrueque", nullable = true)
     private int idProdTrueque;
 
     public Compra() {}
 
-    public Compra( String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
+    public Compra(String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago, int idProdTrueque) {
+        this.uDNIComprador = uDNIComprador;
+        this.IDProducto = IDProducto;
+        this.Fecha = Fecha;
+        this.recepcion = recepcion;
+        this.TipoPago = TipoPago;
+        this.idProdTrueque = idProdTrueque;
+    }
+
+    public Compra(String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
@@ -57,4 +66,7 @@ public class Compra {
 
     public Producto.PagoAceptado getTipoPago() {return TipoPago;}
     public void setTipoPago(Producto.PagoAceptado tipoPago) {TipoPago = tipoPago;}
+
+    public int getIdProdTrueque() {return idProdTrueque;}
+    public void setIdProdTrueque(int idProdTrueque) {this.idProdTrueque = idProdTrueque;}
 }

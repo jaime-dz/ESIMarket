@@ -1,10 +1,13 @@
 package es.esimarket.backend.services;
 import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.entities.FotoProd;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.mappers.ProductMapper;
+import es.esimarket.backend.repositories.FotoProdRepository;
 import es.esimarket.backend.repositories.ProductoRepository;
 
+import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,9 @@ public class ProductoService {
     private ProductoRepository productoRepository;
 
     @Autowired
+    private FotoProdRepository fotoProdRepository;
+
+    @Autowired
     private ProductMapper productMapper;
 
     @Autowired
@@ -31,11 +37,13 @@ public class ProductoService {
     private VariosService variosService;
 
 
-    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada, byte[] foto){
+    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada, byte[] foto ){
 
-        Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada,foto);
+        Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada);
+        FotoProd fp = new FotoProd(p.getID(),foto);
 
         productoRepository.save(p);
+        fotoProdRepository.save(fp);
 
         return ResponseEntity.ok("Producto registrado correctamente");
     }
@@ -105,7 +113,9 @@ public class ProductoService {
         List<ProductoDTO> productDTOs = new ArrayList<>();
 
         for( Producto p : productEntities){
-            productDTOs.add(productMapper.toDTO(p));
+
+            FotoProd fp = fotoProdRepository.findByIdProd(p.getID());
+            productDTOs.add(productMapper.toDTO(p,fp));
         }
 
         return productDTOs;
