@@ -16,14 +16,23 @@
                 <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
 
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/login}">Iniciar sesión</a>
                 </li>
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/signup}">Registrarse</a>
                 </li>
-                <li sec:authorize="isAuthenticated()">
-                    <a th:href="@{/profile/}"></a>
+
+                <li class="user-view" style="display: none;"> <div class="profile-container">
+                        <div class="coins-info">
+                            <span>150</span> <span>⚙️</span> </div>
+                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        
+                        <div class="dropdown-content">
+                            <a th:href="@{/profile/}">Mi Perfil</a>
+                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </header>
@@ -114,6 +123,58 @@
                         <p class="product-seller">Vendido por: Vendedor B</p>
                     </div>
 
+                    <div class="product-card" data-category="services" data-seller="vendedorA">
+                        <img src="/Images/placeholder.png" alt="Clases IP" class="product-image">
+                        <h4 class="product-name">Clases IP</h4>
+                        <p class="product-price">60⚙️/h</p>
+                        <p class="product-seller">Vendido por: Vendedor A</p>
+                    </div>
+
+                    <div class="product-card" data-category="objects" data-seller="vendedorC" data-state="muy bueno">
+                        <img src="/Images/placeholder.png" alt="Apuntes OGE" class="product-image">
+                        <h4 class="product-name">Apuntes OGE</h4>
+                        <p class="product-price">13⚙️</p>
+                        <p class="product-state">Muy Bueno</p>
+                        <p class="product-seller">Vendido por: Vendedor C</p>
+                    </div>
+
+                    <div class="product-card" data-category="services" data-seller="vendedorB">
+                        <img src="/Images/placeholder.png" alt="Packet Tracer" class="product-image">
+                        <h4 class="product-name">Clases Packet Tracer</h4>
+                        <p class="product-price">25⚙️/h</p>
+                        <p class="product-seller">Vendido por: Vendedor B</p>
+                    </div>
+
+                    <div class="product-card" data-category="objects" data-seller="vendedorA" data-state="bueno">
+                        <img src="/Images/placeholder.png" alt="Cuaderno" class="product-image">
+                        <h4 class="product-name">Cuaderno</h4>
+                        <p class="product-price">6⚙️</p>
+                        <p class="product-state">Bueno</p>
+                        <p class="product-seller">Vendido por: Vendedor A</p>
+                    </div>
+
+                    <div class="product-card" data-category="services" data-seller="vendedorC">
+                        <img src="/Images/placeholder.png" alt="x86" class="product-image">
+                        <h4 class="product-name">Clases x86</h4>
+                        <p class="product-price">20⚙️/h</p>
+                        <p class="product-seller">Vendido por: Vendedor C</p>
+                    </div>
+
+                    <div class="product-card" data-category="objects" data-seller="vendedorB" data-state="desgastado">
+                        <img src="/Images/placeholder.png" alt="DAapuntes" class="product-image">
+                        <h4 class="product-name">Apuntes DA</h4>
+                        <p class="product-price">40⚙️</p>
+                        <p class="product-state">Desgastado</p>
+                        <p class="product-seller">Vendido por: Vendedor B</p>
+                    </div>
+
+                    <div class="product-card" data-category="objects" data-seller="vendedorC" data-state="decente">
+                        <img src="/Images/placeholder.png" alt="Punteros" class="product-image">
+                        <h4 class="product-name">Apuntes punteros</h4>
+                        <p class="product-price">35⚙️</p>
+                        <p class="product-state">Decente</p>
+                        <p class="product-seller">Vendido por: Vendedor C</p>
+                    </div>
                 </div>
 
             </div>
@@ -121,17 +182,19 @@
         
         <footer class="menu-bar menu-inferior">
             <ul>
+                <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
 
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/login}">Iniciar sesión</a>
                 </li>
-                <li sec:authorize="!isAuthenticated()">
+                <li class="guest-view">
                     <a th:href="@{/auth/signup}">Registrarse</a>
                 </li>
+
                 <li class="sn">
-                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png"></a>
-                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png"></a>
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
                 </li>
             </ul>
         </footer>

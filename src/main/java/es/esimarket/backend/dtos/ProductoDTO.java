@@ -1,4 +1,5 @@
 package es.esimarket.backend.dtos;
+import es.esimarket.backend.entities.FotoProd;
 import es.esimarket.backend.entities.Producto;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -15,13 +16,13 @@ public class ProductoDTO implements Serializable {
 
     public ProductoDTO() {}
 
-    public ProductoDTO( Producto p ){
+    public ProductoDTO(Producto p , FotoProd fp ){
         this.Precio = p.getPrecio();
         this.Descripcion = p.getDescripcion();
         this.Nombre = p.getNombre();
         this.tipo = p.getTipo();
         this.recepcionAceptada=p.getRecepcionAceptada();
-        this.Foto = p.getFoto();
+        this.Foto = (fp != null) ? fp.getFoto() : null;
     }
 
     public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto) {
