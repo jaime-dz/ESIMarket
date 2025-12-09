@@ -28,27 +28,17 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
-    @GetMapping("/{tipo}")
-    public ResponseEntity<List<ProductoDTO>> getProductos(@PathVariable("tipo") String tipo) {
-        List<Producto> productEntities = productoRepository.findByTipo(tipo);
+    @GetMapping("/filter")
+    public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestParam String json)
+    {
+        List<Producto> productEntities = productoService.FiltroProductosGenerico(json);
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
-    @GetMapping("/patata")
-    public ResponseEntity<List<Producto>> getProductosFiltroGenerico(@RequestParam String json)
-    {
-        return ResponseEntity.ok(productoService.FiltroProductosGenerico(json));
-    }
-
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<String> createProducto(@RequestBody final ProductoRequest request)
-    
-    //(@RequestParam String v, @RequestParam int p,
-    //@RequestParam String d, @RequestParam String n,
-    //@RequestParam String t, @RequestParam Producto.estado e,
-    //@RequestParam Producto.PagoAceptado pa)
     {
 
-        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada());
+        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
     }
 }

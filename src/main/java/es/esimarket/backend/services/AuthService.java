@@ -114,7 +114,7 @@ public class AuthService {
 
     public void saveUserToken( String user , String jwtToken ){
 
-        var token = new Token(jwtToken,Token.TokenType.BEARER,false,false,user);
+        var token = new Token(jwtToken,Token.TokenType.BEARER,false,false,user,jwtService.extraerExpiracion(jwtToken));
 
         tokenRepository.save(token);
     }
@@ -175,8 +175,7 @@ public class AuthService {
     @Scheduled(cron = "0 0 4 * * ?")
     @Transactional
     public void eliminarTokensExpiradosORevocados() {
-        LocalDateTime fechaLimite = LocalDateTime.now().minusDays(30);
-        tokenRepository.deleteTokensAntiguos(fechaLimite);
+        tokenRepository.deleteTokensAntiguos();
     }
 
     public List<UsuarioDTO> mostrar_usuarios(){

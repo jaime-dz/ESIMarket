@@ -77,7 +77,7 @@ public class PedidosService{
         Pedidos p = pedidosRepository.findById(IdPedido).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         p.setEstado(Pedidos.Estado.Entregado);
-        p.setIdTaquilla(NTaquilla);
+        p.setNTaquilla(NTaquilla);
 
         pedidosRepository.save(p);
 

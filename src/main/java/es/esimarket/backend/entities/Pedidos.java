@@ -23,6 +23,9 @@ public class Pedidos{
     @Column(name="IdCompra")
     private BigInteger IdCompra;
 
+    @Column(name="EnTaquilla")
+    private boolean EnTaquilla;
+
     @Column(name="NumTaquilla")
     private int NTaquilla;
 
@@ -44,8 +47,11 @@ public class Pedidos{
     public BigInteger getIdCompra() {return IdCompra;}
     public void setIdCompra(BigInteger IdCompra) {this.IdCompra = IdCompra;}
 
+    public boolean isEnTaquilla() {return EnTaquilla;}
+    public void setEnTaquilla(boolean enTaquilla) {EnTaquilla = enTaquilla;}
+
     public int getNTaquilla() {return NTaquilla;}
-    public void setIdTaquilla(int NTaquilla) {this.NTaquilla=NTaquilla;}
+    public void setNTaquilla(int NTaquilla) {this.NTaquilla = NTaquilla;}
 
     public Estado getEstado() {return Estado;}
     public void setEstado(Estado Estado) {this.Estado=Estado;}

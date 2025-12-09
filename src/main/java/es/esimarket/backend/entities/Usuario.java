@@ -95,12 +95,6 @@ public class Usuario {
     public String getRol() {return rol;}
     public void setRol(String rol) {this.rol = rol;}
 
-    @OneToMany(mappedBy = "user", fetch =FetchType.LAZY)
-    private List<Token> tokens;
-
-    @OneToMany(mappedBy = "uDNI_Vendedor",fetch =FetchType.LAZY)
-    private List<Producto> productos;
-
     @Override
     public String toString() {
         return "Usuario{" +
@@ -112,7 +106,7 @@ public class Usuario {
                 ", saldoMoneda=" + saldoMoneda +
                 ", carrera=" + carrera +
                 ", salt=" + Arrays.toString(salt) +
-                ", tokens=" + tokens +
+                ", rol='" + rol + '\'' +
                 '}';
     }
 }

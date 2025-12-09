@@ -32,12 +32,11 @@ public class ChatController
     private JwtService jwtService;
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String,String>> postChat(@RequestHeader(HttpHeaders.AUTHORIZATION) String request , @RequestBody final ChatRequest Crequest) throws CannotCreateChatError
+    public ResponseEntity<HashMap<String,String>> postChat(@CookieValue(name = "accessToken", required = false) String accessToken , @RequestBody final ChatRequest Crequest) throws CannotCreateChatError
     {
         HashMap<String, String> response = new HashMap<>();
 
-        String token = request.substring(7);
-        String dniComp = jwtService.extraerDNI(token);
+        String dniComp = jwtService.extraerDNI(accessToken);
 
         String respuesta = null;
 
@@ -54,9 +53,9 @@ public class ChatController
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ChatDTO>> getChats(@RequestHeader(HttpHeaders.AUTHORIZATION) String request) throws CannotCreateChatError
+    public ResponseEntity<List<ChatDTO>> getChats(@CookieValue(name = "accessToken", required = false) String accessToken) throws CannotCreateChatError
     {
-        return ResponseEntity.ok(chatService.getChatsUsu(request));
+        return ResponseEntity.ok(chatService.getChatsUsu(accessToken));
     }
 
     

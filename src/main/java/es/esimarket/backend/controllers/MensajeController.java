@@ -47,21 +47,16 @@ public class MensajeController
     @GetMapping("/{chat}")
     public ResponseEntity<List<MensajeDTO>> getMensajes(@PathVariable("chat") int chat){
 
-        return ResponseEntity.ok(mensajeRepository.findByid_IDChat(chat,Sort.by(Sort.Direction.ASC, "id.fechaHora")));
+        return ResponseEntity.ok(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora")));
 
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes(@RequestHeader(HttpHeaders.AUTHORIZATION) String request, @RequestBody final MessageRequest Mrequest){
-
-        //String token = request.getHeader("Authorization").substring(7);
-        //String dni = jwtService.extraerDNI(token);
-
-        //String dni = principal.getName();
+    public ResponseEntity<HashMap<String, String>> postMensajes(@CookieValue(name = "accessToken") String token, @RequestBody final MessageRequest Mrequest){
 
         HashMap<String, String> response = new HashMap<>();
 
-        String dni = "u45389448";
+        String dni = jwtService.extraerDNI(token);
 
         String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
 
