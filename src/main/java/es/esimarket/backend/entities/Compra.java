@@ -27,6 +27,9 @@ public class Compra {
     //@Column(name = "RecepcionAceptada")
     private Producto.RecepcionAceptada recepcion;
 
+    //@Column(name = "IdProdTrueque")
+    private int idProdTrueque;
+
     public Compra() {}
 
     public Compra( String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {

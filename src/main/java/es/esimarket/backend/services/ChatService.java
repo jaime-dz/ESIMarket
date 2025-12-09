@@ -52,7 +52,7 @@ public class ChatService{
         if(uDNI1.equals(uDNI2)) throw new CannotCreateChatError("No se puede crear un chat con uno mismo");
 
         String sql = "Select Exists (Select 1 from Chat where uDNIcomprador = ? and uDNIvendedor = ? and IdProducto = ?)";
-        boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class, c.getuDNIcomprador(), c.getuDNIvendedor(), IdProducto); //el boolean.true.equals es por si devuelve un null que no se ralle por que la clase Boolean no es lo mismo que boolean, es la que lo enmascara
+        boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class, c.getuDNIcomprador(), c.getUDNIvendedor(), IdProducto); //el boolean.true.equals es por si devuelve un null que no se ralle por que la clase Boolean no es lo mismo que boolean, es la que lo enmascara
 
         if(existe) throw new CannotCreateChatError("Ya existe un chat con estos usuarios y producto");
         chatRepository.save(c);
@@ -87,7 +87,7 @@ public class ChatService{
 
         String dni = jwtService.extraerDNI(accessToken);
 
-        List<Chat> chatEntities = chatRepository.findByuDNIcompradorOruDNIvendedor(dni,dni);
+        List<Chat> chatEntities = chatRepository.findByUDNIcompradorOrUDNIvendedor(dni,dni);
 
         if (chatEntities.isEmpty()) throw new CannotCreateChatError("No tienes ningun chat iniciado");
 
@@ -96,7 +96,7 @@ public class ChatService{
             String otroDni;
 
             if ( chatEntity.getuDNIcomprador().equals(dni) ){
-                otroDni=chatEntity.getuDNIvendedor();
+                otroDni=chatEntity.getUDNIvendedor();
              }else{
                 otroDni=chatEntity.getuDNIcomprador();
             }
