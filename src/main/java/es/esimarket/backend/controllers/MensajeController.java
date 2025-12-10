@@ -52,7 +52,7 @@ public class MensajeController
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes(@CookieValue(name = "accessToken") String token, @RequestBody final MessageRequest Mrequest){
+    public ResponseEntity<HashMap<String, String>> postMensajes(@CookieValue(name = "accessToken", required = false) String token, @RequestBody final MessageRequest Mrequest){
 
         HashMap<String, String> response = new HashMap<>();
 
