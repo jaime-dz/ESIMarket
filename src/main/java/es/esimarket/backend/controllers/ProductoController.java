@@ -48,16 +48,17 @@ public class ProductoController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createProducto(@RequestBody final ProductoRequest request)
+    public ResponseEntity<String> createProducto(@CookieValue(name = "accessToken", required = false) String token,@RequestBody final ProductoRequest request)
     {
+        String dni = jwtService.extraerDNI(token);
 
-        return productoService.nuevoProducto(request.uDNIVendedor(),request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
+        return productoService.nuevoProducto(dni,request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
     }
 
     @DeleteMapping("/delete/{idProd}")
-    public void  deleteProducto(@CookieValue(name = "accessToken") String Token, @PathVariable int idProd) {
+    public void  deleteProducto(@CookieValue(name = "accessToken", required = false) String token, @PathVariable int idProd) {
 
-        String dni = jwtService.extraerDNI(Token);
+        String dni = jwtService.extraerDNI(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(dni);
 
         Producto p = productoRepository.findByID(idProd);

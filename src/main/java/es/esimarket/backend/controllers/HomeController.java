@@ -25,20 +25,6 @@ public class HomeController {
     @GetMapping("/")
     public String index() { return "index"; }
 
-    @GetMapping("/user")
-    public ResponseEntity<String> user(@CookieValue(name = "accessToken") String accessToken) {
-
-        String dni = jwtService.extraerDNI(accessToken);
-        Usuario user = usuarioRepository.findByid(dni);
-
-        if ( user == null ) {
-            throw new CannotCreateUserError("Usuario no encontrado");
-        }
-
-        return ResponseEntity.ok(String.valueOf(user.getSaldoMoneda()));
-
-    }
-
     @GetMapping("/about")
     public String about() { return "about"; }
 
