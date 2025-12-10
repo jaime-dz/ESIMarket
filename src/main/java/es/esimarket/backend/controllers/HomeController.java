@@ -29,9 +29,9 @@ public class HomeController {
     public String about() { return "about"; }
 
     @GetMapping("/PrivacyAndPolicy")
-    public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad"; }
+    public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad.pdf"; }
 
     @GetMapping("/TermsAndConditions")
-    public String termsAndConditions() { return "forward:/ESIMarket_Terminos_y_Condiciones"; }
+    public String termsAndConditions() { return "forward:/ESIMarket_Terminos_y_Condiciones.pdf"; }
 
 }
