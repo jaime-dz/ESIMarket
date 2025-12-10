@@ -8,6 +8,7 @@ async function mostrarPerfil() {
     const username=document.getElementById('show-username');
     const email=document.getElementById('show-email');
     const degree=document.getElementById('show-degree');
+    const money = document.getElementById('show-money');
     try {
         // 2. Hacer la petición al backend
         const response = await fetch('/profile/'); 
@@ -23,6 +24,7 @@ async function mostrarPerfil() {
         username.textContent = data.usuario;
         email.textContent = data.email;
         degree.textContent = data.carrera;
+        money.textContent = data.saldo;
 
     } catch (error) {
         console.error('Hubo un problema cargando el perfil:', error);

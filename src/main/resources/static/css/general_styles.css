@@ -6,13 +6,25 @@
 }
 
 .menu-superior ul {
+    /* 1. Ocupa todo el espacio restante para permitir el centrado/alineación */
+    flex-grow: 1; 
+    
+    /* 2. Se convierte en un contenedor flex para alinear sus hijos (los <li>) */
+    display: flex; 
+    align-items: center;
+    
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    position:absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    
+    /* Restablecemos los estilos absolutos de la solución anterior */
+    position: static; 
+    width: auto; 
+    pointer-events: auto; /* Permite clicks en todos los botones de la lista */
+}
+
+.menu-superior ul li:nth-child(1) {
+    margin-left: auto; 
 }
 
 .menu-bar a:hover {
@@ -29,15 +41,33 @@
 }
 
 .menu-superior {
-    position:relative;
+    /* Mantenemos: Aseguramos que el logo, título y la lista UL sean elementos flex */
+    display: flex;
+    align-items: center; 
+    position: relative;
+    z-index: 1001; /* Alto z-index para que el dropdown funcione */
+
+    /* Otros estilos originales que mantienen el diseño del header */
     margin-top: -10px;
     padding: 20px 104px 20px 20px;
     background-color: #00587C;
     margin-left: -10px;
     margin-right: -10px;
+}
 
-    display: flex;
-    align-items: center;
+.menu-superior .guest-view,
+.menu-superior .user-view {
+    /* Aplicamos margin-left: auto a estos elementos, lo que crea un espacio 
+       máximo entre los botones de navegación centrados y estos botones de la derecha. */
+    margin-left: auto; 
+    margin-right: 20px; /* Separación del borde de la pantalla */
+    
+    /* Quitar el posicionamiento absoluto si quedó de la solución anterior */
+    position: static;
+}
+
+.menu-superior li {
+    pointer-events: auto;
 }
 
 .menu-inferior{
@@ -45,17 +75,18 @@
 }
 
 .menu-inferior ul {
-    list-style: none;
-    padding: 0 20px;
-    margin: 0;
-    display:flex;
+    /* Creamos un contexto de posición */
+    position: relative;
+    display: flex;
+    justify-content: center; /* Centramos los enlaces principales */
     align-items: center;
-    box-sizing:border-box;
-    width:100%;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .menu-inferior li {
-    display: inline-block; /* Los ítems del menú inferior como bloques en línea */
+    display: inline-block;
 }
 
 h2{
@@ -259,10 +290,9 @@ main {
     height: fit-content;
 }
 .filter-group { 
-    margin-bottom: 15px; /* Menos separación entre grupos */
+    margin-bottom: 15px;
 }
 
-/* Título de la categoría (ej: "Estado") */
 .filter-group > label { 
     display: block; 
     font-weight: bold; 
@@ -274,14 +304,12 @@ main {
     margin-bottom: 5px; 
 }
 
-/* CLASE NUEVA: Para alinear checkbox + texto */
 .filter-option {
     display: flex;       /* Pone los elementos en fila */
     align-items: center; /* Los centra verticalmente */
     margin-bottom: 4px;  /* Espacio pequeño entre opciones */
 }
 
-/* Forzamos al checkbox a ser pequeño y no ocupar el 100% */
 .filter-option input[type="checkbox"] {
     width: auto !important; /* Importante para sobreescribir tu regla global */
     margin-right: 8px;      /* Espacio entre la cajita y el texto */
@@ -290,23 +318,14 @@ main {
 }
 
 .filter-option label {
-    margin-bottom: 0;       /* Quitamos margen inferior al texto */
-    font-weight: normal;    /* Texto normal, no negrita */
+    margin-bottom: 0;
+    font-weight: normal;
     cursor: pointer;
 }
 
-
-/* --- NUEVOS ESTILOS PARA LA REJILLA Y TARJETAS --- */
-
-/* Contenedor de la Rejilla */
 .product-grid-container {
-    flex: 3; /* Ocupa el espacio restante */
+    flex: 3;
     display: grid;
-    /* * Crea columnas automáticas:
-     * - 'auto-fill': Llena el espacio con tantas columnas como quepan.
-     * - 'minmax(220px, 1fr)': Cada columna tiene un mínimo de 220px
-     * y un máximo de 1 fracción (se reparten el espacio).
-     */
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px; /* Espacio entre las tarjetas */
 }
@@ -315,7 +334,7 @@ main {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 10px; /* MENOS padding (antes 15px) */
+    padding: 10px;
     text-align: left; 
     display: flex; 
     flex-direction: column; 
@@ -323,10 +342,10 @@ main {
 
 .product-image {
     width: 100%;
-    height: 110px; /* MENOS altura (antes 150px) */
+    height: 110px;
     object-fit: cover; 
     border-radius: 4px;
-    margin-bottom: 8px; /* MENOS margen inferior (antes 15px) */
+    margin-bottom: 8px;
 }
 
 .product-name {
@@ -348,25 +367,23 @@ main {
     font-size: 0.9rem;
     color: #777;
     margin: 0;
-    margin-top: auto; /* Empuja el vendedor al fondo de la tarjeta */
+    margin-top: auto;
 }
 
 .sn {
+    position: absolute;
+    right: 20px;
     display: flex;
     gap: 10px;
-    align-items: center;
 }
 
-/* Hacemos que el enlace solo ocupe lo que mide la imagen, no todo el ancho */
 .sn a {
     display: inline-block; 
     width: auto;
-    padding: 5px; /* Un poco de aire para el hover */
+    padding: 5px;
 }
 
-/* --- ESTILOS PERFIL Y DESPLEGABLE (PUNTO 4) --- */
 .user-view {
-    /* Por defecto oculto, JS lo mostrará */
     display: none; 
 }
 
@@ -396,17 +413,29 @@ main {
     border: 2px solid white;
 }
 
-/* El menú desplegable */
 .dropdown-content {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: absolute;
-    top: 100%; /* Justo debajo del contenedor */
+    top: 100%; 
     right: 0;
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1000;
     border-radius: 5px;
+    
+    z-index: 9999;
+
+}
+
+/* Creamos un bloque invisible encima del menú que conecta con la foto */
+.dropdown-content::before {
+    content: "";
+    position: absolute;
+    top: -15px; /* Cubre el hueco entre la foto y el menú */
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: transparent;
 }
 
 /* Estilos de los enlaces dentro del dropdown */
