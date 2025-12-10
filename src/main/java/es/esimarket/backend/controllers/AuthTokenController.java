@@ -77,7 +77,7 @@ public class AuthTokenController {
 
     }
 
-    @GetMapping("/logout")
+    @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @CookieValue(name = "accessToken", required = false) String accessToken) throws  CannotCreateUserError, CannotCreateTokenError
     {
 
@@ -94,7 +94,7 @@ public class AuthTokenController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) throws CannotCreateTokenError
+    public ResponseEntity<Void> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) throws CannotCreateTokenError
     {
         final TokenResponse token = authService.refreshToken(refreshToken);
 

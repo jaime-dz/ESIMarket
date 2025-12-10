@@ -25,27 +25,13 @@ public class HomeController {
     @GetMapping("/")
     public String index() { return "index"; }
 
-    @GetMapping("/user")
-    public ResponseEntity<String> user(@CookieValue(name = "accessToken") String accessToken) {
-
-        String dni = jwtService.extraerDNI(accessToken);
-        Usuario user = usuarioRepository.findByid(dni);
-
-        if ( user == null ) {
-            throw new CannotCreateUserError("Usuario no encontrado");
-        }
-
-        return ResponseEntity.ok(String.valueOf(user.getSaldoMoneda()));
-
-    }
-
     @GetMapping("/about")
     public String about() { return "about"; }
 
     @GetMapping("/PrivacyAndPolicy")
-    public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad"; }
+    public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad.pdf"; }
 
     @GetMapping("/TermsAndConditions")
-    public String termsAndConditions() { return "forward:/ESIMarket_Terminos_y_Condiciones"; }
+    public String termsAndConditions() { return "forward:/ESIMarket_Terminos_y_Condiciones.pdf"; }
 
 }
