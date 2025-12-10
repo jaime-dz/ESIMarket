@@ -39,7 +39,7 @@ public class Usuario {
     private String apellidos;
 
     @Column(name = "Saldo")
-    private long saldoMoneda;
+    private Long saldoMoneda;
 
     @Column(name = "Carrera")
     @Enumerated(EnumType.STRING)
@@ -61,7 +61,7 @@ public class Usuario {
         this.correo = email;
         this.nombre = nombre;
         this.apellidos = apellidos;
-        this.saldoMoneda = 0;
+        this.saldoMoneda = 0L;
         this.carrera = carrera;
         this.salt = salt;
         this.rol = rol;
@@ -89,8 +89,8 @@ public class Usuario {
     public byte[] getSalt() { return salt; }
     public void setSalt(byte[] salt) { this.salt = salt; }
 
-    public long getSaldoMoneda() { return saldoMoneda; }
-    public void setSaldoMoneda(long saldoMoneda) { this.saldoMoneda = saldoMoneda; }
+    public Long getSaldoMoneda() { return saldoMoneda; }
+    public void setSaldoMoneda(Long saldoMoneda) { this.saldoMoneda = saldoMoneda; }
 
     public String getRol() {return rol;}
     public void setRol(String rol) {this.rol = rol;}

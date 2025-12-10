@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 public class Donaciones {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IDUsuario",nullable = false)
     private String IDUsuario;
 

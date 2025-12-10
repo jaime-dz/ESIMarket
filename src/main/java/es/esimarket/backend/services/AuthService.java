@@ -2,12 +2,14 @@ package es.esimarket.backend.services;
 import es.esimarket.backend.controllers.requests.LoginRequest;
 import es.esimarket.backend.controllers.requests.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
+import es.esimarket.backend.entities.Donaciones;
 import es.esimarket.backend.entities.Token;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.dtos.UsuarioDTO;
 import es.esimarket.backend.exceptions.CannotCreateTokenError;
 import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.mappers.UserMapper;
+import es.esimarket.backend.repositories.DonacionesRepository;
 import es.esimarket.backend.repositories.TokenRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class AuthService {
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Autowired
+    private DonacionesRepository donacionesRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -72,6 +77,9 @@ public class AuthService {
         if (userRepository.existsById(user.getId())) {
             throw new CannotCreateUserError("El usuario ya existe");
         }
+
+        Donaciones d = new Donaciones(user.getId(),0);
+        donacionesRepository.save(d);
 
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
