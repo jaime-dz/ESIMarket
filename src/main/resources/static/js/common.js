@@ -187,7 +187,7 @@ export async function cerrarSesion() {
         // Ajusta el método ('POST' o 'GET') según lo requiera tu backend.
         // Lo estándar suele ser POST.
         const respuesta = await fetch('/auth/logout', {
-            method: 'POST', 
+            method: 'DELETE', 
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -210,6 +210,7 @@ export async function cerrarSesion() {
         localStorage.removeItem('isLoggedIn'); // Borramos la bandera local
         window.location.href = "/";            // Redirigimos a la raíz
     }
+    localStorage.removeItem('isLoggedIn'); location.reload();
 }
 
 function ocultarEnlacePaginaActual() {
