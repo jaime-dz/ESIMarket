@@ -7,6 +7,7 @@ public record CompraRequest (
         int idProdOfrecido,
         Producto.PagoAceptado tipoPago,
         Producto.RecepcionAceptada recepcion,
-        int taquilla
+        int taquilla,
+        int idProdTrueque
 )
 {}

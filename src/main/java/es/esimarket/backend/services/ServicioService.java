@@ -52,9 +52,7 @@ public class ServicioService{
 
     public List<Servicio> mostrar_servicios_usuario(String DNIcomprador)
     {
-        List<Servicio> servs = servicioRepository.findByDNIcompradorAndFinalizadoFalse(DNIcomprador);
-
-        return servs;
+        return servicioRepository.findByDNIcompradorAndFinalizadoFalse(DNIcomprador);
     }
 
 
