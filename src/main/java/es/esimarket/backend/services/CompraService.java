@@ -34,9 +34,9 @@ public class CompraService {
     @Autowired
     public VariosService variosService;
 
-    public Boolean UsrPuedeHacerCompra(Usuario u, Producto p)
+    public Boolean UsuPuedeHacerCompra(Usuario u, Producto p)
     {
-        return u.getSaldoMoneda() > p.getPrecio();
+        return u.getSaldoMoneda() >= p.getPrecio();
     }
 
     public String HacerCompra(String uDNI, CompraRequest request)
@@ -44,7 +44,7 @@ public class CompraService {
         Producto p = productoRepository.findByID(request.idProd());
         Usuario uComprador = usuarioRepository.findByid(uDNI);
         Usuario uVendedor = usuarioRepository.findByid(p.getuDNI_Vendedor());
-        Compra c = new Compra();
+        Compra c = null;
         String FechaAct = variosService.ObtenerFecha();
 
         if ( p != null && uComprador != null && uVendedor != null) {
@@ -55,14 +55,9 @@ public class CompraService {
 
             if ( request.tipoPago() == Producto.PagoAceptado.Monedas){
 
-                if ( uComprador.getSaldoMoneda() < p.getPrecio() ) {
+                if ( !UsuPuedeHacerCompra(uComprador,p) ) {
                     throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
                 }
-
-                uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
-                uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
-                usuarioRepository.save(uComprador);
-                usuarioRepository.save(uVendedor);
 
                 c = new Compra(uDNI,request.idProd(),FechaAct,request.recepcion(),request.tipoPago());
 
@@ -77,23 +72,40 @@ public class CompraService {
             compraRepository.save(c);
 
             if ( p.getTipo().equals("Objeto")){
-                if(request.recepcion()==Producto.RecepcionAceptada.Taquilla)
-                {
-                    Pedidos pe = new Pedidos(c.getIDCompra(),request.taquilla(),Pedidos.Estado.PorEntregar);
-                    pedidosRepository.save(pe);
-                }
+                Pedidos pe = getPedidos(request, p, c);
+
+                pedidosRepository.save(pe);
             }else if ( p.getTipo().equals("Servicio")){
 
                 servicioService.CrearServicioPendiente(p.getID(),uComprador.getId());
-            }
+            }else throw new CannotCompletePurchaseError("Tipo de producto invalido");
 
-            
+            uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
+            uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
+            usuarioRepository.save(uComprador);
+            usuarioRepository.save(uVendedor);
 
             return "Compra realizada correctamente";
         }
 
         throw new CannotCompletePurchaseError("No se pudo encontrar el usuario o producto");
 
+    }
+
+    private static Pedidos getPedidos(CompraRequest request, Producto p, Compra c) {
+        Pedidos pe = null;
+
+        if ( request.recepcion() != p.getRecepcionAceptada() )
+            throw new CannotCompletePurchaseError("Tipo de recepcion invalida");
+        if(request.recepcion()==Producto.RecepcionAceptada.enTaquilla)
+        {
+            pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
+
+        }else if ( request.recepcion()==Producto.RecepcionAceptada.EnMano){
+
+            pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
+        }else throw new CannotCompletePurchaseError("Tipo de recepcion no encontrado");
+        return pe;
     }
 
 }

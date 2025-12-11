@@ -1,5 +1,6 @@
 package es.esimarket.backend.controllers;
 
+import es.esimarket.backend.controllers.requests.TaquillaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,7 @@ import es.esimarket.backend.services.JwtService;
 
 
 @Controller
-@RequestMapping("/pedidos")
+@RequestMapping("/orders")
 public class PedidosController{
 
     @Autowired
@@ -45,16 +46,18 @@ public class PedidosController{
         return ResponseEntity.ok(pedidosService.mostrar_pedidos_comprador(uDNI));
     }
 
-    @PatchMapping("/entregarpedido/{IdPedido}/{NTaquilla}")
+    @PutMapping("/deliver/{IdPedido}/{NTaquilla}")
     public ResponseEntity<String> patchPedidoVendedor(@CookieValue(name = "accessToken", required = false) String accessToken,@PathVariable(name = "IdPedido") int IdPedido,@PathVariable(name = "NTaquilla") int NTaquilla)
     {
-        return ResponseEntity.ok(pedidosService.entregarPedido(IdPedido,NTaquilla));  //mirar si convviene mandarle el udni aunque no lo uses
+        String dni = jwtservice.extraerDNI(accessToken);
+        return ResponseEntity.ok(pedidosService.entregarPedido(IdPedido,NTaquilla,dni));  //mirar si convviene mandarle el udni aunque no lo uses
     }
 
-    @PatchMapping("/recogerpedido/{IdPedido}")
+    @PutMapping("/pickup/{IdPedido}")
     public ResponseEntity<String> patchPedidoComprador(@CookieValue(name = "accessToken", required = false) String accessToken,@PathVariable(name = "IdPedido") int IdPedido)
     {
-        return ResponseEntity.ok(pedidosService.recogerPedido(IdPedido));  //mirar si hay que enviar el udni aunque no lo uses
+        String dni = jwtservice.extraerDNI(accessToken);
+        return ResponseEntity.ok(pedidosService.recogerPedido(IdPedido,dni));  //mirar si hay que enviar el udni aunque no lo uses
     }
 
     //El post de pedido va dentro de al funcion hacer compra
