@@ -79,9 +79,9 @@ public class AuthService {
         }
 
         Donaciones d = new Donaciones(user.getId(),0);
-        donacionesRepository.save(d);
 
         var savedUser = userRepository.save(user);
+        donacionesRepository.save(d);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
 

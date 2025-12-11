@@ -22,7 +22,7 @@ public class Producto{
 
     public enum RecepcionAceptada{
         EnMano,
-        Taquilla
+        enTaquilla
     }
 
     @Id
@@ -46,12 +46,15 @@ public class Producto{
     private String tipo;
 
     @Column(name="Estado")
+    @Enumerated(EnumType.STRING)
     private estado estado;
 
     @Column(name="pagoAceptado")
+    @Enumerated(EnumType.STRING)
     private PagoAceptado pagoAceptado;
 
     @Column(name="recepcionAceptada")
+    @Enumerated(EnumType.STRING)
     private RecepcionAceptada recepcionAceptada;
 
     public Producto(){}
