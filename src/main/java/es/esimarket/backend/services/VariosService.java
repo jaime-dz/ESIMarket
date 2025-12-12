@@ -2,6 +2,7 @@ package es.esimarket.backend.services;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
+import java.time.ZoneId;
 
 import java.util.*;
 
@@ -10,7 +11,9 @@ public class VariosService
 {
     public String ObtenerFecha()
     {
-        LocalDateTime fechaActual = LocalDateTime.now();
+        ZoneId zonaHoraria = ZoneId.of("Europe/Madrid");
+
+        LocalDateTime fechaActual = LocalDateTime.now(zonaHoraria);
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return fechaActual.format(formato);
     }

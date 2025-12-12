@@ -18,7 +18,7 @@ import es.esimarket.backend.controllers.requests.ProductoRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping("/producto")
+@RequestMapping("/products")
 public class ProductoController {
 
     @Autowired

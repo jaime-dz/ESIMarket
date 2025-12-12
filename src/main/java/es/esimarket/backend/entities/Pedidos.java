@@ -21,31 +21,32 @@ public class Pedidos{
     private int IdPedido;
 
     @Column(name="IdCompra")
-    private BigInteger IdCompra;
+    private Integer IdCompra;
 
     @Column(name="EnTaquilla")
     private boolean EnTaquilla;
 
     @Column(name="NumTaquilla")
-    private int NTaquilla;
+    private Integer NTaquilla;
 
     @Column(name="Estado")
+    @Enumerated(EnumType.STRING)
     private Estado Estado;
 
     public Pedidos() {}
 
-    public Pedidos(BigInteger IdCompra, int NTaquilla,Estado Estado)
+    public Pedidos(Integer IdCompra,Estado Estado)
     {
         this.IdCompra = IdCompra;
-        this.NTaquilla=NTaquilla;
         this.Estado=Estado;
+        this.EnTaquilla=false;
     }
 
     public int getIdPedido() {return IdPedido;}
     public void setIdPedido(int IdPedido) {this.IdPedido=IdPedido;}
 
-    public BigInteger getIdCompra() {return IdCompra;}
-    public void setIdCompra(BigInteger IdCompra) {this.IdCompra = IdCompra;}
+    public Integer getIdCompra() {return IdCompra;}
+    public void setIdCompra(Integer IdCompra) {this.IdCompra = IdCompra;}
 
     public boolean isEnTaquilla() {return EnTaquilla;}
     public void setEnTaquilla(boolean enTaquilla) {EnTaquilla = enTaquilla;}

@@ -19,7 +19,7 @@ import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.entities.Compra;
 
 @Controller
-@RequestMapping("/compras")
+@RequestMapping("/purchase")
 public class CompraController
 {
     @Autowired
@@ -32,7 +32,7 @@ public class CompraController
     @Autowired
     private CompraService compraService;
 
-    @GetMapping("/")
+    @GetMapping("/user")
     public ResponseEntity<List<Compra>> getComprasUsuario(@CookieValue(name = "accessToken", required = false) String accessToken){
 
         String dni = jwtService.extraerDNI(accessToken);
@@ -48,7 +48,7 @@ public class CompraController
         String respuestaService;
         try {
             respuestaService = compraService.HacerCompra(dni, Crequest);
-        }catch (CannotCompletePurchaseError e){
+        }catch (RuntimeException e){
             response.put("error", e.getMessage() );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

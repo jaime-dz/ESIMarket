@@ -23,6 +23,8 @@ import es.esimarket.backend.entities.Servicio;
 import es.esimarket.backend.repositories.ServicioRepository;
 import es.esimarket.backend.services.ServicioService;
 
+@Controller
+@RequestMapping("/service")
 public class ServicioController{
 
     @Autowired
@@ -31,19 +33,19 @@ public class ServicioController{
     @Autowired
     private ServicioService servicioService;
 
-    @PatchMapping("/patata")
+    @PatchMapping("/setdate")
     public ResponseEntity<String> ModificarFecha(int idProd,String DNIcomprador,LocalDateTime fecha)
     {
         return ResponseEntity.ok(servicioService.modificarFecha(idProd,DNIcomprador,fecha));
     }
 
-    @PatchMapping("/patata")
+    @PatchMapping("/end")
     public ResponseEntity<String> FinalizarServicio(int idProd, String DNIcomprador)
     {
         return ResponseEntity.ok(servicioService.finalizarServicio(idProd,DNIcomprador));
     }
 
-    @GetMapping("/patata")
+    @GetMapping("/user")
     public ResponseEntity<List<Servicio>> GetServiciosUsuario(String DNIcomprador)
     {
         return ResponseEntity.ok(servicioService.mostrar_servicios_usuario(DNIcomprador));

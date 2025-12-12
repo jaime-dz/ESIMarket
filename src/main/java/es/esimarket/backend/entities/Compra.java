@@ -10,7 +10,7 @@ public class Compra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="IdCompra")
-    private BigInteger IDCompra;
+    private Integer IDCompra;
 
     @Column(name = "uDNIComprador", nullable = false)
     private String uDNIComprador;
@@ -22,13 +22,15 @@ public class Compra {
     private String Fecha;
 
     @Column(name = "TipoPago")
+    @Enumerated(EnumType.STRING)
     private Producto.PagoAceptado TipoPago;
 
     @Column(name = "Recepcion")
+    @Enumerated(EnumType.STRING)
     private Producto.RecepcionAceptada recepcion;
 
     @Column(name = "IdProdTrueque", nullable = true)
-    private int idProdTrueque;
+    private Integer idProdTrueque;
 
     public Compra() {}
 
@@ -61,12 +63,12 @@ public class Compra {
     public Producto.RecepcionAceptada getRecepcion() {return recepcion;}
     public void setRecepcion(Producto.RecepcionAceptada recepcion) {this.recepcion=recepcion;}
 
-    public BigInteger getIDCompra() {return IDCompra;}
-    public void setIDCompra(BigInteger IDCompra) {this.IDCompra=IDCompra;}
+    public Integer getIDCompra() {return IDCompra;}
+    public void setIDCompra(Integer IDCompra) {this.IDCompra=IDCompra;}
 
     public Producto.PagoAceptado getTipoPago() {return TipoPago;}
     public void setTipoPago(Producto.PagoAceptado tipoPago) {TipoPago = tipoPago;}
 
-    public int getIdProdTrueque() {return idProdTrueque;}
-    public void setIdProdTrueque(int idProdTrueque) {this.idProdTrueque = idProdTrueque;}
+    public Integer getIdProdTrueque() {return idProdTrueque;}
+    public void setIdProdTrueque(Integer idProdTrueque) {this.idProdTrueque = idProdTrueque;}
 }
