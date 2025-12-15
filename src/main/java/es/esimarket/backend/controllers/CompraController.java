@@ -1,6 +1,9 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.CompraRequest;
+import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
+import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +29,10 @@ public class CompraController
     private CompraRepository compraRepository;
 
     @Autowired
-
     private JwtService jwtService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private CompraService compraService;
