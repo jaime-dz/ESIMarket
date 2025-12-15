@@ -35,7 +35,7 @@
                     
                     <div class="profile-container">
                         <div class="coins-info">
-                            <span th:text="{saldo}"></span> <span>⚙️</span> 
+                            <span th:text="${saldo} ?: '0'"></span> <span>⚙️</span> 
                         </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
@@ -98,12 +98,29 @@
                             <label for="state-deg">Desgastado</label>
                         </div>
                     </div>
+                    <div class="filter-group">
+                        <label for="sort-price">Ordenar por precio</label>
+                        <select id="sort-price" class="filter-select">
+                            <option value="default">Por defecto</option>
+                            <option value="asc">Menor a Mayor (Asc)</option>
+                            <option value="desc">Mayor a Menor (Desc)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Rango de Precio (⚙️)</label>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <input type="number" id="min-price" placeholder="Min" min="0" style="width: 100%; padding: 5px;">
+                            <span>-</span>
+                            <input type="number" id="max-price" placeholder="Max" min="0" style="width: 100%; padding: 5px;">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="product-grid-container" id="product-grid">
                     
                    <div class="product-card" data-category="objects" data-seller="vendedorA" data-state="bueno">
-                        <img src="/Images/placeholder.png" alt="Apuntes MP" class="product-image">
+                        <img src="/Images/book.png" alt="Apuntes MP" class="product-image">
                         <h4 class="product-name">Apuntes MP</h4>
                         <p class="product-price">6⚙️</p>
                         <p class="product-state">Nuevo</p>
@@ -111,14 +128,14 @@
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorB">
-                        <img src="/Images/placeholder.png" alt="Clases AAED" class="product-image">
+                        <img src="/Images/engranaje.jpg" alt="Clases AAED" class="product-image">
                         <h4 class="product-name">Clases de AAED</h4>
                         <p class="product-price">25⚙️/h</p>
                         <p class="product-seller">Vendido por: Vendedor B</p>
                     </div>
 
                     <div class="product-card" data-category="objects" data-seller="vendedorC" data-state="muy bueno">
-                        <img src="/Images/placeholder.png" alt="Libro" class="product-image">
+                        <img src="/Images/book.png" alt="Libro" class="product-image">
                         <h4 class="product-name">Guía de HTML</h4>
                         <p class="product-price">20⚙️</p>
                         <p class="product-state">Correcto</p>
@@ -126,7 +143,7 @@
                     </div>
 
                     <div class="product-card" data-category="objects" data-seller="vendedorA" data-state="decente">
-                        <img src="/Images/placeholder.png" alt="Ejercicios POO" class="product-image">
+                        <img src="/Images/book.png" alt="Ejercicios POO" class="product-image">
                         <h4 class="product-name">Ejercicios POO</h4>
                         <p class="product-price">15⚙️</p>
                         <p class="product-state">Decente</p>
@@ -134,21 +151,21 @@
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorB">
-                        <img src="/Images/placeholder.png" alt="Cesped" class="product-image">
+                        <img src="/Images/engranaje.jpg" alt="Cesped" class="product-image">
                         <h4 class="product-name">Cortar césped</h4>
                         <p class="product-price">20⚙️</p>
                         <p class="product-seller">Vendido por: Vendedor B</p>
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorA">
-                        <img src="/Images/placeholder.png" alt="Clases IP" class="product-image">
+                        <img src="/Images/engranaje.jpg" alt="Clases IP" class="product-image">
                         <h4 class="product-name">Clases IP</h4>
                         <p class="product-price">60⚙️/h</p>
                         <p class="product-seller">Vendido por: Vendedor A</p>
                     </div>
 
                     <div class="product-card" data-category="objects" data-seller="vendedorC" data-state="muy bueno">
-                        <img src="/Images/placeholder.png" alt="Apuntes OGE" class="product-image">
+                        <img src="/Images/book.png" alt="Apuntes OGE" class="product-image">
                         <h4 class="product-name">Apuntes OGE</h4>
                         <p class="product-price">13⚙️</p>
                         <p class="product-state">Nuevo</p>
@@ -156,14 +173,14 @@
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorB">
-                        <img src="/Images/placeholder.png" alt="Packet Tracer" class="product-image">
+                        <img src="/Images/engranaje.jpg" alt="Packet Tracer" class="product-image">
                         <h4 class="product-name">Clases Packet Tracer</h4>
                         <p class="product-price">25⚙️/h</p>
                         <p class="product-seller">Vendido por: Vendedor B</p>
                     </div>
 
                     <div class="product-card" data-category="objects" data-seller="vendedorA" data-state="bueno">
-                        <img src="/Images/placeholder.png" alt="Cuaderno" class="product-image">
+                        <img src="/Images/book.png" alt="Cuaderno" class="product-image">
                         <h4 class="product-name">Cuaderno</h4>
                         <p class="product-price">6⚙️</p>
                         <p class="product-state">Decente</p>
@@ -171,14 +188,14 @@
                     </div>
 
                     <div class="product-card" data-category="services" data-seller="vendedorC">
-                        <img src="/Images/placeholder.png" alt="x86" class="product-image">
+                        <img src="/Images/engranaje.jpg" alt="x86" class="product-image">
                         <h4 class="product-name">Clases x86</h4>
                         <p class="product-price">20⚙️/h</p>
                         <p class="product-seller">Vendido por: Vendedor C</p>
                     </div>
 
                     <div class="product-card" data-category="objects" data-seller="vendedorB" data-state="desgastado">
-                        <img src="/Images/placeholder.png" alt="DAapuntes" class="product-image">
+                        <img src="/Images/book.png" alt="DAapuntes" class="product-image">
                         <h4 class="product-name">Apuntes DA</h4>
                         <p class="product-price">40⚙️</p>
                         <p class="product-state">Desgastado</p>
@@ -186,7 +203,7 @@
                     </div>
 
                     <div class="product-card" data-category="objects" data-seller="vendedorC" data-state="decente">
-                        <img src="/Images/placeholder.png" alt="Punteros" class="product-image">
+                        <img src="/Images/book.png" alt="Punteros" class="product-image">
                         <h4 class="product-name">Apuntes punteros</h4>
                         <p class="product-price">35⚙️</p>
                         <p class="product-state">Decente</p>
