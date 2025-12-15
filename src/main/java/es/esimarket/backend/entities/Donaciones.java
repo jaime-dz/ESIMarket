@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 public class Donaciones {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="IDUsuario",nullable = false)
+    @Column(name="uDNI",nullable = false)
     private String IDUsuario;
 
     @Column(name="num")

@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping("/mensajes")
+@RequestMapping("/messages")
 public class MensajeController
 {
     @Autowired

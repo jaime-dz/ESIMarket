@@ -10,31 +10,43 @@
     </head>
     <body>
         <header class="menu-bar menu-superior">
-            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
-            <h1 style="color:#E57200; font-family: monospace; font-weight: bold;">ESI</h1><h1 style="color:#ffffff; font-family: monospace;">Market</h1>
-            <ul>
-                <li><a th:href="@{/home/}">Inicio</a></li>
-                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+            <div class="header-left">
+                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+            </div>
 
-                <li class="guest-view">
-                    <a th:href="@{/auth/login}">Iniciar sesión</a>
-                </li>
-                <li class="guest-view">
-                    <a th:href="@{/auth/signup}">Registrarse</a>
-                </li>
+            <nav class="header-center">
+                <ul>
+                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                </ul>
+            </nav>
 
-                <li class="user-view" style="display: none;"> <div class="profile-container">
+            <div class="header-right">
+                
+                <div class="guest-view">
+                    <a href="/auth/login">Iniciar sesión</a>
+                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+                </div>
+
+                <div class="user-view" style="display: none;">
+                    
+                    <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
+                    
+                    <div class="profile-container">
                         <div class="coins-info">
-                            <span>150</span> <span>⚙️</span> </div>
+                            <span th:text="{saldo}"></span> <span>⚙️</span> 
+                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
                         <div class="dropdown-content">
-                            <a th:href="@{/profile/}">Mi Perfil</a>
+                            <a href="/profile/">Mi Perfil</a>
                             <a href="#" id="btn-logout">Cerrar sesión</a>
                         </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+
+            </div>
         </header>
         <main>
             <header>
@@ -63,17 +75,22 @@
                         
                         <div class="filter-option">
                             <input type="checkbox" class="state-filter" value="muy bueno" id="state-mb">
-                            <label for="state-mb">Muy Bueno</label>
+                            <label for="state-mb">Precintado</label>
                         </div>
 
                         <div class="filter-option">
                             <input type="checkbox" class="state-filter" value="bueno" id="state-b">
-                            <label for="state-b">Bueno</label>
+                            <label for="state-b">Nuevo</label>
                         </div>
 
                         <div class="filter-option">
                             <input type="checkbox" class="state-filter" value="decente" id="state-d">
-                            <label for="state-d">Decente</label>
+                            <label for="state-d">Casi Nuevo</label>
+                        </div>
+
+                        <div class="filter-option">
+                            <input type="checkbox" class="state-filter" value="decente" id="state-d">
+                            <label for="state-d">Correcto</label>
                         </div>
 
                         <div class="filter-option">
@@ -89,7 +106,7 @@
                         <img src="/Images/placeholder.png" alt="Apuntes MP" class="product-image">
                         <h4 class="product-name">Apuntes MP</h4>
                         <p class="product-price">6⚙️</p>
-                        <p class="product-state">Bueno</p>
+                        <p class="product-state">Nuevo</p>
                         <p class="product-seller">Vendido por: Vendedor A</p>
                     </div>
 
@@ -104,7 +121,7 @@
                         <img src="/Images/placeholder.png" alt="Libro" class="product-image">
                         <h4 class="product-name">Guía de HTML</h4>
                         <p class="product-price">20⚙️</p>
-                        <p class="product-state">Muy Bueno</p>
+                        <p class="product-state">Correcto</p>
                         <p class="product-seller">Vendido por: Vendedor C</p>
                     </div>
 
@@ -134,7 +151,7 @@
                         <img src="/Images/placeholder.png" alt="Apuntes OGE" class="product-image">
                         <h4 class="product-name">Apuntes OGE</h4>
                         <p class="product-price">13⚙️</p>
-                        <p class="product-state">Muy Bueno</p>
+                        <p class="product-state">Nuevo</p>
                         <p class="product-seller">Vendido por: Vendedor C</p>
                     </div>
 
@@ -149,7 +166,7 @@
                         <img src="/Images/placeholder.png" alt="Cuaderno" class="product-image">
                         <h4 class="product-name">Cuaderno</h4>
                         <p class="product-price">6⚙️</p>
-                        <p class="product-state">Bueno</p>
+                        <p class="product-state">Decente</p>
                         <p class="product-seller">Vendido por: Vendedor A</p>
                     </div>
 

@@ -135,49 +135,42 @@ export async function enviarFormularioComoJSON(evento) {
 }
 
 function actualizarBarraNavegacion() {
-    // 1. Obtenemos estado
     const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
 
-    // 2. Seleccionamos elementos por CLASE
-    // guest-view: Elementos que solo ve el invitado (Login, Registro)
     const guestElements = document.querySelectorAll('.guest-view');
-    
-    // user-view: Elementos que solo ve el usuario (Perfil, Monedas, Logout)
+
     const userElements = document.querySelectorAll('.user-view');
 
-    // 3. Aplicamos visibilidad
     if (estaLogueado) {
-        guestElements.forEach(el => el.style.display = 'none');  // Oculta Login/Registro
-        userElements.forEach(el => el.style.display = 'block');  // Muestra Perfil/Monedas
+        guestElements.forEach(el => el.style.display = 'none');
+        userElements.forEach(el => el.style.display = 'block');
     } else {
-        guestElements.forEach(el => el.style.display = 'block'); // Muestra Login/Registro
-        userElements.forEach(el => el.style.display = 'none');   // Oculta Perfil/Monedas
+        guestElements.forEach(el => el.style.display = 'block');
+        userElements.forEach(el => el.style.display = 'none');
     }
 }
 
-/* * Verifica la sesión basándose SOLO en localStorage 
- * (ya que no existe endpoint /auth/check)
- */
 function verificarSesionLocal() {
-    
-    // 1. Comprobamos la bandera local
+
     const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
 
-    // 2. Actualizamos la UI
     actualizarBarraNavegacion();
 
-    // 3. Lógica de REDIRECCIÓN
-    // Si dice que estoy logueado...
     if (estaLogueado) {
         const path = window.location.pathname.toLowerCase();
-        
-        // ...y estoy intentando ver la página de login o registro...
+
         if (path.includes("login") || path.includes("signup") || path.includes("registro") || path.includes("iniciar-sesion")) {
             console.log("Usuario aparentemente logueado. Redirigiendo a home...");
-            window.location.href = "/home/"; 
+            window.location.href = "/"; 
         }
     }
-    // Nota: Sin endpoint de check, no podemos saber si la cookie expiró hasta que el usuario intente hacer algo en /home/
+    else
+    {
+        if (path.includes("profile"))
+        {
+            window.location.href="/";
+        }
+    }
 }
 
 /* Función para cerrar sesión en Backend y Frontend */

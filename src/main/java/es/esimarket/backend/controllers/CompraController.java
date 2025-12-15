@@ -1,6 +1,9 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.CompraRequest;
+import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
+import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +22,22 @@ import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.entities.Compra;
 
 @Controller
-@RequestMapping("/compras")
+@RequestMapping("/purchase")
 public class CompraController
 {
     @Autowired
     private CompraRepository compraRepository;
 
     @Autowired
-
     private JwtService jwtService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private CompraService compraService;
 
-    @GetMapping("/")
+    @GetMapping("/user")
     public ResponseEntity<List<Compra>> getComprasUsuario(@CookieValue(name = "accessToken", required = false) String accessToken){
 
         String dni = jwtService.extraerDNI(accessToken);
@@ -48,7 +53,7 @@ public class CompraController
         String respuestaService;
         try {
             respuestaService = compraService.HacerCompra(dni, Crequest);
-        }catch (CannotCompletePurchaseError e){
+        }catch (RuntimeException e){
             response.put("error", e.getMessage() );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
