@@ -1,4 +1,5 @@
 package es.esimarket.backend.services;
+import es.esimarket.backend.controllers.requests.FiltroRequest;
 import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.dtos.UsuarioDTO;
 import es.esimarket.backend.entities.FotoProd;
@@ -48,8 +49,9 @@ public class ProductoService {
         return ResponseEntity.ok("Producto registrado correctamente");
     }
 
-    public List<Producto> FiltroProductosGenerico(String json)
+    public List<Producto> FiltroProductosGenerico(FiltroRequest filtro)
     {
+        /*
         HashMap<String,String> dic = variosService.StringToDictionary(json);
 
 
@@ -84,9 +86,9 @@ public class ProductoService {
                 case "Estado":
                     sql = sql + "Estado is LIKE '%?' ";
                     ValoresParametros.add(KeyValue.getValue().toLowerCase());
-                    break;  
+                    break;
                 case "Orden":
-                    if(KeyValue.getValue().equals("1")) //Este va a ser ordenarlo ascendente   
+                    if(KeyValue.getValue().equals("1")) //Este va a ser ordenarlo ascendente
                         {
                             sql = sql.substring(0,sql.length()-4);
                             sql = sql + "ORDER BY Precio ASC";
@@ -95,7 +97,7 @@ public class ProductoService {
                         {
                             sql = sql.substring(0,sql.length()-4);
                             sql = sql + "ORDER BY Precio DESC";
-                        }     
+                        }
             }
 
             ContadorElementos = ContadorElementos +1;
@@ -105,7 +107,53 @@ public class ProductoService {
         }
 
         return jdbcTemplate.queryForList(sql, Producto.class, ValoresParametros.toArray());
+        */
 
+        StringBuilder sql = new StringBuilder("SELECT * FROM Productos WHERE 1=1 ");
+        List<Object> params = new ArrayList<>();
+
+        boolean tieneMinimo = filtro.precioInferior() != null;
+        boolean tieneMaximo = filtro.precioSuperior() != null;
+
+        if (tieneMinimo && tieneMaximo) {
+            sql.append(" AND Precio BETWEEN ? AND ?");
+            params.add(filtro.precioInferior());
+            params.add(filtro.precioSuperior());
+
+        } else if (tieneMinimo) {
+            sql.append(" AND Precio >= ?");
+            params.add(filtro.precioInferior());
+
+        } else if (tieneMaximo) {
+            sql.append(" AND Precio <= ?");
+            params.add(filtro.precioSuperior());
+        }
+
+        if (filtro.nombre() != null && !filtro.nombre().isEmpty()) {
+            sql.append(" AND Nombre LIKE ?");
+            params.add("%" + filtro.nombre().toLowerCase() + "%");
+        }
+
+        if (filtro.tipo() != null && !filtro.tipo().isEmpty()) {
+            sql.append(" AND Tipo LIKE ?");
+            params.add(filtro.tipo());
+        }
+
+        if (filtro.estado() != null && !filtro.estado().isEmpty()) {
+            sql.append(" AND Estado LIKE ?");
+            params.add(filtro.estado());
+        }
+
+        if ( filtro.orden() != null ){
+            if (filtro.orden().equals("asc")) {
+                sql.append(" ORDER BY Precio ASC");
+            } else {
+                sql.append(" ORDER BY Precio DESC");
+            }
+        }
+
+
+        return jdbcTemplate.queryForList(String.valueOf(sql), Producto.class, params.toArray());
     }
 
     public List<ProductoDTO> mostrar_productos( List<Producto> productEntities ){

@@ -26,7 +26,7 @@ public class HomeController {
     @GetMapping("/")
     public String index(@CookieValue(name = "accessToken", required = false) String accessToken, Model model)
     {
-        if ( !accessToken.isEmpty() )
+        if ( accessToken != null )
         {
             String dni = jwtService.extraerDNI(accessToken);
             Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
