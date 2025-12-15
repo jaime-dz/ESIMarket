@@ -39,6 +39,7 @@ public class SecurityConfig {
                         req.requestMatchers("/",
                                                      "/auth/**",
                                                      "/home/**",
+                                                     "/products/filter",
                                                      "/css/**",
                                                      "/js/**",
                                                      "/Images/**",
