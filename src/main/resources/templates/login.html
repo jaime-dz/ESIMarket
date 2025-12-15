@@ -10,31 +10,43 @@
     </head>
     <body>
         <header class="menu-bar menu-superior">
-            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
-            <h1 style="color:#E57200; font-family: monospace; font-weight: bold;">ESI</h1><h1 style="color:#ffffff; font-family: monospace;">Market</h1>
-            <ul>
-                <li><a th:href="@{/home/}">Inicio</a></li>
-                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+            <div class="header-left">
+                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+            </div>
 
-                <li class="guest-view">
-                    <a th:href="@{/auth/login}">Iniciar sesión</a>
-                </li>
-                <li class="guest-view">
-                    <a th:href="@{/auth/signup}">Registrarse</a>
-                </li>
+            <nav class="header-center">
+                <ul>
+                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                </ul>
+            </nav>
 
-                <li class="user-view" style="display: none;"> <div class="profile-container">
+            <div class="header-right">
+                
+                <div class="guest-view">
+                    <a href="/auth/login">Iniciar sesión</a>
+                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+                </div>
+
+                <div class="user-view" style="display: none;">
+                    
+                    <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
+                    
+                    <div class="profile-container">
                         <div class="coins-info">
-                            <span>150</span> <span>⚙️</span> </div>
+                            <span>150</span> <span>⚙️</span> 
+                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
                         <div class="dropdown-content">
-                            <a th:href="@{/profile/}">Mi Perfil</a>
+                            <a href="/profile/">Mi Perfil</a>
                             <a href="#" id="btn-logout">Cerrar sesión</a>
                         </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+
+            </div>
         </header>
         <main>
             <div class="square">
