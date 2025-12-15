@@ -7,6 +7,7 @@ import es.esimarket.backend.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,14 @@ public class HomeController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping("/")
-    public String index() { return "index"; }
+    public String index(@CookieValue(name = "accessToken", required = false) String accessToken, Model model)
+    {
+        String dni = jwtService.extraerDNI(accessToken);
+        Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
+
+        model.addAttribute("saldo",u.getSaldoMoneda());
+        return "index";
+    }
 
     @GetMapping("/about")
     public String about() { return "about"; }

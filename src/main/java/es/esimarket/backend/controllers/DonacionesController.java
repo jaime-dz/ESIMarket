@@ -29,7 +29,7 @@ public class DonacionesController {
     @Autowired
     private JwtService jwtService;
 
-    @PutMapping("/realizar/{dni}/{dineroDonado}")
+    @PutMapping("/make/{dni}/{dineroDonado}")
     public ResponseEntity<Void> realizarDonacion(@CookieValue(name = "accessToken", required = false) String token, @PathVariable(name="dni") String dniObj , @PathVariable(name="dineroDonado") double dinero) throws CannotMakeDonationError {
 
         Usuario u = usuarioRepository.findByid(dniObj);
@@ -47,7 +47,7 @@ public class DonacionesController {
         if ( d.getNum() == 5 ) throw new CannotMakeDonationError("Este usuario no puede hacer mas donaciones");
 
         d.setNum(d.getNum() + 1);
-        u.setSaldoMoneda(u.getSaldoMoneda() + (long) Math.ceil(dinero));
+        u.setSaldoMoneda(u.getSaldoMoneda() + ((long) Math.ceil(dinero) * 5));
 
         donacionesRepository.save(d);
         usuarioRepository.save(u);
