@@ -135,8 +135,10 @@ public class ProductoService {
         }
 
         if (filtro.tipo() != null && !filtro.tipo().isEmpty()) {
-            sql.append(" AND Tipo LIKE ?");
-            params.add(filtro.tipo());
+            if ( !filtro.tipo().equals("Todo")){
+                sql.append(" AND Tipo LIKE ?");
+                params.add(filtro.tipo());
+            }
         }
 
         if (filtro.estado() != null && !filtro.estado().isEmpty()) {
