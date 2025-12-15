@@ -85,7 +85,7 @@ export async function enviarFormularioComoJSON(evento) {
             }
 
             // c. Redirigimos
-            window.location.href = "/";
+            window.location.href = "/home/";
             
             return; // ¡IMPORTANTE! Salimos de la función aquí.
         }
@@ -161,14 +161,14 @@ function verificarSesionLocal() {
 
         if (path.includes("login") || path.includes("signup") || path.includes("registro") || path.includes("iniciar-sesion")) {
             console.log("Usuario aparentemente logueado. Redirigiendo a home...");
-            window.location.href = "/"; 
+            window.location.href = "/home/"; 
         }
     }
     else
     {
         if (path.includes("profile"))
         {
-            window.location.href="/";
+            window.location.href="/home/";
         }
     }
 }
@@ -201,7 +201,7 @@ export async function cerrarSesion() {
         // al usuario se le cierre la sesión visualmente y se le redirija.
         
         localStorage.removeItem('isLoggedIn'); // Borramos la bandera local
-        window.location.href = "/";            // Redirigimos a la raíz
+        window.location.href = "/home/";            // Redirigimos a la raíz
     }
     localStorage.removeItem('isLoggedIn'); location.reload();
 }
