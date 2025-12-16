@@ -57,6 +57,9 @@ public class Producto{
     @Enumerated(EnumType.STRING)
     private RecepcionAceptada recepcionAceptada;
 
+    @Column(name="disponible")
+    private boolean disponible;
+
     public Producto(){}
 
     public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado,RecepcionAceptada recepcionAceptada) {
@@ -68,6 +71,7 @@ public class Producto{
         this.estado = estado;
         this.pagoAceptado = pagoAceptado;
         this.recepcionAceptada=recepcionAceptada;
+        this.disponible = true;
     }
 
     public int getID(){return ID;}
@@ -97,5 +101,7 @@ public class Producto{
     public RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
     public void setRecepcionAceptada(RecepcionAceptada recepcionAceptada) {this.recepcionAceptada=recepcionAceptada;}
 
+    public boolean isDisponible() {return disponible;}
+    public void setDisponible(boolean disponible) {this.disponible = disponible;}
 
 }

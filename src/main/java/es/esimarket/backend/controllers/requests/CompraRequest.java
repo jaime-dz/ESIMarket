@@ -6,5 +6,6 @@ public record CompraRequest (
         int idProd,
         Producto.PagoAceptado tipoPago,
         Producto.RecepcionAceptada recepcion,
+        Long horas,
         int idProdTrueque
 ) {}
