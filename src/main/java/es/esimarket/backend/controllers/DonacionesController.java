@@ -47,7 +47,7 @@ public class DonacionesController {
         if ( d.getNum() == 5 ) throw new CannotMakeDonationError("Este usuario no puede hacer mas donaciones");
 
         d.setNum(d.getNum() + 1);
-        u.setSaldoMoneda(u.getSaldoMoneda() + ((long) Math.ceil(dinero) * 5));
+        u.setSaldoMoneda(u.getSaldoMoneda() + ((long) Math.ceil(dinero) * 10));
 
         donacionesRepository.save(d);
         usuarioRepository.save(u);
