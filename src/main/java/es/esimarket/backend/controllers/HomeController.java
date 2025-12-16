@@ -26,15 +26,29 @@ public class HomeController {
     @GetMapping("/")
     public String index(@CookieValue(name = "accessToken", required = false) String accessToken, Model model)
     {
-        String dni = jwtService.extraerDNI(accessToken);
-        Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
+        if ( accessToken != null )
+        {
+            String dni = jwtService.extraerDNI(accessToken);
+            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
 
-        model.addAttribute("saldo",u.getSaldoMoneda());
+            model.addAttribute("profile",u);
+        }
+
         return "index";
     }
 
     @GetMapping("/about")
-    public String about() { return "about"; }
+    public String about(@CookieValue(name = "accessToken", required = false) String accessToken, Model model) 
+    { 
+        if ( accessToken != null )
+        {
+            String dni = jwtService.extraerDNI(accessToken);
+            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
+
+            model.addAttribute("profile",u);
+        }
+        return "about"; 
+    }
 
     @GetMapping("/PrivacyAndPolicy")
     public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad.pdf"; }

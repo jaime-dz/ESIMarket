@@ -1,4 +1,5 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.controllers.requests.FiltroRequest;
 import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.exceptions.CannotCompleteActionError;
@@ -41,9 +42,9 @@ public class ProductoController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestParam String json)
+    public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestBody FiltroRequest request)
     {
-        List<Producto> productEntities = productoService.FiltroProductosGenerico(json);
+        List<Producto> productEntities = productoService.FiltroProductosGenerico(request);
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
