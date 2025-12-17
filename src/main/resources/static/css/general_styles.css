@@ -224,7 +224,8 @@ header{
 
 /*Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto*/
 button[type="submit"],
-.btn-cancel {
+.btn-cancel,
+.btn-reset {
     border-radius: 20px;
     color: #ffffff;
     padding: 15px;
@@ -301,7 +302,8 @@ main {
 #login input[type="password"],
 #signup select,
 #profile-edit select,
-#profile-edit input[type="text"] {
+#profile-edit input[type="text"],
+#profile-edit input[type="email"] {
     width:100%;
     display:block;
     padding: 12px;

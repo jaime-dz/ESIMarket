@@ -13,6 +13,7 @@ public interface ProductMapper {
     Producto toEntity(ProductoDTO productoDTO);
 
     @Mapping(source = "fp.foto", target = "foto")
-    @Mapping(source = "u.nombre", target = "NombreVendedor")
+    @Mapping(source = "u.nombre", target = "nombreVendedor")
+    @Mapping(source = "producto.nombre", target = "nombre")
     ProductoDTO toDTO(Producto producto , FotoProd fp, Usuario u);
 }

@@ -35,7 +35,7 @@ public class ProductoController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping("/")
+    @GetMapping("/")
     public ResponseEntity<List<ProductoDTO>> getProductos() {
 
         List<Producto> productEntities = productoRepository.findAll();

@@ -33,9 +33,6 @@
                     <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
                     
                     <div class="profile-container">
-                        <div class="coins-info">
-                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
-                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
                         <div class="dropdown-content">
@@ -50,10 +47,10 @@
         <main>
             <h1>Editar Perfil</h1>
             <div id="profile-edit" class="square">
-                <form id="edit" method="PUT">
+                <form id="edit-form" method="PUT">
                     <div class="nombre">
                         <label for="nombre">Nombre</label><br>
-                        <input id="nombre" type="text" name="name" th:placeholder="${profile.nombre}">
+                        <input id="nombre" type="text" name="nombre" th:placeholder="${profile.nombre}">
                     </div>
                     <br>
                     <div class="apellidos">
@@ -89,7 +86,7 @@
                         <button type="reset">Resetear</button>
                     </div>
                     <div class="btn-cancel">
-                        <button type="button" onclick="window.location.href='/profile'">Cancelar</button>
+                        <button type="button" onclick="window.location.href='/profile/'">Cancelar</button>
                     </div>
                 </form>
             </div>
