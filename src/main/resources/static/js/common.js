@@ -239,12 +239,12 @@ export function displayProductsItems(products, container) {
             : ''; 
 
         return `
-            <div class="product-card" data-category="${item.tipo}" data-seller="${item.vendedor}">
+            <div class="product-card" data-category="${item.tipo}" data-seller="${item.nombreVendedor}">
                 <img src="${imagenFinal}" alt="${item.nombre}" class="product-image">
                 <h4 class="product-name">${item.nombre}</h4>
                 <p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>
                 ${htmlEstado}
-                <p class="product-seller">Vendido por: ${item.vendedor}</p>
+                <p class="product-seller">Vendido por: ${item.nombreVendedor}</p>
             </div>
         `;
     });

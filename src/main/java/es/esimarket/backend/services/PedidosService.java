@@ -95,7 +95,7 @@ public class PedidosService{
 
         pedidosRepository.save(ped);
 
-        if ( c.getRecepcion() == Producto.RecepcionAceptada.EnMano && c.getTipoPago() == Producto.PagoAceptado.Trueque ){
+        if ( c.getRecepcion() == Producto.RecepcionAceptada.enMano && c.getTipoPago() == Producto.PagoAceptado.Trueque ){
             Producto pT = productoRepository.findById(c.getIdProdTrueque()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
             eliminarProd(pT);
         }

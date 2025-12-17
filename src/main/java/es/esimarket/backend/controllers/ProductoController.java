@@ -6,6 +6,7 @@ import es.esimarket.backend.exceptions.CannotCompleteActionError;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.ProductoService;
+import org.hibernate.engine.transaction.jta.platform.internal.SynchronizationRegistryBasedSynchronizationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -47,6 +48,11 @@ public class ProductoController {
     {
         List<Producto> productEntities = productoService.FiltroProductosGenerico(request);
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
+    }
+
+    @GetMapping("/create")
+    public String createProduct(){
+        return "product-create";
     }
 
     @PostMapping("/create")

@@ -107,7 +107,7 @@ public class CompraService {
         {
             pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
 
-        }else if ( request.recepcion()==Producto.RecepcionAceptada.EnMano){
+        }else if ( request.recepcion()==Producto.RecepcionAceptada.enMano){
 
             pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
         }else throw new CannotCompletePurchaseError("Tipo de recepcion no encontrado");

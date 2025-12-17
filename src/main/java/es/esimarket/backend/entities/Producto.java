@@ -21,7 +21,7 @@ public class Producto{
     }
 
     public enum RecepcionAceptada{
-        EnMano,
+        enMano,
         enTaquilla
     }
 
