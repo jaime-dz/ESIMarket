@@ -203,7 +203,6 @@ export async function cerrarSesion() {
         localStorage.removeItem('isLoggedIn'); // Borramos la bandera local
         window.location.href = "/home/";            // Redirigimos a la raíz
     }
-    localStorage.removeItem('isLoggedIn'); location.reload();
 }
 
 function ocultarEnlacePaginaActual() {

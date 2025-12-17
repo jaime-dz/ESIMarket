@@ -1,1 +1,118 @@
 <!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iniciar sesión</title>
+        <link rel="stylesheet" href="/css/general_styles.css">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <header class="menu-bar menu-superior">
+            <div class="header-left">
+                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+            </div>
+
+            <nav class="header-center">
+                <ul>
+                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                
+                <div class="guest-view">
+                    <a href="/auth/login">Iniciar sesión</a>
+                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+                </div>
+
+                <div class="user-view" style="display: none;">
+                    
+                    <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
+                    
+                    <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
+                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        
+                        <div class="dropdown-content">
+                            <a href="/profile/">Mi Perfil</a>
+                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+        <main>
+            <h1>Editar Perfil</h1>
+            <div id="profile-edit" class="square">
+                <form id="edit" method="PUT">
+                    <div class="nombre">
+                        <label for="nombre">Nombre</label><br>
+                        <input id="nombre" type="text" name="name" th:placeholder="${profile.nombre}">
+                    </div>
+                    <br>
+                    <div class="apellidos">
+                        <label for="apellidos">Apellidos</label><br>
+                        <input id="apellidos" type="text" name="apellidos" th:placeholder="${profile.apellidos}">
+                    </div>
+                    <br>
+                    <div class="correo">
+                        <label for="correo">Correo electrónico</label><br>
+                        <input autofocus id="correo" type="email" name="email" th:placeholder="${profile.email}">
+                    </div>
+                    <br>
+                    <div class="carrera">
+                        <label for="carrera">Carrera</label><br>
+                        <select name="carrera" id="carrera">
+                            <option value="" selected disabled th:text="${'Actual: '+profile.carrera}">--- Selecciona tu carrera ---</option>
+                            <option value="GIA">Ingeniería Aeroespacial (GIA)</option>
+                            <option value="GIDIDP">Ingeniería en Diseño Industrial y Desarrollo del Producto (GIDIDP)</option>
+                            <option value="GIE">Ingeniería Eléctrica (GIE)</option>
+                            <option value="GIEI">Ingeniería Electrónica Industrial (GIEI)</option>
+                            <option value="GII">Ingeniería Informática (GII)</option>
+                            <option value="GIM">Ingeniería Mecánica (GIM)</option>
+                            <option value="GITI">Ingeniería en Tecnologías Industriales (GITI)</option>
+                            <option value="GIEyGIEI">Doble Grado en Ingeniería Eléctrica e Ingeniería Electrónica Industrial (GIE+GIEI)</option>                            <option value="GIMyGIE">Doble Grado en Ingeniería Mecánica e Ingeniería Eléctrica (GIM+GIE)</option>
+                            <option value="GIMyGIDIDP">Doble Grado en Ingeniería Mecánica e Ingeniería en Diseño Industrial y Desarrollo del Producto (GIM+GIDIDP)</option>
+                            <option value="GMyGII">Doble Grado en Matemáticas e Ingeniería Informática (GM+GII)</option>
+                        </select>
+                    </div>
+                    <div class="submit-button">
+                        <button type="submit">Aplicar</button>
+                    </div>
+                    <div class="btn-reset">
+                        <button type="reset">Resetear</button>
+                    </div>
+                    <div class="btn-cancel">
+                        <button type="button" onclick="window.location.href='/profile'">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <footer class="menu-bar menu-inferior">
+            <ul>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li class="guest-view">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li class="guest-view">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+
+                <li class="sn">
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+                </li>
+            </ul>
+        </footer>
+        <script src="/js/common.js" type="module"></script>
+        <script src="/js/profile.js" type="module"></script>>
+    </body>
+</html>
