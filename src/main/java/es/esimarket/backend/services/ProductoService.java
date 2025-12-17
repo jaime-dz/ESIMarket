@@ -29,6 +29,9 @@ public class ProductoService {
     private FotoProdRepository fotoProdRepository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
     private ProductMapper productMapper;
 
     @Autowired
@@ -165,7 +168,8 @@ public class ProductoService {
         for( Producto p : productEntities){
 
             FotoProd fp = fotoProdRepository.findByIdProd(p.getID());
-            productDTOs.add(productMapper.toDTO(p,fp));
+            Usuario u = usuarioRepository.findByid(p.getuDNI_Vendedor());
+            productDTOs.add(productMapper.toDTO(p,fp,u));
         }
 
         return productDTOs;

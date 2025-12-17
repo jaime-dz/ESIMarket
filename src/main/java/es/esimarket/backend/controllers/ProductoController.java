@@ -55,7 +55,7 @@ public class ProductoController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
 
-        return productoService.nuevoProducto(dni,request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
+        return productoService.nuevoProducto(dni,request.precio(),request.descripcion(),request.nombre(),request.tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
     }
 
     @DeleteMapping("/delete/{idProd}")
