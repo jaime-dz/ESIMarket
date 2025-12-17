@@ -38,6 +38,9 @@ public class ProfileController {
 
     @GetMapping("/edit")
     public String editProfile(Model model, @CookieValue(name = "accessToken", required = false) String accessToken) {
+
+        model.addAttribute("profile", new ProfileResponse(u.getNombre(),u.getApellidos(),u.getId(),u.getCorreo(),u.getCarrera(),u.getSaldoMoneda()));
+
         return "profile-edit";
     }
 
