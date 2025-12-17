@@ -1,13 +1,25 @@
-document.addEventListener("DOMContentLoaded", function() {
+/* ==============================================
+   common.js - Lógica Global y de Utilidad
+   ============================================== */
 
-    // 1. Verificamos el estado visual y redirecciones basado en LocalStorage
+document.addEventListener("DOMContentLoaded", async function() {
+
+    // 1. GESTIÓN DE SESIÓN Y NAVEGACIÓN
     verificarSesionLocal();
     if (typeof actualizarBarraNavegacion === 'function') {
         actualizarBarraNavegacion();
     }
 
-    // 2. NUEVO: Gestionar visibilidad por Página Actual (Footer)
-    ocultarEnlacePaginaActual();
+    // 2. LOGOUT (Si existe el botón)
+    const botonLogout = document.getElementById('btn-logout');
+    if (botonLogout) {
+        botonLogout.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            cerrarSesion();
+        });
+    }
+
+    // 3. BUSCADOR (Si existen los elementos)
     const inputBusqueda = document.getElementById("search-input");
     const botonBorrar = document.getElementById("clearBtn");
 
@@ -27,19 +39,36 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-        // Dentro del evento DOMContentLoaded en common.js
-    const botonLogout = document.getElementById('btn-logout');
-    if (botonLogout) {
-        botonLogout.addEventListener('click', (e) => {
-            e.preventDefault(); // Evita comportamientos por defecto si es un link <a>
-            cerrarSesion();
-        });
+    // 4. GESTIÓN MENU FOOTER
+    ocultarEnlacePaginaActual();
+
+    // 5. CARGA DE PRODUCTOS (Solo si existe el contenedor .product-grid-container)
+    const productContainer = document.querySelector('.product-grid-container');
+    
+    if (productContainer) {
+        try {
+            console.log("Iniciando carga de productos...");
+            const response = await fetch('/products/'); 
+            
+            if(response.ok) {
+                const products = await response.json();
+                displayProductsItems(products, productContainer);
+            } else {
+                console.error("Error al cargar productos (Status):", response.status);
+                productContainer.innerHTML = "<p>No se pudieron cargar los productos.</p>";
+            }
+        } catch (error) {
+            console.error("Error de conexión al cargar productos:", error);
+            productContainer.innerHTML = "<p>Error de conexión con el servidor.</p>";
+        }
     }
 });
 
-/* * Esta función maneja TANTO el Login COMO el Registro.
- * Toma la URL del atributo 'action' del HTML (<form action="/auth/login"> o <form action="/auth/signup">)
- */
+
+/* ==============================================
+   FUNCIONES EXPORTABLES (Para usar en otros JS)
+   ============================================== */
+
 export async function enviarFormularioComoJSON(evento) {
     evento.preventDefault();
 
@@ -47,7 +76,6 @@ export async function enviarFormularioComoJSON(evento) {
     const url = form.action; 
     const method = form.method; 
 
-    // Limpiamos mensajes previos
     const divMensaje = document.getElementById('signup-message') || document.getElementById('login-message');
     if (divMensaje) divMensaje.style.display = 'none';
 
@@ -65,48 +93,28 @@ export async function enviarFormularioComoJSON(evento) {
             body: jsonString,
             credentials: 'include' 
         });
-
-        /* --------------------------------------------------------
-           ZONA DE SEGURIDAD: LECTURA DE RESPUESTA
-           -------------------------------------------------------- */
         
-        // 1. CASO DE ÉXITO (Status 200-299)
+        // 1. ÉXITO
         if (respuesta.ok) {
             console.log('Solicitud exitosa. Status:', respuesta.status);
-
-            // NO intentamos leer JSON aquí porque tu backend devuelve Void (vacío).
-            
-            // a. Guardamos sesión
             localStorage.setItem('isLoggedIn', 'true');
             
-            // b. Actualizamos UI (si tienes la función importada o disponible)
             if (typeof actualizarBarraNavegacion === 'function') {
                 actualizarBarraNavegacion();
             }
-
-            // c. Redirigimos
             window.location.href = "/home/";
-            
-            return; // ¡IMPORTANTE! Salimos de la función aquí.
+            return;
         }
 
-        /* --------------------------------------------------------
-           2. CASO DE ERROR (Status 400, 401, 500...)
-           -------------------------------------------------------- */
-        
-        // Aquí estaba el problema antes. Si el error venía vacío, .json() fallaba.
-        // Ahora lo protegemos:
+        // 2. ERROR
         let mensajeError = "Error al procesar la solicitud.";
-
         try {
-            // Intentamos leer el cuerpo del error con cuidado
             const errorData = await respuesta.json();
             if (errorData && errorData.message) {
                 mensajeError = errorData.message;
             }
         } catch (jsonError) {
-            // Si entra aquí, es que el servidor devolvió un error SIN cuerpo JSON (ej: un 401 vacío).
-            console.warn("El servidor devolvió error sin JSON detallado.");
+            console.warn("El servidor devolvió error sin JSON.");
             if (respuesta.status === 401 || respuesta.status === 403) {
                 mensajeError = "Credenciales incorrectas o acceso denegado.";
             } else {
@@ -114,9 +122,7 @@ export async function enviarFormularioComoJSON(evento) {
             }
         }
 
-        // Mostramos el mensaje final en pantalla
         console.error('Fallo en login/registro:', mensajeError);
-        
         if (divMensaje) {
             divMensaje.textContent = mensajeError;
             divMensaje.style.color = 'red';
@@ -124,7 +130,6 @@ export async function enviarFormularioComoJSON(evento) {
         }
 
     } catch (error) {
-        // Este catch captura errores de RED (servidor apagado, sin internet)
         console.error('Error de red crítico:', error);
         if (divMensaje) {
             divMensaje.textContent = 'Error de conexión. Verifica que el servidor esté encendido.';
@@ -134,11 +139,33 @@ export async function enviarFormularioComoJSON(evento) {
     }
 }
 
+export async function cerrarSesion() {
+    try {
+        const respuesta = await fetch('/auth/logout', {
+            method: 'DELETE', 
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+
+        if (respuesta.ok) {
+            console.log("Sesión cerrada en servidor.");
+        }
+    } catch (error) {
+        console.error("Error al intentar cerrar sesión:", error);
+    } finally {
+        localStorage.removeItem('isLoggedIn'); 
+        window.location.href = "/home/";
+    }
+}
+
+
+/* ==============================================
+   FUNCIONES INTERNAS (Helpers)
+   ============================================== */
+
 function actualizarBarraNavegacion() {
     const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
-
     const guestElements = document.querySelectorAll('.guest-view');
-
     const userElements = document.querySelectorAll('.user-view');
 
     if (estaLogueado) {
@@ -151,86 +178,76 @@ function actualizarBarraNavegacion() {
 }
 
 function verificarSesionLocal() {
-
     const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
+    const path = window.location.pathname.toLowerCase();
 
     actualizarBarraNavegacion();
 
     if (estaLogueado) {
-        const path = window.location.pathname.toLowerCase();
-
         if (path.includes("login") || path.includes("signup") || path.includes("registro") || path.includes("iniciar-sesion")) {
-            console.log("Usuario aparentemente logueado. Redirigiendo a home...");
+            console.log("Usuario logueado intentando acceder a auth. Redirigiendo...");
             window.location.href = "/home/"; 
         }
-    }
-    else
-    {
-        if (path.includes("profile"))
-        {
+    } else {
+        if (path.includes("profile")) {
             window.location.href="/home/";
         }
     }
 }
 
-/* Función para cerrar sesión en Backend y Frontend */
-export async function cerrarSesion() {
-    try {
-        // 1. Petición al Backend para destruir la cookie de sesión
-        // Ajusta el método ('POST' o 'GET') según lo requiera tu backend.
-        // Lo estándar suele ser POST.
-        const respuesta = await fetch('/auth/logout', {
-            method: 'DELETE', 
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include' // ¡CRUCIAL! Para enviar la cookie que se va a borrar
-        });
-
-        if (respuesta.ok) {
-            console.log("Sesión cerrada en el servidor correctamente.");
-        } else {
-            console.warn("El servidor respondió error al logout, pero cerraremos localmente.");
-        }
-
-    } catch (error) {
-        console.error("Error de red al intentar cerrar sesión:", error);
-    } finally {
-        // 2. Limpieza Local y Redirección
-        // Usamos 'finally' para asegurar que, aunque falle el servidor o la red,
-        // al usuario se le cierre la sesión visualmente y se le redirija.
-        
-        localStorage.removeItem('isLoggedIn'); // Borramos la bandera local
-        window.location.href = "/home/";            // Redirigimos a la raíz
-    }
-}
-
 function ocultarEnlacePaginaActual() {
-    // 1. Obtenemos la ruta actual (ej: "/home/" o "/home/about")
     const currentPath = window.location.pathname;
-
-    // 2. Seleccionamos todos los enlaces del menú inferior
     const footerLinks = document.querySelectorAll('.menu-inferior ul li a');
 
     footerLinks.forEach(link => {
-        // Ignoramos los botones de redes sociales (que tienen imágenes dentro)
         if (link.querySelector('img')) return;
-
-        // 3. Obtenemos la ruta del enlace limpio (sin dominio)
-        // Usamos new URL para asegurar que comparamos rutas absolutas
         const linkPath = new URL(link.href, window.location.origin).pathname;
-
-        // 4. Normalizamos (quitamos la barra final para comparar mejor)
-        // Ejemplo: "/home/" se convierte en "/home"
         const cleanCurrent = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
         const cleanLink = linkPath.endsWith('/') ? linkPath.slice(0, -1) : linkPath;
 
-        // Comparamos. También manejamos el caso especial de la raíz "/"
         if (cleanCurrent === cleanLink || (cleanCurrent === "" && cleanLink === "/home")) {
-            // Si coinciden, ocultamos el elemento de la lista (LI) entero
             if (link.parentElement.tagName === 'LI') {
                 link.parentElement.style.display = 'none';
             }
         }
     });
+}
+
+// Función encargada de pintar el HTML de los productos
+export function displayProductsItems(products, container) {
+    if (!products || products.length === 0) {
+        container.innerHTML = "<p>No hay productos disponibles.</p>";
+        return;
+    }
+
+    const displayProducts = products.map(function(item) {
+        // A. DETECTAR TIPO
+        const esServicio = item.tipo && item.tipo.toLowerCase() === 'servicio';
+
+        // B. LÓGICA DE FOTO
+        let imagenFinal = item.foto;
+        if (!imagenFinal) {
+            imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
+        }
+
+        // C. SUFIJO DE PRECIO
+        const sufijoPrecio = esServicio ? '/h' : '';
+
+        // D. LÓGICA DE ESTADO
+        const htmlEstado = (!esServicio && item.estado) 
+            ? `<p class="product-state">${item.estado}</p>` 
+            : ''; 
+
+        return `
+            <div class="product-card" data-category="${item.tipo}" data-seller="${item.nombreVendedor}">
+                <img src="${imagenFinal}" alt="${item.nombre}" class="product-image">
+                <h4 class="product-name">${item.nombre}</h4>
+                <p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>
+                ${htmlEstado}
+                <p class="product-seller">Vendido por: ${item.nombreVendedor}</p>
+            </div>
+        `;
+    });
+
+    container.innerHTML = displayProducts.join("");
 }

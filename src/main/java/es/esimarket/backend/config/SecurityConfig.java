@@ -40,6 +40,7 @@ public class SecurityConfig {
                                                      "/auth/**",
                                                      "/home/**",
                                                      "/products/filter",
+                                                     "/products/",
                                                      "/error",
                                                      "/css/**",
                                                      "/js/**",

@@ -33,9 +33,6 @@
                     <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
                     
                     <div class="profile-container">
-                        <div class="coins-info">
-                            <span th:text="${saldo}"></span> <span>⚙️</span> 
-                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
                         <div class="dropdown-content">
@@ -57,14 +54,14 @@
                 <p>Nombre:<span th:text="${profile.nombre}"></span></p><br>
                 <p>Apellidos:<span th:text="${profile.apellidos}"></span></p><br>
                 <p>Usuario:<span th:text="${profile.usuario}"></span></p><br>
-                <p>Correo Elenctrónico:<span th:text="${profile.email}"></span></p><br>
+                <p>Correo Electrónico:<span th:text="${profile.email}"></span></p><br>
                 <p>Carrera:<span th:text="${profile.carrera}"></span></p><br>
                 <p>Saldo:<span th:text="${profile.saldo + ' ⚙️'}"></span></p><br>
-
+                <div class="submit-button">
+                    <button type="button" id="edit-profile" onclick="window.location.href='/profile/edit'">Editar Perfil</button>
+                </div><br><br>
             </div>
-            <div class="submit-button">
-                <button type="submit" id="edit-profile" onclick="window.location.href='/profile/edit'">Editar Perfil</button>
-            </div><br><br>
+            
         </main>
         
         
