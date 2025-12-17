@@ -223,12 +223,34 @@ header{
 }
 
 /*Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto*/
-button[type="submit"]{
-    background-color:#E57200;
+button[type="submit"],
+.btn-cancel {
     border-radius: 20px;
-    color:#ffffff; /*color de la fuente, que se me olvida*/
+    color: #ffffff;
     padding: 15px;
-    border: solid #E57200;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+}
+
+
+button[type="submit"] {
+    background-color: #E57200;
+    border: 1px solid #E57200;
+}
+
+
+.btn-cancel {
+    background-color: #6c757d; /* Gris estándar (o usa #dc3545 para rojo) */
+    border: 1px solid #6c757d;
+    margin-left: 10px; /* Separación entre botones */
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
 }
 
 html {
@@ -277,7 +299,9 @@ main {
 #signup input[type="password"],
 #login input[type="text"],
 #login input[type="password"],
-#signup select {
+#signup select,
+#profile-edit select,
+#profile-edit input[type="text"] {
     width:100%;
     display:block;
     padding: 12px;
