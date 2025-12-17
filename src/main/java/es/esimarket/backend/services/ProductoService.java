@@ -11,6 +11,7 @@ import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
 import es.esimarket.backend.entities.Producto;
@@ -158,7 +159,7 @@ public class ProductoService {
         }
 
 
-        return jdbcTemplate.queryForList(String.valueOf(sql), Producto.class, params.toArray());
+        return jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Producto.class), params.toArray());
     }
 
     public List<ProductoDTO> mostrar_productos( List<Producto> productEntities ){
