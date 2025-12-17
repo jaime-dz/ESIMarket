@@ -73,15 +73,21 @@ public class CompraService {
 
             if ( p.getTipo().equals("Objeto")){
                 Pedidos pe = getPedidos(request, p, c);
-
                 pedidosRepository.save(pe);
+
+                uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
+                uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
             }else if ( p.getTipo().equals("Servicio")){
 
                 servicioService.CrearServicioPendiente(p.getID(),uComprador.getId());
+
+                uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  (p.getPrecio()*request.horas()));
+                uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  (p.getPrecio()*request.horas()));
             }else throw new CannotCompletePurchaseError("Tipo de producto invalido");
 
-            uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
-            uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
+            p.setDisponible(false);
+            productoRepository.save(p);
+
             usuarioRepository.save(uComprador);
             usuarioRepository.save(uVendedor);
 
