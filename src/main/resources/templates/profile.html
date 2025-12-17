@@ -62,7 +62,9 @@
                 <p>Saldo:<span th:text="${profile.saldo + ' ⚙️'}"></span></p><br>
 
             </div>
-            <button id="edit-profile"></button>
+            <div class="submit-button">
+                <button type="submit" id="edit-profile" onclick="window.location.href='/profile/edit'">Editar Perfil</button>
+            </div><br><br>
         </main>
         
         

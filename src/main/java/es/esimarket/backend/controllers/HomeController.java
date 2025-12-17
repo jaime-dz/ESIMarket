@@ -6,6 +6,7 @@ import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,15 +25,14 @@ public class HomeController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping("/")
-    public String index(@CookieValue(name = "accessToken", required = false) String accessToken, Model model)
+    public String index(Authentication authentication, Model model)
     {
-        if ( accessToken != null )
-        {
-            String dni = jwtService.extraerDNI(accessToken);
-            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
+        
+        String dni = authentication.getName();
+        Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
 
-            model.addAttribute("profile",u);
-        }
+        model.addAttribute("profile",u);
+
 
         return "index";
     }
