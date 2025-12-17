@@ -82,11 +82,8 @@ public class ChatService{
 
     }
 
-    public List<ChatDTO> getChatsUsu(String accessToken) throws CannotCreateChatError{
+    public List<ChatDTO> getChatsUsu(String dni) throws CannotCreateChatError{
         List<ChatDTO> chatDTOs = new ArrayList<>();
-
-        String dni = jwtService.extraerDNI(accessToken);
-
         List<Chat> chatEntities = chatRepository.findByUDNIcompradorOrUDNIvendedor(dni,dni);
 
         if (chatEntities.isEmpty()) throw new CannotCreateChatError("No tienes ningun chat iniciado");

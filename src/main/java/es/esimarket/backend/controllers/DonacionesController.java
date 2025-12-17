@@ -8,6 +8,8 @@ import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
@@ -30,11 +32,13 @@ public class DonacionesController {
     private JwtService jwtService;
 
     @PutMapping("/make/{dni}/{dineroDonado}")
-    public ResponseEntity<Void> realizarDonacion(@CookieValue(name = "accessToken", required = false) String token, @PathVariable(name="dni") String dniObj , @PathVariable(name="dineroDonado") double dinero) throws CannotMakeDonationError {
+    public ResponseEntity<Void> realizarDonacion( @PathVariable(name="dni") String dniObj , @PathVariable(name="dineroDonado") double dinero) throws CannotMakeDonationError {
 
         Usuario u = usuarioRepository.findByid(dniObj);
 
-        String dniResp = jwtService.extraerDNI(token);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dniResp = auth.getName();
+
         UserDetails userD = userDetailsService.loadUserByUsername(dniResp);
 
         if ( userD.getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN")) )

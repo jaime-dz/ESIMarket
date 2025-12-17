@@ -7,6 +7,8 @@ import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,10 @@ public class ProfileController {
     private JwtService jwtService;
 
     @GetMapping("/")
-    public String getProfile( Model model, @CookieValue(name = "accessToken", required = false) String accessToken ) throws CannotCreateUserError {
-        String dni = jwtService.extraerDNI( accessToken );
+    public String getProfile( Model model) throws CannotCreateUserError {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
         Usuario u = usuarioRepository.findByid(dni);
 
         if ( u == null )  throw new CannotCreateUserError("Usuario no encontrado");
@@ -37,9 +41,10 @@ public class ProfileController {
     }
 
     @GetMapping("/edit")
-    public String editProfile(Model model, @CookieValue(name = "accessToken", required = false) String accessToken) {
+    public String editProfile(Model model) {
 
-        String dni = jwtService.extraerDNI( accessToken );
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
         Usuario u = usuarioRepository.findByid(dni);
 
         model.addAttribute("profile", new ProfileResponse(u.getNombre(),u.getApellidos(),u.getId(),u.getCorreo(),u.getCarrera(),u.getSaldoMoneda()));
@@ -48,9 +53,11 @@ public class ProfileController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<Void> modProfile(@RequestBody ProfileResponse p , @CookieValue(name = "accessToken", required = false) String Token ) {
+    public ResponseEntity<Void> modProfile(@RequestBody ProfileResponse p ) {
 
-        profileService.editarUsuario(Token, p);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
+        profileService.editarUsuario(uDNI, p);
         return ResponseEntity.ok().build();
     }
 
