@@ -6,6 +6,8 @@ import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.ServicioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,19 +33,27 @@ public class ServicioController{
     @PatchMapping("/setdate")
     public ResponseEntity<String> ModificarFecha(int idProd,String DNIcomprador,LocalDateTime fecha)
     {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
+        // AÑADIR COMPROBACION DE USUARIO
         return ResponseEntity.ok(servicioService.modificarFecha(idProd,DNIcomprador,fecha));
     }
 
     @PatchMapping("/end")
     public ResponseEntity<String> FinalizarServicio(int idProd, String DNIcomprador)
     {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
+        // AÑADIR COMPROBACION DE USUARIO
         return ResponseEntity.ok(servicioService.finalizarServicio(idProd,DNIcomprador));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<Servicio>> GetServiciosUsuario(@CookieValue(name = "accessToken", required = false) String token)
+    public ResponseEntity<List<Servicio>> GetServiciosUsuario()
     {
-        String dni = jwtService.extraerDNI(token);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+        // AÑADIR COMPROBACION DE USUARIO
         return ResponseEntity.ok(servicioService.mostrar_servicios_usuario(dni));
     }
 }

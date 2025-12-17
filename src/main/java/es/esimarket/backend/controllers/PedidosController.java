@@ -3,6 +3,8 @@ package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.TaquillaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,30 +35,34 @@ public class PedidosController{
     }
 
     @GetMapping("/byseller")
-    public ResponseEntity<List<PedidosDTO>> getPedidosVendedor(@CookieValue(name = "accessToken", required = false) String accessToken)
+    public ResponseEntity<List<PedidosDTO>> getPedidosVendedor()
     {
-        String uDNI = jwtservice.extraerDNI(accessToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
         return ResponseEntity.ok(pedidosService.mostrar_pedidos_vendedor(uDNI));
     }
 
     @GetMapping("/bypurchaser")
-    public ResponseEntity<List<PedidosDTO>> getPedidosComprador(@CookieValue(name = "accessToken", required = false) String accessToken)
+    public ResponseEntity<List<PedidosDTO>> getPedidosComprador()
     {
-        String uDNI = jwtservice.extraerDNI(accessToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
         return ResponseEntity.ok(pedidosService.mostrar_pedidos_comprador(uDNI));
     }
 
     @PutMapping("/deliver/{IdPedido}/{NTaquilla}")
-    public ResponseEntity<String> patchPedidoVendedor(@CookieValue(name = "accessToken", required = false) String accessToken,@PathVariable(name = "IdPedido") int IdPedido,@PathVariable(name = "NTaquilla") int NTaquilla)
+    public ResponseEntity<String> patchPedidoVendedor( @PathVariable(name = "IdPedido") int IdPedido,@PathVariable(name = "NTaquilla") int NTaquilla)
     {
-        String dni = jwtservice.extraerDNI(accessToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
         return ResponseEntity.ok(pedidosService.entregarPedido(IdPedido,NTaquilla,dni));  //mirar si convviene mandarle el udni aunque no lo uses
     }
 
     @PutMapping("/pickup/{IdPedido}")
-    public ResponseEntity<String> patchPedidoComprador(@CookieValue(name = "accessToken", required = false) String accessToken,@PathVariable(name = "IdPedido") int IdPedido)
+    public ResponseEntity<String> patchPedidoComprador( @PathVariable(name = "IdPedido") int IdPedido)
     {
-        String dni = jwtservice.extraerDNI(accessToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
         return ResponseEntity.ok(pedidosService.recogerPedido(IdPedido,dni));  //mirar si hay que enviar el udni aunque no lo uses
     }
 

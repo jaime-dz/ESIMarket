@@ -51,25 +51,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-
-        if (path.equals("/")
-		        || path.startsWith("/auth")
-                || path.startsWith("/home")
-                || path.equals("/error")
-                || path.equals("/products/filter")
-                || path.startsWith("/css")
-                || path.startsWith("/js")
-                || path.startsWith("/Images")
-                || path.endsWith(".pdf")) {
-            filterChain.doFilter( request, response);
-            return;
-        }
-
         String accessToken = getCookieValue(request, "accessToken");
         String refreshToken = getCookieValue(request, "refreshToken");
 
 
         if (accessToken == null && refreshToken == null) {
+            if (esRutaPublica(path)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             redirigirAlLogin(response);
             return;
         }
@@ -173,6 +163,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 userDetails, null, userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+    private boolean esRutaPublica(String path) {
+        return path.equals("/")
+                || path.startsWith("/auth")
+                || path.startsWith("/home")
+                || path.equals("/error")
+                || path.equals("/products/filter")
+                || path.startsWith("/css")
+                || path.startsWith("/js")
+                || path.startsWith("/Images")
+                || path.endsWith(".pdf");
     }
 
 }

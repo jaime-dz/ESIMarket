@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import es.esimarket.backend.repositories.ChatRepository;
@@ -52,11 +54,12 @@ public class MensajeController
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes(@CookieValue(name = "accessToken", required = false) String token, @RequestBody final MessageRequest Mrequest){
+    public ResponseEntity<HashMap<String, String>> postMensajes( @RequestBody final MessageRequest Mrequest){
 
         HashMap<String, String> response = new HashMap<>();
 
-        String dni = jwtService.extraerDNI(token);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
 
         String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
 
