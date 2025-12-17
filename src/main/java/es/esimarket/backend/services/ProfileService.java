@@ -38,6 +38,8 @@ public class ProfileService {
             u.setCarrera(request.getCarrera());
         }
 
+        usuarioRepository.save(u);
+
     }
 
 }
