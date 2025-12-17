@@ -35,14 +35,14 @@ public class ProductoController {
     @Autowired
     private JwtService jwtService;
 
-    @GetMapping("/")
+    @PostMapping("/")
     public ResponseEntity<List<ProductoDTO>> getProductos() {
 
         List<Producto> productEntities = productoRepository.findAll();
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestBody FiltroRequest request)
     {
         List<Producto> productEntities = productoService.FiltroProductosGenerico(request);
