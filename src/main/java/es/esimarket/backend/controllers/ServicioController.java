@@ -1,6 +1,6 @@
 package es.esimarket.backend.controllers;
 
-import es.esimarket.backend.entities.Servicio;
+import es.esimarket.backend.dtos.ServicioDTO;
 import es.esimarket.backend.repositories.ServicioRepository;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.ServicioService;
@@ -35,7 +35,6 @@ public class ServicioController{
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
-        // AÑADIR COMPROBACION DE USUARIO
         return ResponseEntity.ok(servicioService.modificarFecha(idProd,DNIcomprador,fecha));
     }
 
@@ -44,16 +43,14 @@ public class ServicioController{
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
-        // AÑADIR COMPROBACION DE USUARIO
         return ResponseEntity.ok(servicioService.finalizarServicio(idProd,DNIcomprador));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<Servicio>> GetServiciosUsuario()
+    public ResponseEntity<List<ServicioDTO>> GetServiciosUsuario()
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
-        // AÑADIR COMPROBACION DE USUARIO
         return ResponseEntity.ok(servicioService.mostrar_servicios_usuario(dni));
     }
 }
