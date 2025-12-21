@@ -49,12 +49,12 @@ public class PedidosService{
 
     public List<PedidosDTO> mostrar_pedidos_vendedor(String uDNI)
     {
-        List<Pedidos> pedidosNormales;
+        List<Pedidos> pedidosNormales = pedidosRepository.findPedidosByVendedor(uDNI);
         List<PedidosDTO> pedidosDTO = new ArrayList<>();
 
-        String sql = "Select * from Pedidos where Estado = 'PorEntregar' and IdCompra in(select iDCompra from Compra where IDProducto in (select ID from Producto where uDNIVendedor = '?'))";
+        //String sql = "Select * from pedido where Estado = 'PorEntregar' and IdCompra in(select iDCompra from compra where IDProducto in (select ID from producto where uDNIVendedor = ?))";
 
-        pedidosNormales = jdbcTemplate.queryForList(sql,Pedidos.class,uDNI);
+        //pedidosNormales = jdbcTemplate.queryForList(sql,Pedidos.class,uDNI);
 
         for(Pedidos p: pedidosNormales)
         {
@@ -68,12 +68,12 @@ public class PedidosService{
     public List<PedidosDTO> mostrar_pedidos_comprador(String uDNI)
     {
 
-        List<Pedidos> pedidosNormales;
+        List<Pedidos> pedidosNormales = pedidosRepository.findPedidosByComprador(uDNI);
         List<PedidosDTO> pedidosDTO = new ArrayList<>();
 
-        String sql = "Select * from Pedidos where Estado = 'Entregado' and IdCompra in(select iDCompra from Compra where uDNIComprador = '?')";
+        //String sql = "Select * from pedido where Estado = 'Entregado' and IdCompra in(select iDCompra from compra where uDNIComprador = ?)";
 
-        pedidosNormales = jdbcTemplate.queryForList(sql,Pedidos.class,uDNI);
+        //pedidosNormales = jdbcTemplate.queryForList(sql,Pedidos.class,uDNI);
 
         for(Pedidos p: pedidosNormales)
         {
