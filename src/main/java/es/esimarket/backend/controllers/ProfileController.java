@@ -64,10 +64,13 @@ public class ProfileController {
     }
 
     @PostMapping("/edit/password")
-    public ResponseEntity<String> changePassword( @RequestBody String newPassword ){
+    public ResponseEntity<String> changePassword( @RequestParam(value = "newPassword") String newPassword ){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
+
+        System.out.println("---------------- NUEVA CONTRASEÑA -----------------");
+        System.out.println("[" + newPassword + "]");
 
         Usuario u = usuarioRepository.findById(uDNI).orElseThrow(()-> new CannotCreateUserError("Usuario no encontrado"));
 
@@ -75,8 +78,8 @@ public class ProfileController {
             return ResponseEntity.badRequest().body("La contraseña debe ser distinta a la anterior");
         }
 
-        String[] credencialesNuevas = loginEncriptado.encode(Base64.getEncoder().encodeToString(u.getSalt()) + " " + newPassword).split(" ");
-        byte[] newSalt = Base64.getDecoder().decode(credencialesNuevas[0]);
+        byte[] newSalt = LoginEncriptado.GenerateSalt();
+        String[] credencialesNuevas = loginEncriptado.encode(Base64.getEncoder().encodeToString(newSalt) + " " + newPassword).split(" ");
         String newHash = credencialesNuevas[1];
 
         u.setContrasenna(newHash);
