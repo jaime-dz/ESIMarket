@@ -36,7 +36,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests( req ->
-                        req.requestMatchers("/",
+                        req.requestMatchers("/auth/validate").authenticated()
+                                .requestMatchers("/",
                                                      "/auth/**",
                                                      "/home/**",
                                                      "/products/filter",
