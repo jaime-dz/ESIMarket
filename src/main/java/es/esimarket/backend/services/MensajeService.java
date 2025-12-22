@@ -1,7 +1,9 @@
 package es.esimarket.backend.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import es.esimarket.backend.dtos.MensajeDTO;
 import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.mappers.MessageMapper;
 import es.esimarket.backend.repositories.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.repositories.MensajeRepository;
 import es.esimarket.backend.services.VariosService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +25,9 @@ public class MensajeService
 {
     @Autowired
     private MensajeRepository mensajeRepository;
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     public String CrearMensaje(int chat, String uDNI, String texto)
     {
@@ -31,6 +37,17 @@ public class MensajeService
         mensajeRepository.save(m);
 
         return "Mensaje añadido correctamente";
+    }
+
+    public List<MensajeDTO >mostrar_mensajes( List<Mensaje> m ){
+
+        List<MensajeDTO> messagesDTO = new ArrayList<>();
+
+        for ( Mensaje mess : m ){
+            messagesDTO.add(messageMapper.toDto(mess));
+        }
+
+        return messagesDTO;
     }
 
     /*public ResponseEntity<List<Mensaje>> MostrarChat(int chat)

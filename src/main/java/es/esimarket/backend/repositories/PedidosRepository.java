@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer>{
 
-    @Query(value = "SELECT * FROM pedido WHERE Estado = 'PorEntregar' AND IdCompra IN (SELECT IdCompra FROM compra WHERE IDProducto IN (SELECT ID FROM producto WHERE uDNIVendedor = :uDNI))", nativeQuery = true)
+    @Query(value = "SELECT * FROM pedido WHERE Estado = 'PorEntregar' AND IdCompra IN (SELECT IdCompra FROM compra WHERE IDProducto IN (SELECT ID FROM producto WHERE uDNIVendedor = :uDNI)) ORDER BY p.Estado ASC", nativeQuery = true)
     List<Pedidos> findPedidosByVendedor(@Param("uDNI") String uDNI);
 
     @Query(value = "SELECT p.* FROM pedido p JOIN compra c ON p.IdCompra = c.IdCompra /*WHERE p.Estado = 'Entregado'*/ AND c.uDNIComprador = :uDNI ORDER BY p.Estado DESC ", nativeQuery = true)

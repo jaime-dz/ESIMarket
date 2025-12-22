@@ -45,9 +45,9 @@ public class ProductoService {
     public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada, byte[] foto ){
 
         Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada);
+        p = productoRepository.save(p);
         FotoProd fp = new FotoProd(p.getID(),foto);
 
-        productoRepository.save(p);
         fotoProdRepository.save(fp);
 
         return ResponseEntity.ok("Producto registrado correctamente");
