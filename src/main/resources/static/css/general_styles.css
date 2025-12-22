@@ -589,8 +589,32 @@ main {
     color: black;
 }
 
-/* Mostrar el menú al pasar el ratón por encima del contenedor */
 .profile-container:hover .dropdown-content {
     display: block;
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+/* El icono del ojo */
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 1.2rem;
+    user-select: none; /* Para que no se seleccione como texto */
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    padding-right: 45px !important; /* Espacio extra a la derecha */
+}

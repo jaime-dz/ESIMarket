@@ -139,7 +139,7 @@ export async function enviarFormularioComoJSON(evento) {
         }
 
         // 2. ERROR
-        let mensajeError = "Error al procesar la solicitud.";
+        let mensajeError = "Usuario o contraseña incorrectos";
         try {
             const errorData = await respuesta.json();
             if (errorData && errorData.message) {
