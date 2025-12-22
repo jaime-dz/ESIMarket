@@ -303,7 +303,12 @@ main {
 #signup select,
 #profile-edit select,
 #profile-edit input[type="text"],
-#profile-edit input[type="email"] {
+#profile-edit input[type="email"],
+#publish-ad input[type="text"],
+#publish-ad input[type="number"],
+#publish-ad textarea,
+#publish-ad select,
+#publish-ad input[type="file"] {
     width:100%;
     display:block;
     padding: 12px;
@@ -348,13 +353,16 @@ main {
 
 .clear-button{
     position: absolute;
-    right:10px;
+    right:15px;
     top:50%;
-    transform: translateY(-50%);
+    transform: translateY(-55%);
     color:#888;
-    font-size: 20px;
+    font-size: 30px;
     cursor: pointer;
     display: none;
+    padding: 0 10px;
+    line-height: 1;
+    transition: color 0.3s;
 }
 
 .product-container {
