@@ -75,7 +75,7 @@ public class ProfileController {
             return ResponseEntity.badRequest().body("La contraseña debe ser distinta a la anterior");
         }
 
-        String[] credencialesNuevas = loginEncriptado.encode(newPassword).split(" ");
+        String[] credencialesNuevas = loginEncriptado.encode(Base64.getEncoder().encodeToString(u.getSalt()) + " " + newPassword).split(" ");
         byte[] newSalt = Base64.getDecoder().decode(credencialesNuevas[0]);
         String newHash = credencialesNuevas[1];
 
