@@ -129,7 +129,6 @@ export async function enviarFormularioComoJSON(evento) {
         // 1. ÉXITO
         if (respuesta.ok) {
             console.log('Solicitud exitosa. Status:', respuesta.status);
-            localStorage.setItem('isLoggedIn', 'true');
             
             if (typeof actualizarBarraNavegacion === 'function') {
                 actualizarBarraNavegacion();
@@ -196,7 +195,11 @@ export async function cerrarSesion() {
    ============================================== */
 
 function actualizarBarraNavegacion() {
-    const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
+    // CAMBIO: Leemos la cookie 'isLoggedIn' en lugar del localStorage
+    // Asumimos que si la cookie existe y tiene valor 'true', el usuario está logueado
+    const cookieVal = getCookie('isLoggedIn');
+    const estaLogueado = cookieVal === 'true'; 
+
     const guestElements = document.querySelectorAll('.guest-view');
     const userElements = document.querySelectorAll('.user-view');
 
@@ -210,13 +213,16 @@ function actualizarBarraNavegacion() {
 }
 
 function verificarSesionLocal() {
-    const estaLogueado = localStorage.getItem('isLoggedIn') === 'true';
+    // CAMBIO: Usamos getCookie
+    const cookieVal = getCookie('isLoggedIn');
+    const estaLogueado = cookieVal === 'true';
+
     const path = window.location.pathname.toLowerCase();
 
     actualizarBarraNavegacion();
 
     if (estaLogueado) {
-        if (path.includes("login") || path.includes("signup") || path.includes("registro") || path.includes("iniciar-sesion")) {
+        if (path.includes("login") || path.includes("signup") || path.includes("registro")) {
             console.log("Usuario logueado intentando acceder a auth. Redirigiendo...");
             window.location.href = "/home/"; 
         }
@@ -290,30 +296,31 @@ export function displayProductsItems(products, container) {
 
 // Agrega esto en la sección de FUNCIONES INTERNAS
 async function validarSesionConServidor() {
-    // 1. Si el frontend cree que NO estamos logueados, no hacemos nada.
-    if (localStorage.getItem('isLoggedIn') !== 'true') return;
+    // CAMBIO: Si no hay cookie, no hacemos la llamada extra al servidor
+    if (getCookie('isLoggedIn') !== 'true') return;
 
     try {
-        // 2. Hacemos una petición ligera a una ruta que requiera autenticación.
-        // NOTA: Asegúrate de tener una ruta tipo '/auth/check', '/profile' 
-        // o usa una existente que sepas que falla si no hay sesión.
         const response = await fetch('/auth/validate', { 
             method: 'GET',
             headers: { 'Accept': 'application/json' },
-            credentials: 'include' // Importante para enviar la cookie
+            credentials: 'include' 
         });
 
-        // 3. Si el servidor dice "No autorizado" (401) o "Prohibido" (403)
         if (response.status === 401 || response.status === 403) {
-            console.warn("La cookie de sesión ha expirado. Cerrando sesión local...");
-            
-            // Borramos la variable y actualizamos la UI
-            localStorage.removeItem('isLoggedIn');
+            console.warn("La sesión ha expirado en el servidor.");
+            // Ya no borramos nada manualmente porque el navegador 
+            // gestionará la expiración de la cookie si el servidor lo indica
             actualizarBarraNavegacion(); 
-            
             window.location.href = "/home/";
         }
     } catch (error) {
         console.error("Error verificando estado de la sesión:", error);
     }
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
 }
