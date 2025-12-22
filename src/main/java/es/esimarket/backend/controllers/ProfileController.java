@@ -83,6 +83,7 @@ public class ProfileController {
         u.setSalt(newSalt);
         usuarioRepository.save(u);
 
+        return  ResponseEntity.ok().body("Contraseña cambiada correctamente");
 
     }
 
