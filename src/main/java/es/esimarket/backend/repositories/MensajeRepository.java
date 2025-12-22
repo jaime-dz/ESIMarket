@@ -10,6 +10,6 @@ import java.util.*;
 
 @Repository
 public interface MensajeRepository extends JpaRepository<Mensaje, BigInteger> {
-    List<MensajeDTO> findByIDChat(int chat, Sort sort);
+    List<Mensaje> findByIDChat(int chat, Sort sort);
 
 }
