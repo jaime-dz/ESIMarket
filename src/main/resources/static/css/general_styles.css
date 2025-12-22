@@ -382,14 +382,13 @@ main {
 
 .clear-button{
     position: absolute;
-    right:15px;
-    top:50%;
-    transform: translateY(-55%);
+    right:10px;
+    top:32%;
+    transform: translateY(-50%);
     color:#888;
-    font-size: 30px;
+    font-size: 24px;
     cursor: pointer;
     display: none;
-    padding: 0 10px;
     line-height: 1;
     transition: color 0.3s;
 }
@@ -617,4 +616,9 @@ main {
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
     padding-right: 45px !important; /* Espacio extra a la derecha */
+}
+
+.input-container {
+    position: relative;
+    width: 100%;
 }
