@@ -55,12 +55,14 @@ public class AuthTokenController {
     {
         final TokenResponse token = authService.registerUser(request);
 
-        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration );
-        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration);
+        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration ,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", "true",jwtExpiration,false);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
                 .build();
     }
 
@@ -69,12 +71,14 @@ public class AuthTokenController {
     {
         final TokenResponse token = authService.loginUser(request);
 
-        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration);
-        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration);
+        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", "true",jwtExpiration,false);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
                 .build();
 
     }
@@ -85,12 +89,14 @@ public class AuthTokenController {
 
         authService.logout_user(refreshToken);
 
-        ResponseCookie jwtCookie = crearCookie("accessToken", "", 0);
-        ResponseCookie refreshCookie = crearCookie("refreshToken", "", 0);
+        ResponseCookie jwtCookie = crearCookie("accessToken", "", 0,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", "", 0,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", null,0,false);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
                 .build();
 
     }
@@ -105,19 +111,21 @@ public class AuthTokenController {
     {
         final TokenResponse token = authService.refreshToken(refreshToken);
 
-        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration);
-        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration);
+        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", "true",jwtExpiration,false);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
                 .build();
 
     }
 
-    private ResponseCookie crearCookie(String nombre, String valor, long duracion) {
+    private ResponseCookie crearCookie(String nombre, String valor, long duracion, boolean httponly) {
         return ResponseCookie.from(nombre, valor)
-                .httpOnly(true) // Seguridad: JS no puede leerla
+                .httpOnly(httponly) // Seguridad: JS no puede leerla
                 .secure(false)  // false para localhost, true para producción (HTTPS)
                 .path("/")
                 .maxAge(duracion / 1000) // Segundos
