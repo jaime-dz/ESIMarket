@@ -446,6 +446,8 @@ main {
     flex: 3;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-auto-rows: max-content;  /* La altura de la fila se ajusta al contenido, no al espacio libre */
+    align-content: start;
     gap: 20px; /* Espacio entre las tarjetas */
 }
 
