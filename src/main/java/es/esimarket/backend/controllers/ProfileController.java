@@ -69,9 +69,6 @@ public class ProfileController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
 
-        System.out.println("---------------- NUEVA CONTRASEÑA -----------------");
-        System.out.println("[" + newPassword + "]");
-
         Usuario u = usuarioRepository.findById(uDNI).orElseThrow(()-> new CannotCreateUserError("Usuario no encontrado"));
 
         if ( loginEncriptado.matches(newPassword, Base64.getEncoder().encodeToString(u.getSalt()) + " " + u.getContrasenna()) ){
