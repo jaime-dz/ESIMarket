@@ -9,6 +9,7 @@ import java.util.Arrays;
 
 public class ProductoDTO implements Serializable {
 
+    private int ID;
     private int Precio;
     private String Descripcion;
     private String Nombre;
