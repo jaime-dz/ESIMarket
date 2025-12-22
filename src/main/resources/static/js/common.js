@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // 1. GESTIÓN DE SESIÓN Y NAVEGACIÓN
     verificarSesionLocal();
+    await validarSesionConServidor();
     if (typeof actualizarBarraNavegacion === 'function') {
         actualizarBarraNavegacion();
     }
@@ -19,22 +20,53 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
     }
 
-    // 3. BUSCADOR (Si existen los elementos)
+    // 3. BUSCADOR (Lógica completa)
     const inputBusqueda = document.getElementById("search-input");
     const botonBorrar = document.getElementById("clearBtn");
 
+    // Función que filtra las tarjetas visualmente
+    function filtrarProductos(texto) {
+        const busqueda = texto.toLowerCase();
+        // Seleccionamos todas las tarjetas que ya están pintadas en pantalla
+        const tarjetas = document.querySelectorAll('.product-card');
+
+        tarjetas.forEach(card => {
+            // Buscamos el nombre dentro de la tarjeta
+            const nombreProducto = card.querySelector('.product-name').textContent.toLowerCase();
+            
+            // Si coincide, mostramos (block/flex), si no, ocultamos (none)
+            if (nombreProducto.includes(busqueda)) {
+                card.style.display = 'flex'; // O 'block' según tu diseño original
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
     if(inputBusqueda && botonBorrar) {
+        // Evento al escribir
         inputBusqueda.addEventListener("input", function() {
-            if (inputBusqueda.value.length > 0) {
+            const texto = inputBusqueda.value;
+            
+            // 1. Mostrar u ocultar la X
+            if (texto.length > 0) {
                 botonBorrar.style.display = "block";
             } else {
                 botonBorrar.style.display = "none";
             }
+
+            // 2. Filtrar los productos
+            filtrarProductos(texto);
         });
         
+        // Evento al borrar con la X
         botonBorrar.addEventListener("click", function() {
             inputBusqueda.value = "";
             botonBorrar.style.display = "none";
+            
+            // Importante: Volver a mostrar todos los productos
+            filtrarProductos(""); 
+            
             inputBusqueda.focus();
         });
     }
@@ -225,11 +257,15 @@ export function displayProductsItems(products, container) {
         const esServicio = item.tipo && item.tipo.toLowerCase() === 'servicio';
 
         // B. LÓGICA DE FOTO
-        let imagenFinal = item.foto;
-        if (!imagenFinal) {
+        let imagenFinal;
+        if (item.foto) {
+            // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
+            // Le agregamos la cabecera para que el navegador lo entienda como imagen.
+            imagenFinal = "data:image/jpeg;base64," + item.foto;
+        } else {
+            // Si item.foto es null, usamos la ruta local por defecto
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
         }
-
         // C. SUFIJO DE PRECIO
         const sufijoPrecio = esServicio ? '/h' : '';
 
@@ -250,4 +286,34 @@ export function displayProductsItems(products, container) {
     });
 
     container.innerHTML = displayProducts.join("");
+}
+
+// Agrega esto en la sección de FUNCIONES INTERNAS
+async function validarSesionConServidor() {
+    // 1. Si el frontend cree que NO estamos logueados, no hacemos nada.
+    if (localStorage.getItem('isLoggedIn') !== 'true') return;
+
+    try {
+        // 2. Hacemos una petición ligera a una ruta que requiera autenticación.
+        // NOTA: Asegúrate de tener una ruta tipo '/auth/check', '/profile' 
+        // o usa una existente que sepas que falla si no hay sesión.
+        const response = await fetch('/auth/validate', { 
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+            credentials: 'include' // Importante para enviar la cookie
+        });
+
+        // 3. Si el servidor dice "No autorizado" (401) o "Prohibido" (403)
+        if (response.status === 401 || response.status === 403) {
+            console.warn("La cookie de sesión ha expirado. Cerrando sesión local...");
+            
+            // Borramos la variable y actualizamos la UI
+            localStorage.removeItem('isLoggedIn');
+            actualizarBarraNavegacion(); 
+            
+            window.location.href = "/home/";
+        }
+    } catch (error) {
+        console.error("Error verificando estado de la sesión:", error);
+    }
 }
