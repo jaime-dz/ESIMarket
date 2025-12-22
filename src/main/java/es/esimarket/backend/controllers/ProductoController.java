@@ -6,8 +6,10 @@ import es.esimarket.backend.exceptions.CannotCompleteActionError;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.ProductoService;
+import org.hibernate.engine.transaction.jta.platform.internal.SynchronizationRegistryBasedSynchronizationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,25 +43,33 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestBody FiltroRequest request)
     {
         List<Producto> productEntities = productoService.FiltroProductosGenerico(request);
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createProducto(@CookieValue(name = "accessToken", required = false) String token,@RequestBody final ProductoRequest request)
-    {
-        String dni = jwtService.extraerDNI(token);
+    @GetMapping("/create")
+    public String createProduct(){
+        return "product-create";
+    }
 
-        return productoService.nuevoProducto(dni,request.precio(),request.descripcion(),request.Nombre(),request.Tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
+    @PostMapping("/create")
+    public ResponseEntity<String> createProducto( @RequestBody final ProductoRequest request)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+
+        return productoService.nuevoProducto(dni,request.precio(),request.descripcion(),request.nombre(),request.tipo(),request.estado(),request.pago(),request.recepcionAceptada(),request.foto());
     }
 
     @DeleteMapping("/delete/{idProd}")
-    public void  deleteProducto(@CookieValue(name = "accessToken", required = false) String token, @PathVariable int idProd) {
+    public void  deleteProducto( @PathVariable int idProd) {
 
-        String dni = jwtService.extraerDNI(token);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(dni);
 
         Producto p = productoRepository.findByID(idProd);

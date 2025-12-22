@@ -11,6 +11,7 @@ import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 
 import es.esimarket.backend.entities.Producto;
@@ -29,6 +30,9 @@ public class ProductoService {
     private FotoProdRepository fotoProdRepository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
     private ProductMapper productMapper;
 
     @Autowired
@@ -41,9 +45,9 @@ public class ProductoService {
     public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada, byte[] foto ){
 
         Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada);
+        p = productoRepository.save(p);
         FotoProd fp = new FotoProd(p.getID(),foto);
 
-        productoRepository.save(p);
         fotoProdRepository.save(fp);
 
         return ResponseEntity.ok("Producto registrado correctamente");
@@ -155,7 +159,7 @@ public class ProductoService {
         }
 
 
-        return jdbcTemplate.queryForList(String.valueOf(sql), Producto.class, params.toArray());
+        return jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Producto.class), params.toArray());
     }
 
     public List<ProductoDTO> mostrar_productos( List<Producto> productEntities ){
@@ -165,7 +169,8 @@ public class ProductoService {
         for( Producto p : productEntities){
 
             FotoProd fp = fotoProdRepository.findByIdProd(p.getID());
-            productDTOs.add(productMapper.toDTO(p,fp));
+            Usuario u = usuarioRepository.findByid(p.getuDNI_Vendedor());
+            productDTOs.add(productMapper.toDTO(p,fp,u));
         }
 
         return productDTOs;

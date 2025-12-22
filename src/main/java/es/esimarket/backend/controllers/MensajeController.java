@@ -4,11 +4,14 @@ import es.esimarket.backend.dtos.MensajeDTO;
 import es.esimarket.backend.exceptions.CannotDetermineIfToxicError;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.OllamaService;
+import es.esimarket.backend.services.VariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import es.esimarket.backend.repositories.ChatRepository;
@@ -39,6 +42,9 @@ public class MensajeController
     private OllamaService ollamaService;
 
     @Autowired
+    private VariosService variosService;
+
+    @Autowired
     private JwtService jwtService;
 
     @Autowired
@@ -46,17 +52,17 @@ public class MensajeController
 
     @GetMapping("/{chat}")
     public ResponseEntity<List<MensajeDTO>> getMensajes(@PathVariable("chat") int chat){
-
-        return ResponseEntity.ok(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora")));
+        return ResponseEntity.ok(mensajeService.mostrar_mensajes(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora"))));
 
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes(@CookieValue(name = "accessToken", required = false) String token, @RequestBody final MessageRequest Mrequest){
+    public ResponseEntity<HashMap<String, String>> postMensajes( @RequestBody final MessageRequest Mrequest){
 
         HashMap<String, String> response = new HashMap<>();
 
-        String dni = jwtService.extraerDNI(token);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
 
         String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
 
@@ -76,9 +82,11 @@ public class MensajeController
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        String status = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto());
+        String FechaAct = variosService.ObtenerFecha();
+        String status = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
 
         response.put("message", status);
+        response.put("content",new MensajeDTO(FechaAct,Mrequest.Texto(),dni).toString());
 
         return ResponseEntity.ok(response);
     }

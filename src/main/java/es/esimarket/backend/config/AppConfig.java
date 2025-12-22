@@ -1,7 +1,5 @@
 package es.esimarket.backend.config;
 import es.esimarket.backend.entities.Usuario;
-import es.esimarket.backend.mappers.UserMapper;
-import es.esimarket.backend.mappers.UserMapperImpl;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.LoginEncriptado;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +59,5 @@ public class AppConfig {
         return new LoginEncriptado();
     }
 
-
-    @Bean
-    public UserMapper userMapper() {
-        return new UserMapperImpl();
-    }
 
 }

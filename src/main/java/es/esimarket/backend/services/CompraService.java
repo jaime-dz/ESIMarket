@@ -17,10 +17,10 @@ import java.util.*;
 public class CompraService {
 
     @Autowired
-    public ProductoRepository productoRepository;
+    private ProductoRepository productoRepository;
 
     @Autowired
-    public PedidosRepository pedidosRepository;
+    private PedidosRepository pedidosRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -29,10 +29,10 @@ public class CompraService {
     private ServicioService servicioService;
 
     @Autowired
-    public CompraRepository compraRepository;
+    private CompraRepository compraRepository;
 
     @Autowired
-    public VariosService variosService;
+    private VariosService variosService;
 
     public Boolean UsuPuedeHacerCompra(Usuario u, Producto p)
     {
@@ -69,8 +69,6 @@ public class CompraService {
 
             }else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
 
-            compraRepository.save(c);
-
             if ( p.getTipo().equals("Objeto")){
                 Pedidos pe = getPedidos(request, p, c);
                 pedidosRepository.save(pe);
@@ -79,6 +77,7 @@ public class CompraService {
                 uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
             }else if ( p.getTipo().equals("Servicio")){
 
+                compraRepository.save(c);
                 servicioService.CrearServicioPendiente(p.getID(),uComprador.getId());
 
                 uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  (p.getPrecio()*request.horas()));
@@ -98,7 +97,7 @@ public class CompraService {
 
     }
 
-    private static Pedidos getPedidos(CompraRequest request, Producto p, Compra c) {
+    private Pedidos getPedidos(CompraRequest request, Producto p, Compra c) {
         Pedidos pe = null;
 
         if ( request.recepcion() != p.getRecepcionAceptada() )
@@ -107,10 +106,13 @@ public class CompraService {
         {
             pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
 
-        }else if ( request.recepcion()==Producto.RecepcionAceptada.EnMano){
+        }else if ( request.recepcion()==Producto.RecepcionAceptada.enMano){
 
             pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
         }else throw new CannotCompletePurchaseError("Tipo de recepcion no encontrado");
+
+        compraRepository.save(c);
+
         return pe;
     }
 

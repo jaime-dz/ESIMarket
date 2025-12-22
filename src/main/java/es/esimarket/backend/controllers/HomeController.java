@@ -6,6 +6,9 @@ import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,29 +27,34 @@ public class HomeController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping("/")
-    public String index(@CookieValue(name = "accessToken", required = false) String accessToken, Model model)
+    public String index(Model model)
     {
-        if ( accessToken != null )
-        {
-            String dni = jwtService.extraerDNI(accessToken);
-            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
+
+            String dni = auth.getName();
+            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
             model.addAttribute("profile",u);
+
         }
 
         return "index";
     }
 
     @GetMapping("/about")
-    public String about(@CookieValue(name = "accessToken", required = false) String accessToken, Model model) 
-    { 
-        if ( accessToken != null )
-        {
-            String dni = jwtService.extraerDNI(accessToken);
+    public String about(Model model)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
+
+            String dni = auth.getName();
             Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
 
             model.addAttribute("profile",u);
         }
+
         return "about"; 
     }
 

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,16 +40,18 @@ public class CompraController
     private CompraService compraService;
 
     @GetMapping("/user")
-    public ResponseEntity<List<Compra>> getComprasUsuario(@CookieValue(name = "accessToken", required = false) String accessToken){
-
-        String dni = jwtService.extraerDNI(accessToken);
+    public ResponseEntity<List<Compra>> getComprasUsuario()
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
         return ResponseEntity.ok(compraRepository.findByuDNIComprador(dni));
     }
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String,String>> postCompra(@CookieValue(name = "accessToken", required = false) String accessToken, @RequestBody final CompraRequest Crequest)
+    public ResponseEntity<HashMap<String,String>> postCompra( @RequestBody final CompraRequest Crequest)
     {
-        String dni = jwtService.extraerDNI(accessToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
 
         HashMap<String,String> response = new HashMap<>();
         String respuestaService;

@@ -16,9 +16,8 @@ public class ProfileService {
     @Autowired
     private JwtService  jwtService;
 
-    public void editarUsuario( String token , ProfileResponse request ) throws CannotCreateUserError {
+    public void editarUsuario( String dni , ProfileResponse request ) throws CannotCreateUserError {
 
-        String dni = jwtService.extraerDNI( token );
         Usuario u = usuarioRepository.findByid(dni);
 
         if ( u == null )  throw new CannotCreateUserError("Usuario no encontrado");
@@ -38,6 +37,8 @@ public class ProfileService {
         if (request.getCarrera() != null) {
             u.setCarrera(request.getCarrera());
         }
+
+        usuarioRepository.save(u);
 
     }
 

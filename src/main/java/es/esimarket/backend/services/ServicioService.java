@@ -1,9 +1,13 @@
 package es.esimarket.backend.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import es.esimarket.backend.dtos.ServicioDTO;
 import es.esimarket.backend.entities.Producto;
+import es.esimarket.backend.exceptions.CannotCreateProductError;
+import es.esimarket.backend.mappers.ServiceMapper;
 import es.esimarket.backend.repositories.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,9 @@ public class ServicioService{
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private ServiceMapper serviceMapper;
 
     @Autowired
     private VariosService variosService;
@@ -59,9 +66,19 @@ public class ServicioService{
         return "Se ha finalizado el servicio";
     }
 
-    public List<Servicio> mostrar_servicios_usuario(String DNIcomprador)
+    public List<ServicioDTO> mostrar_servicios_usuario(String DNIcomprador)
     {
-        return servicioRepository.findByDNIcompradorAndFinalizadoFalse(DNIcomprador);
+        List<Servicio> services = servicioRepository.findByDNIcompradorAndFinalizadoFalse(DNIcomprador);
+        List<ServicioDTO> DTOservices = new ArrayList<>();
+
+        for( Servicio s : services){
+
+            Producto p = productoRepository.findById(s.getIdProd()).orElseThrow(()-> new CannotCreateProductError("El producto no existe"));
+            DTOservices.add(serviceMapper.toDTO(s,p));
+        }
+
+        return DTOservices;
+
     }
 
 

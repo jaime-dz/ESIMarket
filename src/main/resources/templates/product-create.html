@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inicio</title>
+        <link rel="stylesheet" href="/css/general_styles.css">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
+    </head>
+    <body>
+        <header class="menu-bar menu-superior">
+            <div class="header-left">
+                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+            </div>
+
+            <nav class="header-center">
+                <ul>
+                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                
+                <div class="guest-view">
+                    <a href="/auth/login">Iniciar sesión</a>
+                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+                </div>
+
+                <div class="user-view" style="display: none;">
+                    
+                    <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
+                    
+                    <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
+                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        
+                        <div class="dropdown-content">
+                            <a href="/profile/">Mi Perfil</a>
+                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+        <main>
+            <h1>Publica tu anuncio!</h1><br><br>
+            <div class="square">
+                <form id="publish-ad" action="/products/create" method="post">
+                    
+                    <div class="form-grupo">
+                        <label for="fotoInput">Imagen del producto:</label>
+                        <input type="file" id="fotoInput" accept="image/*">
+                        
+                        <input type="hidden" name="foto" id="fotoFinal">
+                        
+                        <div style="text-align: center; margin-top: 10px;">
+                            <img id="imgPreview" src="" alt="Previsualización" style="display:none; max-width: 100%; max-height: 200px; border-radius: 10px; border: 1px solid #ccc;">
+                        </div>
+                        <p id="error-foto" style="color: red; display: none; text-align: center; font-size: 0.9em;"></p>
+                    </div>
+                    <br>
+
+                    <div class="nombre-prod">
+                        <label for="nombre-prod">Nombre*</label>
+                        <input type="text" name="nombre" maxlength="50" placeholder="Nombre de tu producto" required/>
+                    </div>
+                    <br>
+
+                    <div class="desc-prod">
+                        <label for="desc-prod">Descripción</label>
+                        <textarea name="descripcion" maxlength="500" placeholder="Breve descripción..."></textarea>
+                    </div>
+                    <br>
+
+                    <div class="categoria-prod">
+                        <label for="categoria">Tipo*</label>
+                        <select name="tipo" id="categoria">
+                            <option value="producto" selected>Producto</option>
+                            <option value="servicio">Servicio</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="estado-prod" id="contenedor-estado">
+                        <label for="estado">Estado*</label>
+                        <select name="estado" id="estado" required>
+                            <option value="" disabled selected>-- Selecciona el estado --</option>
+                            <option value="Precintado">Precintado</option>
+                            <option value="Nuevo">Nuevo</option>
+                            <option value="Casi_Nuevo">Casi Nuevo</option>
+                            <option value="Correcto">Correcto</option>
+                            <option value="Desgastado">Desgastado</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="precio-prod">
+                        <label for="price">Precio*</label>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="number" name="precio" id="price" placeholder="0" min="0" required>
+                            <span id="precio-suffix" style="font-weight: bold; font-family: monospace;"></span>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="tipo-pago">
+                        <label for="pago">Tipo de pago*</label>
+                        <select name="pago" id="pago">
+                            <option value="Monedas" selected>Monedas</option>
+                            <option value="Trueque">Trueque</option>
+                            <option value="Ambos">Ambos</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div id="signup-message" style="display:none; text-align:center; margin-bottom:10px;"></div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-common btn-orange">Subir anuncio</button>
+                        
+                        <button type="reset" class="btn-common btn-gray">Resetear</button>
+                        
+                        <button type="button" class="btn-common btn-blue" onclick="window.location.href='/home/'">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="menu-bar menu-inferior">
+            <ul>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li class="guest-view">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li class="guest-view">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+
+                <li class="sn">
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+                </li>
+            </ul>
+        </footer>
+        <script src="/js/common.js" type="module"></script>
+        <script type="module">
+            import { enviarFormularioComoJSON } from '/js/common.js';
+
+            document.addEventListener('DOMContentLoaded', () => {
+                
+                // --- REFERENCIAS ---
+                const form = document.getElementById('publish-ad');
+                const categoriaSelect = document.getElementById('categoria');
+                const contenedorEstado = document.getElementById('contenedor-estado');
+                const inputEstado = document.getElementById('estado');
+                const suffixPrecio = document.getElementById('precio-suffix');
+                
+                const fotoInput = document.getElementById('fotoInput');
+                const fotoFinal = document.getElementById('fotoFinal');
+                const imgPreview = document.getElementById('imgPreview');
+                const errorFoto = document.getElementById('error-foto');
+
+                let imagenUsuarioBase64 = ""; 
+                const MAX_SIZE_MB = 2;
+
+                // --- 1. LÓGICA DE CATEGORÍA ---
+                function actualizarFormulario() {
+                    const esServicio = categoriaSelect.value === 'servicio';
+                    if (esServicio) {
+                        contenedorEstado.style.display = 'none';
+                        inputEstado.required = false; 
+                        inputEstado.value = ""; 
+                        suffixPrecio.textContent = "/h";
+                    } else {
+                        contenedorEstado.style.display = 'block';
+                        inputEstado.required = true;
+                        suffixPrecio.textContent = ""; 
+                    }
+                }
+                categoriaSelect.addEventListener('change', actualizarFormulario);
+                actualizarFormulario();
+
+                // --- 2. GESTIÓN DE IMAGEN DEL USUARIO ---
+                fotoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    errorFoto.style.display = 'none';
+                    imgPreview.style.display = 'none';
+                    imagenUsuarioBase64 = "";
+
+                    if (file) {
+                        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+                            errorFoto.textContent = `La imagen es muy pesada (Máx ${MAX_SIZE_MB}MB)`;
+                            errorFoto.style.display = 'block';
+                            this.value = "";
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file); // Esto genera "data:image/png;base64,....."
+                        reader.onload = function(event) {
+                            const rawData = event.target.result;
+                            imgPreview.src = rawData;
+                            imgPreview.style.display = 'block';
+                            
+                            // --- !!! CORRECCIÓN CRÍTICA !!! ---
+                            // Separamos por la coma y cogemos SOLO la parte [1] (el código)
+                            // Si algo falla, dejamos la variable vacía para no enviar basura.
+                            const partes = rawData.split(',');
+                            if (partes.length > 1) {
+                                imagenUsuarioBase64 = partes[1];
+                            }
+                        }
+                    }
+                });
+
+                // --- 3. ENVÍO DEL FORMULARIO ---
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault(); 
+                    if (errorFoto.style.display === 'block') return;
+
+                    // CASO A: El usuario subió foto manualmente
+                    if (imagenUsuarioBase64 && imagenUsuarioBase64.length > 0) {
+                        fotoFinal.disabled = false; // Aseguramos que se envíe
+                        fotoFinal.value = imagenUsuarioBase64;
+                        enviarFormularioComoJSON(e);
+                    } 
+                    // CASO B: Usamos imagen por defecto
+                    else {
+                        const esServicio = categoriaSelect.value === 'servicio';
+                        const rutaImagenDefault = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
+                        
+                        try {
+                            const response = await fetch(rutaImagenDefault);
+                            // Si la imagen no existe (404), lanzamos error para ir al catch
+                            if (!response.ok) throw new Error("Imagen default no encontrada");
+                            
+                            const blob = await response.blob();
+                            
+                            const reader = new FileReader();
+                            reader.readAsDataURL(blob);
+                            reader.onloadend = function() {
+                                const partes = reader.result.split(',');
+                                
+                                // --- !!! VALIDACIÓN DE SEGURIDAD !!! ---
+                                if (partes.length > 1) {
+                                    fotoFinal.disabled = false;
+                                    fotoFinal.value = partes[1]; // Solo la parte Base64
+                                } else {
+                                    // Si la conversión falla, deshabilitamos el input
+                                    // para enviar 'null' en vez de basura
+                                    fotoFinal.disabled = true; 
+                                }
+                                enviarFormularioComoJSON(e);
+                            };
+                        } catch (error) {
+                            console.error("Error procesando imagen por defecto:", error);
+                            // Si falla la carga, deshabilitamos el campo 'foto'
+                            // Así el JSON será { ... "foto": null ... } o simplemente no irá el campo
+                            fotoFinal.disabled = true; 
+                            enviarFormularioComoJSON(e);
+                        }
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>    

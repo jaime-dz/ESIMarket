@@ -51,24 +51,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-
-        if (path.equals("/")
-		        || path.startsWith("/auth")
-                || path.startsWith("/home")
-                || path.equals("/products/filter")
-                || path.startsWith("/css")
-                || path.startsWith("/js")
-                || path.startsWith("/Images")
-                || path.endsWith(".pdf")) {
-            filterChain.doFilter( request, response);
-            return;
-        }
-
         String accessToken = getCookieValue(request, "accessToken");
         String refreshToken = getCookieValue(request, "refreshToken");
 
 
         if (accessToken == null && refreshToken == null) {
+
+            if (esRutaPublica(path)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             redirigirAlLogin(response);
             return;
         }
@@ -153,8 +145,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .secure(false) // Pon true en producción (HTTPS)
                         .build();
 
+                ResponseCookie isLoggedIn = ResponseCookie.from("isLoggedIn", "true")
+                        .path("/") // Asegúrate que coincida con tu config original
+                        .maxAge(jwtExpiration / 1000) // Convertir ms a segundos
+                        .httpOnly(false)
+                        .secure(false) // Pon true en producción (HTTPS)
+                        .build();
+
                 // Inyectar la cookie en la respuesta
                 response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+                response.addHeader(HttpHeaders.SET_COOKIE,isLoggedIn.toString());
 
                 // Autenticar al usuario para que PASE este filtro
                 autenticarUsuario(userDNI, request);
@@ -172,6 +172,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 userDetails, null, userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+    private boolean esRutaPublica(String path) {
+        return path.equals("/")
+                || path.startsWith("/auth")
+                || path.startsWith("/home")
+                || path.equals("/error")
+                || path.equals("/products/")
+                || path.equals("/products/filter")
+                || path.startsWith("/css")
+                || path.startsWith("/js")
+                || path.startsWith("/Images")
+                || path.endsWith(".pdf");
     }
 
 }

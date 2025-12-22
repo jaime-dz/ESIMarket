@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import es.esimarket.backend.repositories.ChatRepository;
 import es.esimarket.backend.repositories.MensajeRepository;
 import es.esimarket.backend.services.ChatService;
 import java.util.HashMap;
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @Controller
@@ -32,11 +34,12 @@ public class ChatController
     private JwtService jwtService;
 
     @PostMapping("/")
-    public ResponseEntity<HashMap<String,String>> postChat(@CookieValue(name = "accessToken", required = false) String accessToken , @RequestBody final ChatRequest Crequest) throws CannotCreateChatError
+    public ResponseEntity<HashMap<String,String>> postChat(@RequestBody final ChatRequest Crequest) throws CannotCreateChatError
     {
-        HashMap<String, String> response = new HashMap<>();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dniComp = auth.getName();
 
-        String dniComp = jwtService.extraerDNI(accessToken);
+        HashMap<String, String> response = new HashMap<>();
 
         String respuesta = null;
 
@@ -53,9 +56,12 @@ public class ChatController
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ChatDTO>> getChats(@CookieValue(name = "accessToken", required = false) String accessToken) throws CannotCreateChatError
+    public ResponseEntity<List<ChatDTO>> getChats() throws CannotCreateChatError
     {
-        return ResponseEntity.ok(chatService.getChatsUsu(accessToken));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+
+        return ResponseEntity.ok(chatService.getChatsUsu(dni));
     }
 
     
