@@ -29,10 +29,9 @@ public class MensajeService
     @Autowired
     private MessageMapper messageMapper;
 
-    public String CrearMensaje(int chat, String uDNI, String texto)
+    public String CrearMensaje(int chat, String uDNI, String texto, String Fecha)
     {
-        VariosService v = new VariosService();
-        Mensaje m = new Mensaje(chat,uDNI,v.ObtenerFecha(),texto);
+        Mensaje m = new Mensaje(chat,uDNI,Fecha,texto);
 
         mensajeRepository.save(m);
 
