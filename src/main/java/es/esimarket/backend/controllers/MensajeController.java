@@ -4,6 +4,7 @@ import es.esimarket.backend.dtos.MensajeDTO;
 import es.esimarket.backend.exceptions.CannotDetermineIfToxicError;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.OllamaService;
+import es.esimarket.backend.services.VariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,9 @@ public class MensajeController
 
     @Autowired
     private OllamaService ollamaService;
+
+    @Autowired
+    private VariosService variosService;
 
     @Autowired
     private JwtService jwtService;
@@ -78,9 +82,11 @@ public class MensajeController
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        String status = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto());
+        String FechaAct = variosService.ObtenerFecha();
+        String status = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
 
         response.put("message", status);
+        response.put("content",new MensajeDTO(FechaAct,Mrequest.Texto(),dni).toString());
 
         return ResponseEntity.ok(response);
     }
