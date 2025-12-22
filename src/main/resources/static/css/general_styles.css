@@ -152,10 +152,6 @@ h2{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.submit-button{
-    text-align: center;
-}
-
 p{
     text-align: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -223,12 +219,10 @@ header{
 }
 
 /*Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto*/
-button[type="submit"],
-.btn-cancel,
-.btn-reset {
+button[type="submit"] {
     border-radius: 20px;
     color: #ffffff;
-    padding: 15px;
+    padding: 12px 25px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -241,17 +235,52 @@ button[type="submit"],
 button[type="submit"] {
     background-color: #E57200;
     border: 1px solid #E57200;
+}-- */
+
+.form-buttons {
+    display: flex;
+    justify-content: center; /* Centrados en la pantalla */
+    gap: 15px;               /* Espacio entre botones */
+    margin-top: 30px;        /* Espacio arriba */
+    flex-wrap: wrap;         /* Si la pantalla es muy pequeña, bajan de línea */
 }
 
-
-.btn-cancel {
-    background-color: #6c757d; /* Gris estándar (o usa #dc3545 para rojo) */
-    border: 1px solid #6c757d;
-    margin-left: 10px; /* Separación entre botones */
+.btn-common {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-family: 'Trebuchet MS', Arial, sans-serif;
+    transition: background-color 0.3s, transform 0.1s;
+    min-width: 120px;        /* Para que todos tengan un ancho mínimo similar */
 }
 
-.btn-cancel:hover {
+.btn-common:active {
+    transform: scale(0.98);
+}
+
+.btn-orange {
+    background-color: #E57200;
+}
+.btn-orange:hover {
+    background-color: #cc6600;
+}
+
+.btn-gray {
+    background-color: #6c757d;
+}
+.btn-gray:hover {
     background-color: #5a6268;
+}
+
+.btn-blue {
+    background-color: #00587C;
+}
+.btn-blue:hover {
+    background-color: #00588c;
 }
 
 html {
@@ -500,6 +529,28 @@ main {
     border: 2px solid white;
 }
 
+.profile-wrapper {
+    display: flex;
+    justify-content: center; /* Centrado en la pantalla */
+    align-items: center;     /* Centrados verticalmente uno respecto al otro */
+    gap: 50px;               /* Separación entre la foto y el cuadro de datos */
+    padding: 40px 20px;
+    flex-wrap: wrap;         /* Si la pantalla es móvil, baja uno debajo del otro */
+}
+
+.imagen-left img {
+    border-radius: 50%;
+    border: 5px solid #E57200;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.profile-wrapper .square {
+    margin: 0; /* Quitamos los márgenes automáticos para que el flex controle la posición */
+    width: 100%;
+    max-width: 500px;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -538,8 +589,32 @@ main {
     color: black;
 }
 
-/* Mostrar el menú al pasar el ratón por encima del contenedor */
 .profile-container:hover .dropdown-content {
     display: block;
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+/* El icono del ojo */
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 1.2rem;
+    user-select: none; /* Para que no se seleccione como texto */
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    padding-right: 45px !important; /* Espacio extra a la derecha */
+}
