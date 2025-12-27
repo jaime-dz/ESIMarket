@@ -67,7 +67,7 @@ public class ProductoController {
         Producto p = productoRepository.findById(id).orElseThrow(()-> new CannotCreateProductError("Producto no encontrado"));
         FotoProd fp = fotoProdRepository.findById(id).orElseThrow(()-> new CannotCreatePhotoError("Foto no encontrada"));
         Usuario u = usuarioRepository.findById(p.getuDNI_Vendedor()).orElseThrow(()-> new CannotCreateUserError("Usuario no encontrado"));
-        ProductoDTO pDTO = productMapper.toDTO(p,fp,u);
+        ProductoDTO pDTO = new ProductoDTO(p,u,fp);
 
         model.addAttribute("product",pDTO);
 

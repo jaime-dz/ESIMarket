@@ -9,73 +9,83 @@ import java.util.Arrays;
 
 public class ProductoDTO implements Serializable {
 
-    private int ID;
-    private int Precio;
-    private String Descripcion;
-    private String Nombre;
-    private String NombreVendedor;
+    private int id;
+    private int precio;
+    private String descripcion;
+    private String nombre;
+    private String nombreVendedor;
     private String tipo;
     private Producto.estado estado;
     private Producto.RecepcionAceptada recepcionAceptada;
-    private byte[] Foto;
+    private byte[] foto;
 
     public ProductoDTO() {}
 
     public ProductoDTO(Producto p , Usuario u, FotoProd fp ) {
-        this.ID = p.getID();
-        this.Precio = p.getPrecio();
-        this.Descripcion = p.getDescripcion();
-        this.Nombre = p.getNombre();
+        this.id = p.getID();
+        this.precio = p.getPrecio();
+        this.descripcion = p.getDescripcion();
+        this.nombre = p.getNombre();
         this.tipo = p.getTipo();
+        this.estado = p.getEstado();
         this.recepcionAceptada=p.getRecepcionAceptada();
-        this.Foto = (fp != null) ? fp.getFoto() : null;
-        this.NombreVendedor = u.getNombre();
+        this.foto = (fp != null) ? fp.getFoto() : null;
+        this.nombreVendedor = (u != null) ? u.getNombre() : "Vendedor desconocido";
     }
 
     public ProductoDTO(int id, int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto, String NombreV) {
-        this.ID = id;
-        this.Precio = precio;
-        this.Descripcion = descripcion;
-        this.Nombre = nombre;
+        this.id = id;
+        this.precio = precio;
+        this.descripcion = descripcion;
+        this.nombre = nombre;
         this.tipo = tipo;
         this.estado = estado;
         this.recepcionAceptada = recepcionAceptada;
-        this.Foto = foto;
-        this.NombreVendedor = NombreV;
+        this.foto = foto;
+        this.nombreVendedor = NombreV;
     }
 
-    public int getID() {return ID;}
-    public int getPrecio() {return Precio;}
-    public String getDescripcion() {return Descripcion;}
-    public String getNombre() {return Nombre;}
+    public String getFotoBase64(){
+        if (this.foto != null && this.foto.length > 0) {
+            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(this.foto);
+        }
+        return null;
+    }
+
+    public int getId() {return id;}
+    public int getPrecio() {return precio;}
+    public String getDescripcion() {return descripcion;}
+    public String getNombre() {return nombre;}
+    public String getNombreVendedor() {return nombreVendedor;}
     public String getTipo() {return tipo;}
     public Producto.estado getEstado() {return estado;}
     public Producto.RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
-    public byte[] getFoto() {return Foto;}
-    public String getNombreVendedor() {return NombreVendedor;}
+    public byte[] getFoto() {return foto;}
 
-    public void setID(int ID) {this.ID = ID;}
-    public void setPrecio(int precio) {Precio = precio;}
-    public void setDescripcion(String descripcion) {Descripcion = descripcion;}
-    public void setNombre(String nombre) {Nombre = nombre;}
+
+    public void setId(int id) {this.id = id;}
+    public void setPrecio(int precio) {this.precio = precio;}
+    public void setDescripcion(String descripcion) {this.descripcion = descripcion;}
+    public void setNombre(String nombre) {this.nombre = nombre;}
+    public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
     public void setTipo(String tipo) {this.tipo = tipo;}
     public void setEstado(Producto.estado estado) {this.estado = estado;}
-    public void setRecepcionAceptada(Producto.RecepcionAceptada recepcionAceptada) {this.recepcionAceptada=recepcionAceptada;}
-    public void setFoto(byte[] foto) {Foto = foto;}
-    public void setNombreVendedor(String nombreVendedor) {NombreVendedor = nombreVendedor;}
+    public void setRecepcionAceptada(Producto.RecepcionAceptada recepcionAceptada) {this.recepcionAceptada = recepcionAceptada;}
+    public void setFoto(byte[] foto) {this.foto = foto;}
 
     @Override
     public String toString() {
         return "ProductoDTO{" +
-                "ID=" + ID +
-                ", Precio=" + Precio +
-                ", Descripcion='" + Descripcion + '\'' +
-                ", Nombre='" + Nombre + '\'' +
-                ", NombreVendedor='" + NombreVendedor + '\'' +
+                "id=" + id +
+                ", precio=" + precio +
+                ", descripcion='" + descripcion + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", nombreVendedor='" + nombreVendedor + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", estado=" + estado +
                 ", recepcionAceptada=" + recepcionAceptada +
-                ", Foto=" + Arrays.toString(Foto) +
+                ", foto=" + Arrays.toString(foto) +
                 '}';
     }
+
 }
