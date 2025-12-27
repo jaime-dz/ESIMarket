@@ -54,6 +54,13 @@ public class ProductoController {
     @Autowired
     private JwtService jwtService;
 
+    @GetMapping("/")
+    public ResponseEntity<List<ProductoDTO>> getProductos() {
+
+        List<Producto> productEntities = productoRepository.findAll();
+        return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
+    }
+
     @GetMapping("/view/{ID}")
     public String viewProduct(Model model, @PathVariable(name="ID") int id ) {
 
