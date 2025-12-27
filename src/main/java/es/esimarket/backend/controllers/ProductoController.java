@@ -1,9 +1,17 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.FiltroRequest;
 import es.esimarket.backend.dtos.ProductoDTO;
+import es.esimarket.backend.entities.FotoProd;
 import es.esimarket.backend.entities.Producto;
+import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCompleteActionError;
+import es.esimarket.backend.exceptions.CannotCreatePhotoError;
+import es.esimarket.backend.exceptions.CannotCreateProductError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
+import es.esimarket.backend.mappers.ProductMapper;
+import es.esimarket.backend.repositories.FotoProdRepository;
 import es.esimarket.backend.repositories.ProductoRepository;
+import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.ProductoService;
 import org.hibernate.engine.transaction.jta.platform.internal.SynchronizationRegistryBasedSynchronizationStrategy;
@@ -15,6 +23,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import es.esimarket.backend.controllers.requests.ProductoRequest;
 
@@ -31,6 +40,15 @@ public class ProductoController {
     private ProductoService productoService;
 
     @Autowired
+    private FotoProdRepository fotoProdRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ProductMapper productMapper;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -41,6 +59,19 @@ public class ProductoController {
 
         List<Producto> productEntities = productoRepository.findAll();
         return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
+    }
+
+    @GetMapping("/view/{ID}")
+    public String viewProduct(Model model, @PathVariable(name="ID") int id ) {
+
+        Producto p = productoRepository.findById(id).orElseThrow(()-> new CannotCreateProductError("Producto no encontrado"));
+        FotoProd fp = fotoProdRepository.findById(id).orElse(null);
+        Usuario u = usuarioRepository.findById(p.getuDNI_Vendedor()).orElseThrow(()-> new CannotCreateUserError("Usuario no encontrado"));
+        ProductoDTO pDTO = new ProductoDTO(p,u,fp);
+
+        model.addAttribute("product",pDTO);
+
+        return "product-view";
     }
 
     @PostMapping("/filter")

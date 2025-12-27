@@ -8,8 +8,20 @@
         <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
     </head>
     <body>
+        <div id="sideMenu" class="sidebar user-view">
+            <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+            <a href="/home/">Historial de compras</a>
+            <a href="/products/create">Lista de pedidos</a>
+            <a href="/profile/">Lista de servicios</a>
+            <a href="/home/about">Donaciones</a>
+        </div>
         <header class="menu-bar menu-superior">
             <div class="header-left">
+                <div class="hamburger-icon user-view" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
                 <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
                 <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
                 <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
@@ -80,7 +92,7 @@
                     <div class="categoria-prod">
                         <label for="categoria">Tipo*</label>
                         <select name="tipo" id="categoria">
-                            <option value="producto" selected>Producto</option>
+                            <option value="Objeto" selected>Objeto</option>
                             <option value="servicio">Servicio</option>
                         </select>
                     </div>
@@ -95,6 +107,15 @@
                             <option value="Casi_Nuevo">Casi Nuevo</option>
                             <option value="Correcto">Correcto</option>
                             <option value="Desgastado">Desgastado</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="recepcion-prod" id="contenedor-recepcion">
+                        <label for="recepcionAceptada">Recepción*</label>
+                        <select name="recepcionAceptada" id="recepcionAceptada" required>
+                            <option value="" disabled selected>-- Selecciona la recepción --</option>
+                            <option value="enMano">En Mano</option>
+                            <option value="enTaquilla">En Taquilla</option>
                         </select>
                     </div>
                     <br>
@@ -160,6 +181,8 @@
                 const categoriaSelect = document.getElementById('categoria');
                 const contenedorEstado = document.getElementById('contenedor-estado');
                 const inputEstado = document.getElementById('estado');
+                const contenedorRecepcion = document.getElementById('contenedor-recepcion');
+                const inputRecepcion = document.getElementById('recepcionAceptada');
                 const suffixPrecio = document.getElementById('precio-suffix');
                 
                 const fotoInput = document.getElementById('fotoInput');
@@ -175,12 +198,17 @@
                     const esServicio = categoriaSelect.value === 'servicio';
                     if (esServicio) {
                         contenedorEstado.style.display = 'none';
+                        contenedorRecepcion.style.display = 'none';
                         inputEstado.required = false; 
-                        inputEstado.value = ""; 
+                        inputRecepcion.required = false;
+                        inputEstado.value = "";
+                        inputRecepcion.value = ""; 
                         suffixPrecio.textContent = "/h";
                     } else {
                         contenedorEstado.style.display = 'block';
+                        contenedorRecepcion.style.display = 'block';
                         inputEstado.required = true;
+                        inputRecepcion.required = true;
                         suffixPrecio.textContent = ""; 
                     }
                 }

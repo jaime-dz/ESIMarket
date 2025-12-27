@@ -9,8 +9,20 @@
         <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
     </head>
     <body>
+        <div id="sideMenu" class="sidebar user-view">
+            <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+            <a href="/home/">Historial de compras</a>
+            <a href="/products/create">Lista de pedidos</a>
+            <a href="/profile/">Lista de servicios</a>
+            <a href="/home/about">Donaciones</a>
+        </div>
         <header class="menu-bar menu-superior">
             <div class="header-left">
+                <div class="hamburger-icon user-view" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
                 <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
                 <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
                 <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
@@ -76,27 +88,27 @@
                             <label>Estado</label>
                             
                             <div class="filter-option">
-                                <input type="checkbox" class="state-filter" value="precintado" id="state-mb">
+                                <input type="checkbox" class="state-filter" value="Precintado" id="state-p">
                                 <label for="state-mb">Precintado</label>
                             </div>
 
                             <div class="filter-option">
-                                <input type="checkbox" class="state-filter" value="nuevo" id="state-b">
+                                <input type="checkbox" class="state-filter" value="Nuevo" id="state-n">
                                 <label for="state-b">Nuevo</label>
                             </div>
 
                             <div class="filter-option">
-                                <input type="checkbox" class="state-filter" value="casi-nuevo" id="state-d">
+                                <input type="checkbox" class="state-filter" value="Casi-Nuevo" id="state-cn">
                                 <label for="state-d">Casi Nuevo</label>
                             </div>
 
                             <div class="filter-option">
-                                <input type="checkbox" class="state-filter" value="correcto" id="state-d">
+                                <input type="checkbox" class="state-filter" value="Correcto" id="state-c">
                                 <label for="state-d">Correcto</label>
                             </div>
 
                             <div class="filter-option">
-                                <input type="checkbox" class="state-filter" value="desgastado" id="state-deg">
+                                <input type="checkbox" class="state-filter" value="Desgastado" id="state-deg">
                                 <label for="state-deg">Desgastado</label>
                             </div>
                         </div>
