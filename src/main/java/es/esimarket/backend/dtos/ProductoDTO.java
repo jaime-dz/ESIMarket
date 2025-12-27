@@ -67,7 +67,7 @@ public class ProductoDTO implements Serializable {
     @Override
     public String toString() {
         return "ProductoDTO{" +
-                "Id=" + ID +
+                "ID=" + ID +
                 ", Precio=" + Precio +
                 ", Descripcion='" + Descripcion + '\'' +
                 ", Nombre='" + Nombre + '\'' +
@@ -75,7 +75,7 @@ public class ProductoDTO implements Serializable {
                 ", tipo='" + tipo + '\'' +
                 ", estado=" + estado +
                 ", recepcionAceptada=" + recepcionAceptada +
-                ", Foto=" + java.util.Base64.getEncoder().encodeToString(Foto) +
+                ", Foto=" + Arrays.toString(Foto) +
                 '}';
     }
 }
