@@ -624,3 +624,67 @@ main {
     position: relative;
     width: 100%;
 }
+
+.hamburger-icon {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    margin-right: 15px; /* Espacio entre las líneas y el logo */
+}
+
+.hamburger-icon span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: white; /* Color de las líneas */
+    border-radius: 3px;
+}
+
+/* Asegurar que header-left alinee todo en fila */
+.header-left {
+    display: flex;
+    align-items: center; /* Centrado vertical */
+}
+
+/* Estilos del Menú Lateral (Sidebar) */
+.sidebar {
+    height: 100%;
+    width: 0; /* Empieza cerrado */
+    position: fixed;
+    z-index: 2000; /* Por encima de todo, incluso del mapa */
+    top: 0;
+    left: 0;
+    background-color: #111; /* Color de fondo oscuro */
+    overflow-x: hidden;
+    transition: 0.5s; /* Animación suave */
+    padding-top: 60px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+}
+
+/* Enlaces dentro del menú */
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    font-family: monospace; /* A juego con tu fuente */
+}
+
+.sidebar a:hover {
+    color: #f1f1f1;
+    background-color: #E57200; /* Naranja corporativo al pasar el ratón */
+}
+
+/* Botón de cerrar (X) dentro del menú */
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
