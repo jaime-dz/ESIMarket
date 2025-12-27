@@ -22,7 +22,7 @@ public class ProductoDTO implements Serializable {
     public ProductoDTO() {}
 
     public ProductoDTO(Producto p , Usuario u, FotoProd fp ) {
-
+        this.ID = p.getID();
         this.Precio = p.getPrecio();
         this.Descripcion = p.getDescripcion();
         this.Nombre = p.getNombre();
@@ -32,7 +32,8 @@ public class ProductoDTO implements Serializable {
         this.NombreVendedor = u.getNombre();
     }
 
-    public ProductoDTO(int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto, String NombreV) {
+    public ProductoDTO(int id, int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto, String NombreV) {
+        this.ID = id;
         this.Precio = precio;
         this.Descripcion = descripcion;
         this.Nombre = nombre;
@@ -43,7 +44,7 @@ public class ProductoDTO implements Serializable {
         this.NombreVendedor = NombreV;
     }
 
-
+    public int getID() {return ID;}
     public int getPrecio() {return Precio;}
     public String getDescripcion() {return Descripcion;}
     public String getNombre() {return Nombre;}
@@ -53,6 +54,7 @@ public class ProductoDTO implements Serializable {
     public byte[] getFoto() {return Foto;}
     public String getNombreVendedor() {return NombreVendedor;}
 
+    public void setID(int ID) {this.ID = ID;}
     public void setPrecio(int precio) {Precio = precio;}
     public void setDescripcion(String descripcion) {Descripcion = descripcion;}
     public void setNombre(String nombre) {Nombre = nombre;}
@@ -65,7 +67,8 @@ public class ProductoDTO implements Serializable {
     @Override
     public String toString() {
         return "ProductoDTO{" +
-                "Precio=" + Precio +
+                "Id=" + ID +
+                ", Precio=" + Precio +
                 ", Descripcion='" + Descripcion + '\'' +
                 ", Nombre='" + Nombre + '\'' +
                 ", NombreVendedor='" + NombreVendedor + '\'' +
