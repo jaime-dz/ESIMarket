@@ -65,7 +65,7 @@ public class ProductoController {
     public String viewProduct(Model model, @PathVariable(name="ID") int id ) {
 
         Producto p = productoRepository.findById(id).orElseThrow(()-> new CannotCreateProductError("Producto no encontrado"));
-        FotoProd fp = fotoProdRepository.findById(id).orElseThrow(()-> new CannotCreatePhotoError("Foto no encontrada"));
+        FotoProd fp = fotoProdRepository.findById(id).orElse(null);
         Usuario u = usuarioRepository.findById(p.getuDNI_Vendedor()).orElseThrow(()-> new CannotCreateUserError("Usuario no encontrado"));
         ProductoDTO pDTO = new ProductoDTO(p,u,fp);
 
