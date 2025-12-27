@@ -15,5 +15,10 @@ public interface ProductMapper {
     @Mapping(source = "fp.foto", target = "foto")
     @Mapping(source = "u.nombre", target = "nombreVendedor")
     @Mapping(source = "producto.nombre", target = "nombre")
+    @Mapping(source = "producto.precio", target = "precio")
+    @Mapping(source = "producto.descripcion", target = "descripcion")
+    @Mapping(source = "producto.tipo", target = "tipo")
+    @Mapping(source = "producto.estado", target = "estado")
+    @Mapping(source = "producto.ID", target = "id")
     ProductoDTO toDTO(Producto producto , FotoProd fp, Usuario u);
 }

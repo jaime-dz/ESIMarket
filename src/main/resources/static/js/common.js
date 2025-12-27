@@ -138,7 +138,7 @@ export async function enviarFormularioComoJSON(evento) {
         }
 
         // 2. ERROR
-        let mensajeError = "Usuario o contraseña incorrectos";
+        let mensajeError = "Error";
         try {
             const errorData = await respuesta.json();
             if (errorData && errorData.message) {
@@ -267,7 +267,7 @@ export function displayProductsItems(products, container) {
         if (item.foto) {
             // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
             // Le agregamos la cabecera para que el navegador lo entienda como imagen.
-            imagenFinal = "data:image/jpeg;base64," + item.foto;
+            imagenFinal = 'data:image/jpeg;base64,' + item.foto;
         } else {
             // Si item.foto es null, usamos la ruta local por defecto
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
@@ -326,4 +326,13 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
+}
+
+window.toggleMenu = function() {
+    const menu = document.getElementById("sideMenu");
+    if (menu.style.width === "250px") {
+        menu.style.width = "0";
+    } else {
+        menu.style.width = "250px";
+    }
 }

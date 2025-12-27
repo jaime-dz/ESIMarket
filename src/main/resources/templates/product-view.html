@@ -2,11 +2,62 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${product.nombre}">Detalle del Producto</title>
     <link rel="stylesheet" href="/css/general_styles.css">
+    <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
 </head>
 <body>
+    <div id="sideMenu" class="sidebar user-view">
+        <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+        <a href="/home/">Historial de compras</a>
+        <a href="/products/create">Lista de pedidos</a>
+        <a href="/profile/">Lista de servicios</a>
+        <a href="/home/about">Donaciones</a>
+    </div>
     <header class="menu-bar menu-superior">
+            <div class="header-left">
+                <div class="hamburger-icon user-view" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+            </div>
+
+            <nav class="header-center">
+                <ul>
+                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                
+                <div class="guest-view">
+                    <a href="/auth/login">Iniciar sesión</a>
+                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+                </div>
+
+                <div class="user-view" style="display: none;">
+                    
+                    <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+                    
+                    <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
+                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        
+                        <div class="dropdown-content">
+                            <a href="/profile/">Mi Perfil</a>
+                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </header>
 
     <main style="max-width: 800px; margin: 40px auto; padding: 20px;">
@@ -14,15 +65,13 @@
         <div id="product-detail-container" style="display: flex; gap: 30px;">
             
             <div style="flex: 1;">
-                <img th:if="${product.foto != null and !product.foto.isEmpty()}" 
-                     th:src="${'data:image/jpeg;base64,' + product.foto}" 
-                     alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
                 
-                <img th:if="${(product.foto == null or product.foto.isEmpty()) and product.tipo.toLowerCase() == 'servicio'}"
+                <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) == 'servicio'}"
                      src="/Images/engranaje.jpg" 
                      alt="Servicio" style="width: 100%; border-radius: 10px; object-fit: cover;">
 
-                <img th:if="${(product.foto == null or product.foto.isEmpty()) and product.tipo.toLowerCase() != 'servicio'}"
+                <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) != 'servicio'}"
                      src="/Images/book.jpg" 
                      alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
             </div>
@@ -30,10 +79,10 @@
             <div style="flex: 1;">
                 <h1 th:text="${product.nombre}" style="color: #E57200;">Nombre del Producto</h1>
                 
-                <h3 style="color: #333;">
+                <h3 style="color: #333; text-align: center;">
                     <span th:text="${product.precio}">0</span> 
                     <span>⚙️</span>
-                    <span th:if="${product.tipo.toLowerCase() == 'servicio'}">/h</span>
+                    <span th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}">/h</span>
                 </h3>
 
                 <p><strong>Vendedor:</strong> <span th:text="${product.nombreVendedor}">Usuario</span></p>
@@ -53,7 +102,24 @@
             </div>
         </div>
     </main>
+    <footer class="menu-bar menu-inferior">
+            <ul>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
 
+                <li class="guest-view">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li class="guest-view">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+
+                <li class="sn">
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+                </li>
+            </ul>
+        </footer>
     <script src="/js/common.js" type="module"></script>
 </body>
 </html>

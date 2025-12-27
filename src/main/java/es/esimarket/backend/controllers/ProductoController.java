@@ -64,12 +64,18 @@ public class ProductoController {
     @GetMapping("/view/{ID}")
     public String viewProduct(Model model, @PathVariable(name="ID") int id ) {
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+
         Producto p = productoRepository.findById(id).orElseThrow(()-> new CannotCreateProductError("Producto no encontrado"));
-        FotoProd fp = fotoProdRepository.findById(id).orElseThrow(()-> new CannotCreatePhotoError("Foto no encontrada"));
+        FotoProd fp = fotoProdRepository.findById(id).orElse(null);
         Usuario u = usuarioRepository.findById(p.getuDNI_Vendedor()).orElseThrow(()-> new CannotCreateUserError("Usuario no encontrado"));
-        ProductoDTO pDTO = productMapper.toDTO(p,fp,u);
+        ProductoDTO pDTO = new ProductoDTO(p,u,fp);
+
+        boolean owner = dni.equals(p.getuDNI_Vendedor());
 
         model.addAttribute("product",pDTO);
+        model.addAttribute("isOwner",owner);
 
         return "product-view";
     }
@@ -108,6 +114,8 @@ public class ProductoController {
         if ( !p.getuDNI_Vendedor().equals(dni) && userDetails.getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
             throw new CannotCompleteActionError("No tienes permiso para hacer esta accion");
         }
+
+        if ( !p.isDisponible() ) throw new CannotCreateProductError("No puedes borrar un produccto ya comprado");
 
         productoRepository.delete(p);
 
