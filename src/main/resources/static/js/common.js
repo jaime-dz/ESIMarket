@@ -267,7 +267,7 @@ export function displayProductsItems(products, container) {
         if (item.foto) {
             // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
             // Le agregamos la cabecera para que el navegador lo entienda como imagen.
-            imagenFinal = "data:image/jpeg;base64," + item.foto;
+            imagenFinal = 'data:image/jpeg;base64,' + item.foto;
         } else {
             // Si item.foto es null, usamos la ruta local por defecto
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';

@@ -14,15 +14,13 @@
         <div id="product-detail-container" style="display: flex; gap: 30px;">
             
             <div style="flex: 1;">
-                <img th:if="${product.foto != null and !product.foto.isEmpty()}" 
-                     th:src="${'data:image/jpeg;base64,' + product.foto}" 
-                     alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                <img th:if="${product.foto != null}" th:src="${'data:image/jpeg;base64,' + product.fotoBase64}" alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
                 
-                <img th:if="${(product.foto == null or product.foto.isEmpty()) and product.tipo.toLowerCase() == 'servicio'}"
+                <img th:if="${product.foto == null and product.tipo.toLowerCase() == 'servicio'}"
                      src="/Images/engranaje.jpg" 
                      alt="Servicio" style="width: 100%; border-radius: 10px; object-fit: cover;">
 
-                <img th:if="${(product.foto == null or product.foto.isEmpty()) and product.tipo.toLowerCase() != 'servicio'}"
+                <img th:if="${product.foto == null and product.tipo.toLowerCase() != 'servicio'}"
                      src="/Images/book.jpg" 
                      alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
             </div>
