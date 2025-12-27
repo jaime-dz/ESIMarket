@@ -75,7 +75,7 @@ public class ProductoDTO implements Serializable {
                 ", tipo='" + tipo + '\'' +
                 ", estado=" + estado +
                 ", recepcionAceptada=" + recepcionAceptada +
-                ", Foto=" + Arrays.toString(Foto) +
+                ", Foto=" + java.util.Base64.getEncoder().encodeToString(Foto) +
                 '}';
     }
 }
