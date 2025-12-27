@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (typeof actualizarBarraNavegacion === 'function') {
         actualizarBarraNavegacion();
     }
-
+    
     // 2. LOGOUT (Si existe el botón)
     const botonLogout = document.getElementById('btn-logout');
     if (botonLogout) {
@@ -287,6 +287,9 @@ export function displayProductsItems(products, container) {
                 <p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>
                 ${htmlEstado}
                 <p class="product-seller">Vendido por: ${item.nombreVendedor}</p>
+                <a href="/products/view/${item.id}" class="btn-detail" style="display:block; text-align:center; margin-top:10px; background:#E57200; color:white; padding:5px; text-decoration:none; border-radius:5px;">
+                    Ver detalle
+                </a>
             </div>
         `;
     });

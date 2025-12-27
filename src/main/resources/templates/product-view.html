@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.nombre}">Detalle del Producto</title>
+    <link rel="stylesheet" href="/css/general_styles.css">
+</head>
+<body>
+    <header class="menu-bar menu-superior">
+        </header>
+
+    <main style="max-width: 800px; margin: 40px auto; padding: 20px;">
+        
+        <div id="product-detail-container" style="display: flex; gap: 30px;">
+            
+            <div style="flex: 1;">
+                <img th:if="${product.foto != null and !product.foto.isEmpty()}" 
+                     th:src="${'data:image/jpeg;base64,' + product.foto}" 
+                     alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                
+                <img th:if="${(product.foto == null or product.foto.isEmpty()) and product.tipo.toLowerCase() == 'servicio'}"
+                     src="/Images/engranaje.jpg" 
+                     alt="Servicio" style="width: 100%; border-radius: 10px; object-fit: cover;">
+
+                <img th:if="${(product.foto == null or product.foto.isEmpty()) and product.tipo.toLowerCase() != 'servicio'}"
+                     src="/Images/book.jpg" 
+                     alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+            </div>
+
+            <div style="flex: 1;">
+                <h1 th:text="${product.nombre}" style="color: #E57200;">Nombre del Producto</h1>
+                
+                <h3 style="color: #333;">
+                    <span th:text="${product.precio}">0</span> 
+                    <span>⚙️</span>
+                    <span th:if="${product.tipo.toLowerCase() == 'servicio'}">/h</span>
+                </h3>
+
+                <p><strong>Vendedor:</strong> <span th:text="${product.nombreVendedor}">Usuario</span></p>
+                <p><strong>Categoría:</strong> <span th:text="${product.tipo}">-</span></p>
+                
+                <p th:if="${product.tipo.toLowerCase() != 'servicio'}">
+                    <strong>Estado:</strong> <span th:text="${product.estado}">-</span>
+                </p>
+                
+                <hr>
+                
+                <h4>Descripción:</h4>
+                <p th:text="${product.descripcion ?: 'Sin descripción detallada.'}"></p>
+
+                <br>
+                <button onclick="window.history.back()" style="padding: 10px 20px; cursor: pointer;">Volver</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/common.js" type="module"></script>
+</body>
+</html>
