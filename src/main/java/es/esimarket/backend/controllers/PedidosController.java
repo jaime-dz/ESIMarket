@@ -55,6 +55,7 @@ public class PedidosController{
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
+
         return ResponseEntity.ok(pedidosService.entregarPedido(IdPedido,NTaquilla,dni));  //mirar si convviene mandarle el udni aunque no lo uses
     }
 
@@ -63,9 +64,7 @@ public class PedidosController{
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
-        return ResponseEntity.ok(pedidosService.recogerPedido(IdPedido,dni));  //mirar si hay que enviar el udni aunque no lo uses
+        return ResponseEntity.ok(pedidosService.recogerPedido(IdPedido,dni));
     }
-
-    //El post de pedido va dentro de al funcion hacer compra
 
 }

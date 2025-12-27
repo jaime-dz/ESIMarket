@@ -16,6 +16,6 @@ public class HostRedirectController {
         }
 
         // Devuelve la vista por defecto si es otro host
-        return "index";  // Por ejemplo index.html en templates
+        return "redirect:/home/";  // Por ejemplo index.html en templates
     }
 }
