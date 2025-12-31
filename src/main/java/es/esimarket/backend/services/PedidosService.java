@@ -97,7 +97,6 @@ public class PedidosService{
 
         if ( c.getRecepcion() == Producto.RecepcionAceptada.enMano && c.getTipoPago() == Producto.PagoAceptado.Trueque ){
             Producto pT = productoRepository.findById(c.getIdProdTrueque()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
-            eliminarProd(pT);
         }
 
         return "Se ha entregado su pedido con exito";
@@ -114,18 +113,9 @@ public class PedidosService{
         p.setEstado(Pedidos.Estado.Recogido);
 
         pedidosRepository.save(p);
-        if ( prod != null ) eliminarProd(prod);
-        if ( c.getTipoPago() == Producto.PagoAceptado.Trueque ){
-            Producto pT = productoRepository.findById(c.getIdProdTrueque()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
-            eliminarProd(pT);
-        }
 
         return "Se ha recogido el pedido con exito";
     }
 
-    @Transactional
-    private void eliminarProd(Producto p ){
-        productoRepository.delete(p);
-    }
 
 }

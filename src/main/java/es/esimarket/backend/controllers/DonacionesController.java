@@ -6,6 +6,7 @@ import es.esimarket.backend.exceptions.CannotMakeDonationError;
 import es.esimarket.backend.repositories.DonacionesRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -57,5 +59,18 @@ public class DonacionesController {
         usuarioRepository.save(u);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/donationByUser")
+    public String donacionesPorUsuario (Model model)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
+        
+        Donaciones don = donacionesRepository.findByIDUsuario(uDNI);
+
+        model.addAttribute("donation",don);
+
+        return "donation-user";
     }
 }

@@ -113,7 +113,7 @@ public class ProductoService {
         return jdbcTemplate.queryForList(sql, Producto.class, ValoresParametros.toArray());
         */
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM Productos WHERE 1=1 ");
+        StringBuilder sql = new StringBuilder("SELECT * FROM producto WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
 
         boolean tieneMinimo = filtro.precioInferior() != null;
