@@ -4,10 +4,13 @@ import java.util.List;
 
 import es.esimarket.backend.controllers.requests.FiltroPedRequest;
 import es.esimarket.backend.controllers.requests.TaquillaRequest;
+import es.esimarket.backend.entities.FotoProd;
 import es.esimarket.backend.exceptions.CannotCompleteActionError;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
+import es.esimarket.backend.exceptions.CannotCreatePhotoError;
 import es.esimarket.backend.exceptions.CannotCreateProductError;
 import es.esimarket.backend.repositories.CompraRepository;
+import es.esimarket.backend.repositories.FotoProdRepository;
 import es.esimarket.backend.repositories.PedidosRepository;
 import es.esimarket.backend.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,9 @@ public class PedidosService{
 
     @Autowired
     private CompraRepository compraRepository;
+
+    @Autowired
+    private FotoProdRepository fotoProdRepository;
 
     @Autowired
     private ProductoRepository productoRepository;
@@ -81,8 +87,9 @@ public class PedidosService{
         {
             Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
             Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
+            FotoProd fp = fotoProdRepository.findByIdProd(prod.getID());
 
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),c.getuDNIComprador(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
+            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),fp.getFoto(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
         }
 
         return PedidosDTOs;

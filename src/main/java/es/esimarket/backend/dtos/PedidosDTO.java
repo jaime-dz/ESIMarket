@@ -1,6 +1,7 @@
 package es.esimarket.backend.dtos;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import es.esimarket.backend.entities.Pedidos;
 
@@ -8,7 +9,11 @@ public class PedidosDTO implements Serializable{
 
     private int idPedido;
 
+    private byte[] foto;
+
     private String nombreComprador;
+
+    private String nombreVendedor;
 
     private String nombreProd;
 
@@ -20,10 +25,12 @@ public class PedidosDTO implements Serializable{
 
     public PedidosDTO() {}
 
-    public PedidosDTO(int IdPedido, String nombreComprador, String nombreProd, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
+    public PedidosDTO(int IdPedido, byte[] foto, String nombreComprador, String nombreVendedor, String nombreProd, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
     {
         this.idPedido = IdPedido;
+        this.foto = foto;
         this.nombreComprador = nombreComprador;
+        this.nombreVendedor = nombreVendedor;
         this.nombreProd = nombreProd;
         this.nTaquilla =NTaquilla;
         this.enTaquilla =EnTaquilla;
@@ -33,8 +40,18 @@ public class PedidosDTO implements Serializable{
     public int getIdPedido() {return idPedido;}
     public void setIdPedido(int IdPedido) {this.idPedido = IdPedido;}
 
+    public String getFotoBase64(){
+        if (this.foto != null && this.foto.length > 0) {
+            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(this.foto);
+        }
+        return null;
+    }
+
     public String getNombreComprador() {return nombreComprador;}
     public void setNombreComprador(String nombreComprador) {this.nombreComprador = nombreComprador;}
+
+    public String getNombreVendedor() {return nombreVendedor;}
+    public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
 
     public String getNombreProd() {return nombreProd;}
     public void setNombreProd(String nombreProd) {this.nombreProd = nombreProd;}
@@ -52,7 +69,9 @@ public class PedidosDTO implements Serializable{
     public String toString() {
         return "PedidosDTO{" +
                 "idPedido=" + idPedido +
+                ", foto=" + Arrays.toString(foto) +
                 ", nombreComprador='" + nombreComprador + '\'' +
+                ", nombreVendedor='" + nombreVendedor + '\'' +
                 ", nombreProd='" + nombreProd + '\'' +
                 ", nTaquilla=" + nTaquilla +
                 ", enTaquilla=" + enTaquilla +
