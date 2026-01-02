@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Profile</title>
-        <link rel="stylesheet" href="/css/general_styles.css">
-        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
-    </head>
-    <body>
-        <div id="sideMenu" class="sidebar user-view">
-            <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
-            <a href="/purchase/user">Historial de compras</a>
-            <a href="/orders/filter">Lista de pedidos</a>
-            <a href="/service/user">Lista de servicios</a>
-            <a href="/donations/donationByUser">Donaciones</a>
-            <a href="/chat/">Chats</a>
-        </div>
-        <header class="menu-bar menu-superior">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.nombre}">Detalle del Producto</title>
+    <link rel="stylesheet" href="/css/general_styles.css">
+    <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div id="sideMenu" class="sidebar user-view">
+        <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+        <a href="/purchase/user">Historial de compras</a>
+        <a href="/orders/filter">Lista de pedidos</a>
+        <a href="/service/user">Lista de servicios</a>
+        <a href="/donations/donationByUser">Donaciones</a>
+        <a href="/chat/">Chats</a>
+    </div>
+    <header class="menu-bar menu-superior">
             <div class="header-left">
                 <div class="hamburger-icon user-view" onclick="toggleMenu()">
                     <span></span>
@@ -46,6 +46,9 @@
                     <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
                     
                     <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
                         <div class="dropdown-content">
@@ -57,42 +60,21 @@
 
             </div>
         </header>
-        <main>
-    <div class="profile-wrapper">
-        
-        <div class="imagen-left">
-            <img src="/Images/huevoverde.jpeg" width="256px" height="256px" alt="Foto de perfil"/>
-        </div>
 
-        <div class="square">
-            <h1>Mis Datos</h1><br><br>
-            <p>Nombre: <span th:text="${profile.nombre}"></span></p><br>
-            <p>Apellidos: <span th:text="${profile.apellidos}"></span></p><br>
-            <p>Usuario: <span th:text="${profile.usuario}"></span></p><br>
-            <p>Correo Electrónico: <span th:text="${profile.email}"></span></p><br>
-            <p>Carrera: <span th:text="${profile.carrera}"></span></p><br>
-            <p>Saldo: <span th:text="${profile.saldo + ' ⚙️'}"></span></p><br>
-            
-            <div class="form-buttons">
-                <button type="button" 
-                        id="edit-profile" 
-                        class="btn-common btn-orange" 
-                        onclick="window.location.href='/profile/edit'">
-                    Editar Perfil
-                </button>
-                <button type="button" 
-                        id="change-password" 
-                        class="btn-common btn-gray" 
-                        onclick="window.location.href='/profile/edit/password'">
-                    Cambiar Contraseña
-                </button>
-            </div><br><br>
+    <main style="max-width: 800px; margin: 40px auto; padding: 20px;">
+        <div class="desplegable-pedidos">
+            <label for="filtro-ped">Selecciona uno</label>
+            <select name="filtro-ped" id="filtro-ped">
+                <option value="todos">Todos</option>
+                <option value="por entregar">Por entregar</option>
+                <option value="por recoger">Por recoger</option>
+            </select>
         </div>
-
-    </div> </main>
-        
-        
-        <footer class="menu-bar menu-inferior">
+        <div class="submit-button">
+            <button type="submit">Aplicar</button>
+        </div>
+    </main>
+    <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
@@ -103,14 +85,13 @@
                 <li class="guest-view">
                     <a th:href="@{/auth/signup}">Registrarse</a>
                 </li>
-                
+
                 <li class="sn">
                     <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
                     <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
                 </li>
             </ul>
         </footer>
-        <script src="/js/common.js" type="module"></script>
-        <script src="/js/profile.js" type="module"></script>
-    </body>
+    <script src="/js/common.js" type="module"></script>
+</body>
 </html>

@@ -11,10 +11,11 @@
     <body>
         <div id="sideMenu" class="sidebar user-view">
             <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
-            <a href="/home/">Historial de compras</a>
-            <a href="/products/create">Lista de pedidos</a>
-            <a href="/profile/">Lista de servicios</a>
-            <a href="/home/about">Donaciones</a>
+            <a href="/purchase/user">Historial de compras</a>
+            <a href="/orders/filter">Lista de pedidos</a>
+            <a href="/service/user">Lista de servicios</a>
+            <a href="/donations/donationByUser">Donaciones</a>
+            <a href="/chat/">Chats</a>
         </div>
         <header class="menu-bar menu-superior">
             <div class="header-left">
@@ -63,6 +64,7 @@
         <main>
             <header>
                 <div class="search-form">
+                    <br>
                     <label for="search-input">Buscar servicios/productos:</label><br><br>
                     <div class="input-container">
                         <input type="text" id="search-input" placeholder="Busca lo que quieras">
@@ -98,7 +100,7 @@
                             </div>
 
                             <div class="filter-option">
-                                <input type="checkbox" class="state-filter" value="Casi-Nuevo" id="state-cn">
+                                <input type="checkbox" class="state-filter" value="Casi_Nuevo" id="state-cn">
                                 <label for="state-d">Casi Nuevo</label>
                             </div>
 

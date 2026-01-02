@@ -277,7 +277,7 @@ export function displayProductsItems(products, container) {
 
         // D. LÓGICA DE ESTADO
         const htmlEstado = (!esServicio && item.estado) 
-            ? `<p class="product-state">${item.estado}</p>` 
+            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>` 
             : ''; 
 
         return `
