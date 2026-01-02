@@ -87,7 +87,7 @@ public class PedidosService{
         {
             Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
             Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
-            FotoProd fp = fotoProdRepository.findById(prod.getID()).orElseThrow(()->new CannotCreatePhotoError("Foto no encontrada"));
+            FotoProd fp = fotoProdRepository.findByIdProd(prod.getID());
 
             PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),fp.getFoto(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
         }
