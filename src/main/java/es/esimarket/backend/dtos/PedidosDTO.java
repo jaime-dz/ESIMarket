@@ -6,43 +6,57 @@ import es.esimarket.backend.entities.Pedidos;
 
 public class PedidosDTO implements Serializable{
 
-    private int IdPedido;
+    private int idPedido;
 
-    private int NTaquilla;
+    private String nombreComprador;
 
-    private boolean EnTaquilla;
+    private String nombreProd;
 
-    private Pedidos.Estado Estado;
+    private int nTaquilla;
+
+    private boolean enTaquilla;
+
+    private Pedidos.Estado estado;
 
     public PedidosDTO() {}
 
-    public PedidosDTO(int IdPedido, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
+    public PedidosDTO(int IdPedido, String nombreComprador, String nombreProd, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
     {
-        this.IdPedido = IdPedido;
-        this.NTaquilla=NTaquilla;
-        this.EnTaquilla=EnTaquilla;
-        this.Estado=Estado;
+        this.idPedido = IdPedido;
+        this.nombreComprador = nombreComprador;
+        this.nombreProd = nombreProd;
+        this.nTaquilla =NTaquilla;
+        this.enTaquilla =EnTaquilla;
+        this.estado =Estado;
     }
 
-    public int getIdPedido() {return IdPedido;}
-    public void setIdPedido(int IdPedido) {this.IdPedido = IdPedido;}
+    public int getIdPedido() {return idPedido;}
+    public void setIdPedido(int IdPedido) {this.idPedido = IdPedido;}
 
-    public int getNTaquilla() {return NTaquilla;}
-    public void setIdTaquilla(int NTaquilla) {this.NTaquilla=NTaquilla;}
+    public String getNombreComprador() {return nombreComprador;}
+    public void setNombreComprador(String nombreComprador) {this.nombreComprador = nombreComprador;}
 
-    public boolean getEnTaquilla() {return EnTaquilla;}
-    public void setEnTaquilla(boolean EnTaquilla) {this.EnTaquilla=EnTaquilla;}
+    public String getNombreProd() {return nombreProd;}
+    public void setNombreProd(String nombreProd) {this.nombreProd = nombreProd;}
 
-    public Pedidos.Estado getEstado() {return Estado;}
-    public void setEstado(Pedidos.Estado Estado) {this.Estado=Estado;}
+    public boolean isEnTaquilla() {return enTaquilla;}
+    public void setEnTaquilla(boolean enTaquilla) {this.enTaquilla = enTaquilla;}
+
+    public int getnTaquilla() {return nTaquilla;}
+    public void setIdTaquilla(int NTaquilla) {this.nTaquilla =NTaquilla;}
+
+    public Pedidos.Estado getEstado() {return estado;}
+    public void setEstado(Pedidos.Estado Estado) {this.estado =Estado;}
 
     @Override
     public String toString() {
         return "PedidosDTO{" +
-                "NTaquilla=" + NTaquilla +
-                ", EnTaquilla='" + EnTaquilla + '\'' +
-                ", Estado='" + Estado + '\'' +
+                "idPedido=" + idPedido +
+                ", nombreComprador='" + nombreComprador + '\'' +
+                ", nombreProd='" + nombreProd + '\'' +
+                ", nTaquilla=" + nTaquilla +
+                ", enTaquilla=" + enTaquilla +
+                ", estado=" + estado +
                 '}';
     }
-
 }
