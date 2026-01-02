@@ -15,6 +15,8 @@ public class PedidosDTO implements Serializable{
 
     private String nombreVendedor;
 
+    private boolean esComprador;
+
     private String nombreProd;
 
     private int nTaquilla;
@@ -25,12 +27,13 @@ public class PedidosDTO implements Serializable{
 
     public PedidosDTO() {}
 
-    public PedidosDTO(int IdPedido, byte[] foto, String nombreComprador, String nombreVendedor, String nombreProd, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
+    public PedidosDTO(int IdPedido, byte[] foto, String nombreComprador, String nombreVendedor,boolean esComprador, String nombreProd, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
     {
         this.idPedido = IdPedido;
         this.foto = foto;
         this.nombreComprador = nombreComprador;
         this.nombreVendedor = nombreVendedor;
+        this.esComprador = esComprador;
         this.nombreProd = nombreProd;
         this.nTaquilla =NTaquilla;
         this.enTaquilla =EnTaquilla;
@@ -53,6 +56,9 @@ public class PedidosDTO implements Serializable{
     public String getNombreVendedor() {return nombreVendedor;}
     public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
 
+    public boolean isEsComprador() {return esComprador;}
+    public void setEsComprador(boolean esComprador) {this.esComprador = esComprador;}
+
     public String getNombreProd() {return nombreProd;}
     public void setNombreProd(String nombreProd) {this.nombreProd = nombreProd;}
 
@@ -72,10 +78,12 @@ public class PedidosDTO implements Serializable{
                 ", foto=" + Arrays.toString(foto) +
                 ", nombreComprador='" + nombreComprador + '\'' +
                 ", nombreVendedor='" + nombreVendedor + '\'' +
+                ", esComprador=" + esComprador +
                 ", nombreProd='" + nombreProd + '\'' +
                 ", nTaquilla=" + nTaquilla +
                 ", enTaquilla=" + enTaquilla +
                 ", estado=" + estado +
                 '}';
     }
+
 }
