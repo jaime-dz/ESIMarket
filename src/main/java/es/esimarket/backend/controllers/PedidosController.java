@@ -30,17 +30,19 @@ public class PedidosController{
     @Autowired
     private JwtService jwtservice;
 
-    @GetMapping("/filter")
-    public String getPedidos(Model model, @RequestBody FiltroPedRequest request )
+    @GetMapping("/")
+    public String listaPedidos(){
+        return "order-list";
+    }
+
+    @PostMapping("/filter")
+    public List<PedidosDTO> getPedidos(Model model, @RequestBody FiltroPedRequest request )
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
-        List<PedidosDTO> peds = pedidosService.filtro_pedidos(uDNI, request);
 
-        model.addAttribute("pedidos",peds);
-
-        return "order-list";
-
+        if ( request == null) request = new FiltroPedRequest("");
+        return pedidosService.filtro_pedidos(uDNI, request);
 
     }
 
