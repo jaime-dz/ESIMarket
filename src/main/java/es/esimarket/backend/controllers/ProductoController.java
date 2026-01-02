@@ -80,13 +80,6 @@ public class ProductoController {
         return "product-view";
     }
 
-    @PostMapping("/filter")
-    public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestBody FiltroProdRequest request)
-    {
-        List<Producto> productEntities = productoService.FiltroProductosGenerico(request);
-        return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
-    }
-
     @GetMapping("/create")
     public String createProduct(){
         return "product-create";

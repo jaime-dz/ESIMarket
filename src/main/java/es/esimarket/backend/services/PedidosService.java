@@ -82,7 +82,7 @@ public class PedidosService{
             Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
             Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
 
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),c.getuDNIComprador(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
+            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
         }
 
         return PedidosDTOs;
