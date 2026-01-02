@@ -2,12 +2,16 @@ package es.esimarket.backend.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.esimarket.backend.controllers.requests.FiltroPedRequest;
 import es.esimarket.backend.controllers.requests.TaquillaRequest;
 import es.esimarket.backend.exceptions.CannotCompleteActionError;
+import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
+import es.esimarket.backend.exceptions.CannotCreateProductError;
 import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.repositories.PedidosRepository;
 import es.esimarket.backend.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import es.esimarket.backend.dtos.PedidosDTO;
@@ -35,13 +39,50 @@ public class PedidosService{
     @Autowired
     private JdbcTemplate jdbcTemplate;
     
-    public List<PedidosDTO> mostrar_pedidos(){
-        List<Pedidos> Pedidoss = pedidosRepository.findAll();
+    public List<PedidosDTO> filtro_pedidos(String dni, FiltroPedRequest request){
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM pedido");
+        sql.append("JOIN compra c ON p.IdCompra = c.IdCompra ");
+        sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
+        List<Object> params = new ArrayList<>();
+
+        String[] filters = new String[]{"todos", "por entregar","por recoger"};
+
+        if ( request.filter() != null && ( request.filter().equals("todos") || request.filter().equals("por entregar") || request.filter().equals("por recoger") ) ){
+            switch (request.filter()) {
+                case "por entregar":
+                    // El usuario es el VENDEDOR y el estado es 'PorEntregar'
+                    sql.append("WHERE pr.uDNIVendedor = ? AND p.Estado = 'PorEntregar'");
+                    params.add(dni);
+                    break;
+
+                case "por recoger":
+                    // El usuario es el COMPRADOR y el estado es 'Entregado' (listo para recoger)
+                    sql.append("WHERE c.uDNIcomprador = ? AND p.Estado = 'Entregado'");
+                    params.add(dni);
+                    break;
+
+                case "todos":
+                default:
+                    // El usuario es el COMPRADOR O el VENDEDOR
+                    sql.append("WHERE c.uDNIcomprador = ? OR pr.uDNIVendedor = ?");
+                    params.add(dni);
+                    params.add(dni); // Añadimos el DNI dos veces para los dos '?'
+                    break;
+            }
+
+        }
+
+
+        List<Pedidos> peds = jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Pedidos.class), params.toArray());
         List<PedidosDTO> PedidosDTOs = new ArrayList<>();
 
-        for( Pedidos p : Pedidoss)
+        for( Pedidos p : peds)
         {
-            PedidosDTOs.add(pedidosMapper.toDto(p));
+            Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
+            Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
+
+            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),c.getuDNIComprador(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
         }
 
         return PedidosDTOs;

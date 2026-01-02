@@ -1,5 +1,5 @@
 package es.esimarket.backend.services;
-import es.esimarket.backend.controllers.requests.FiltroRequest;
+import es.esimarket.backend.controllers.requests.FiltroProdRequest;
 import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.dtos.UsuarioDTO;
 import es.esimarket.backend.entities.FotoProd;
@@ -53,7 +53,7 @@ public class ProductoService {
         return ResponseEntity.ok("Producto registrado correctamente");
     }
 
-    public List<Producto> FiltroProductosGenerico(FiltroRequest filtro)
+    public List<Producto> FiltroProductosGenerico(FiltroProdRequest filtro)
     {
         /*
         HashMap<String,String> dic = variosService.StringToDictionary(json);
