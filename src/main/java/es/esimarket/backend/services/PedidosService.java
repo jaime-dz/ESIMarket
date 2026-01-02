@@ -89,7 +89,7 @@ public class PedidosService{
             Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
             FotoProd fp = fotoProdRepository.findByIdProd(prod.getID());
 
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),fp.getFoto(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
+            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),fp.getFoto(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),c.getuDNIComprador().equals(dni),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
         }
 
         return PedidosDTOs;
