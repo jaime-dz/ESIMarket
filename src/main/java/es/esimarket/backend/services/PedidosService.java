@@ -47,19 +47,9 @@ public class PedidosService{
     
     public List<PedidosDTO> filtro_pedidos(String dni, FiltroPedRequest request){
 
-        StringBuilder sql = new StringBuilder("SELECT " +
-    "   p.IdPedido, " +
-    "   p.NumTaquilla as nTaquilla, " +
-    "   p.Estado, " +
-    "   pr.Nombre as nombreProd, " +
-    "   pr.Precio, " +
-    "   fp.Foto, " +
-    "   pr.Tipo, " +
-    "   c.IdCompra, " +
-    "FROM pedido p " +
-    "JOIN compra c ON p.IdCompra = c.IdCompra " +
-    "JOIN producto pr ON c.IDproducto = pr.ID "+
-    "JOIN FotoProd fp ON fp.IdProd = pr.ID");
+        StringBuilder sql = new StringBuilder("SELECT * FROM pedido");
+        sql.append("JOIN compra c ON p.IdCompra = c.IdCompra ");
+        sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
         List<Object> params = new ArrayList<>();
 
         String[] filters = new String[]{"todos", "por entregar","por recoger"};

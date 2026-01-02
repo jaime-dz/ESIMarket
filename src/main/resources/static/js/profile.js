@@ -7,15 +7,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const editForm = document.getElementById("edit-form");
+    //interceptar el formulario de edición y hacerlo PUT
+    const editForm = document.getElementById("edit-form"); // Asegúrate que en HTML el form tenga este ID
+
     if (editForm) {
         editForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
+            event.preventDefault(); // Detenemos el envío normal del HTML
 
             const formData = new FormData(editForm);
             const datosParaEnviar = {};
             let hayCambios = false;
 
+            // Recorremos los datos y solo guardamos los que NO estén vacíos
             formData.forEach((value, key) => {
                 if (value && value.trim() !== "") {
                     datosParaEnviar[key] = value.trim();
@@ -29,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
+                // Enviamos petición PUT manual
                 const respuesta = await fetch('/profile/edit', {
                     method: 'PUT',
                     headers: {
@@ -38,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 if (respuesta.ok) {
+                    // Si sale bien, volvemos al perfil
                     window.location.href = "/profile/";
                 } else {
                     alert("Error al actualizar el perfil. Inténtalo de nuevo.");

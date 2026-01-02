@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de pedidos</title>
+    <title th:text="${product.nombre}">Detalle del Producto</title>
     <link rel="stylesheet" href="/css/general_styles.css">
     <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
 </head>
@@ -11,7 +11,7 @@
     <div id="sideMenu" class="sidebar user-view">
         <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
         <a href="/purchase/user">Historial de compras</a>
-        <a href="/orders/">Lista de pedidos</a>
+        <a href="/orders/filter">Lista de pedidos</a>
         <a href="/service/user">Lista de servicios</a>
         <a href="/donations/donationByUser">Donaciones</a>
         <a href="/chat/">Chats</a>
@@ -65,17 +65,14 @@
         <div class="desplegable-pedidos">
             <label for="filtro-ped">Selecciona uno</label>
             <select name="filtro-ped" id="filtro-ped">
-                <option value="todos" selected>Todos</option>
+                <option value="todos">Todos</option>
                 <option value="por entregar">Por entregar</option>
                 <option value="por recoger">Por recoger</option>
             </select>
-            <div class="submit-button">
-                <button type="submit">Aplicar</button>
-            </div>
-
-
-        </div>       
-
+        </div>
+        <div class="submit-button">
+            <button type="submit">Aplicar</button>
+        </div>
     </main>
     <footer class="menu-bar menu-inferior">
             <ul>
