@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${product.nombre}">Detalle del Producto</title>
+    <title>Lista de pedidos</title>
     <link rel="stylesheet" href="/css/general_styles.css">
     <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
 </head>
@@ -11,7 +11,7 @@
     <div id="sideMenu" class="sidebar user-view">
         <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
         <a href="/purchase/user">Historial de compras</a>
-        <a href="/orders/filter">Lista de pedidos</a>
+        <a href="/orders/">Lista de pedidos</a>
         <a href="/service/user">Lista de servicios</a>
         <a href="/donations/donationByUser">Donaciones</a>
         <a href="/chat/">Chats</a>
@@ -71,7 +71,10 @@
             </select>
         </div>
         <div class="submit-button">
-            <button type="submit">Aplicar</button>
+            <button type="button" onclick="gestionarCargaPedidos()">Aplicar</button>
+        </div>
+
+        <div id="lista-pedidos" class="pedidos-container" style="margin-top: 20px;">
         </div>
     </main>
     <footer class="menu-bar menu-inferior">
@@ -93,5 +96,58 @@
             </ul>
         </footer>
     <script src="/js/common.js" type="module"></script>
+    <script>
+        async function gestionarCargaPedidos(filtroOverride = null) {
+            const select = document.getElementById('filtro-ped');
+            const filtro = filtroOverride || select.value || "todos";
+            const container = document.getElementById('lista-pedidos'); // El div que añadimos
+            
+            container.innerHTML = "<p>Cargando pedidos...</p>";
+
+            try {
+                // Usamos POST porque cambiamos el controlador a @PostMapping
+                const response = await fetch('/orders/filter', {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ filtro: filtro }) // Ajusta según tu FiltroPedRequest
+                });
+
+                if (!response.ok) throw new Error("Error cargando pedidos");
+
+                const pedidos = await response.json();
+                
+                if (pedidos.length === 0) {
+                    container.innerHTML = "<p>No hay pedidos con este filtro.</p>";
+                    return;
+                }
+
+                // Generar HTML
+                const html = pedidos.map(p => `
+                    <div class="pedido-card" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
+                        <h3>${p.nombreProd}</h3>
+                        <p>Estado: <strong>${p.estado}</strong></p>
+                        <p>Comprador: ${p.nombreComprador} | Vendedor: ${p.nombreVendedor}</p>
+                        
+                        ${p.esComprador && p.estado === 'Entregado' ? 
+                        `<button onclick="accionRecogerPedido(${p.idPedido})">Confirmar Recogida</button>` : ''}
+                        
+                        ${!p.esComprador && p.estado === 'PorEntregar' ? 
+                        `<button onclick="accionEntregarPedido(${p.idPedido})">Marcar Entregado</button>` : ''}
+                    </div>
+                `).join('');
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = "<p>Error al cargar los datos.</p>";
+            }
+        }
+
+        // Cargar al inicio
+        document.addEventListener("DOMContentLoaded", () => gestionarCargaPedidos());
+            </script>
 </body>
 </html>

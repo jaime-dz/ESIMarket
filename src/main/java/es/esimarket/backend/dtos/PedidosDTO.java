@@ -19,7 +19,7 @@ public class PedidosDTO implements Serializable{
 
     private String nombreProd;
 
-    private int nTaquilla;
+    private Integer nTaquilla;
 
     private boolean enTaquilla;
 
@@ -27,7 +27,7 @@ public class PedidosDTO implements Serializable{
 
     public PedidosDTO() {}
 
-    public PedidosDTO(int IdPedido, byte[] foto, String nombreComprador, String nombreVendedor,boolean esComprador, String nombreProd, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
+    public PedidosDTO(int IdPedido, byte[] foto, String nombreComprador, String nombreVendedor,boolean esComprador, String nombreProd, Integer NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
     {
         this.idPedido = IdPedido;
         this.foto = foto;
@@ -65,8 +65,8 @@ public class PedidosDTO implements Serializable{
     public boolean isEnTaquilla() {return enTaquilla;}
     public void setEnTaquilla(boolean enTaquilla) {this.enTaquilla = enTaquilla;}
 
-    public int getnTaquilla() {return nTaquilla;}
-    public void setIdTaquilla(int NTaquilla) {this.nTaquilla =NTaquilla;}
+    public Integer getnTaquilla() {return nTaquilla;}
+    public void setIdTaquilla(Integer NTaquilla) {this.nTaquilla =NTaquilla;}
 
     public Pedidos.Estado getEstado() {return estado;}
     public void setEstado(Pedidos.Estado Estado) {this.estado =Estado;}

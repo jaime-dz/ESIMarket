@@ -47,7 +47,7 @@ public class PedidosService{
     
     public List<PedidosDTO> filtro_pedidos(String dni, FiltroPedRequest request){
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM pedido");
+        StringBuilder sql = new StringBuilder("SELECT p.*, pr.uDNIVendedor, c.uDNIcomprador FROM pedido p ");
         sql.append("JOIN compra c ON p.IdCompra = c.IdCompra ");
         sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
         List<Object> params = new ArrayList<>();
@@ -68,7 +68,6 @@ public class PedidosService{
                     params.add(dni);
                     break;
 
-                case "todos":
                 default:
                     // El usuario es el COMPRADOR O el VENDEDOR
                     sql.append("WHERE c.uDNIcomprador = ? OR pr.uDNIVendedor = ?");
@@ -87,9 +86,18 @@ public class PedidosService{
         {
             Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
             Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
-            FotoProd fp = fotoProdRepository.findByIdProd(prod.getID());
-
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),fp.getFoto(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),c.getuDNIComprador().equals(dni),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
+            FotoProd fp = fotoProdRepository.findById(prod.getID()).orElse(null);
+            byte[] Foto = null;
+            Integer NTaq = null;
+            if ( fp != null ) {
+                Foto = fp.getFoto();
+                if (p.getNTaquilla() != null) {
+                    NTaq=p.getNTaquilla();
+                }
+            }
+            
+            
+            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),Foto,c.getuDNIComprador(),prod.getuDNI_Vendedor(),c.getuDNIComprador().equals(dni),prod.getNombre(),NTaq,p.isEnTaquilla(),p.getEstado()));
         }
 
         return PedidosDTOs;
