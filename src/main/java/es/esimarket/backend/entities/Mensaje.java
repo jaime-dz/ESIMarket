@@ -2,6 +2,8 @@ package es.esimarket.backend.entities;
 import jakarta.persistence.*;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name="mensaje")
@@ -19,14 +21,14 @@ public class Mensaje{
     private String uDNIremitente;
 
     @Column(name = "FechaHora", nullable = false)
-    private String fechaHora;
+    private LocalDateTime fechaHora;
 
     @Column(name= "Texto")
     private String texto;
 
     public Mensaje(){}
 
-    public Mensaje(int id_chat, String uDNI_rem, String fecha, String texto){
+    public Mensaje(int id_chat, String uDNI_rem, LocalDateTime fecha, String texto){
         this.IDChat = id_chat;
         this.uDNIremitente = uDNI_rem;
         this.fechaHora = fecha;
@@ -42,6 +44,26 @@ public class Mensaje{
     public String getTexto(){return texto;}
     public void setTexto(String texto) {this.texto=texto;}
 
-    public String getFechaHora(){return fechaHora;}
-    public void setFechaHora(String FechaHora) { this.fechaHora = FechaHora; }
+    public LocalDateTime getFecha(){ return fechaHora;}
+
+    public String getFechaHora(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return fechaHora.format(formato);
+    }
+
+    public String getFechaDia(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return fechaHora.format(formato);
+    }
+    
+    public String getDia(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd");
+        return fechaHora.format(formato);
+    }
+
+    public String getHoraMin(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm");
+        return fechaHora.format(formato);
+    }
+    public void setFechaHora(LocalDateTime FechaHora) { this.fechaHora = FechaHora; }
 }

@@ -1,5 +1,4 @@
 package es.esimarket.backend.repositories;
-import es.esimarket.backend.dtos.MensajeDTO;
 import es.esimarket.backend.entities.Mensaje;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

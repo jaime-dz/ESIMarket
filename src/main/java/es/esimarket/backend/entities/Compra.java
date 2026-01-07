@@ -1,5 +1,7 @@
 package es.esimarket.backend.entities;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.persistence.*;
 
@@ -19,7 +21,7 @@ public class Compra {
     private int IDProducto;
 
     @Column(name = "Fecha", nullable = false)
-    private String Fecha;
+    private LocalDateTime Fecha;
 
     @Column(name = "TipoPago")
     @Enumerated(EnumType.STRING)
@@ -34,7 +36,7 @@ public class Compra {
 
     public Compra() {}
 
-    public Compra(String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago, int idProdTrueque) {
+    public Compra(String uDNIComprador, int IDProducto, LocalDateTime Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago, int idProdTrueque) {
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
@@ -43,7 +45,7 @@ public class Compra {
         this.idProdTrueque = idProdTrueque;
     }
 
-    public Compra(String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
+    public Compra(String uDNIComprador, int IDProducto, LocalDateTime Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
@@ -57,8 +59,11 @@ public class Compra {
     public int getIDProducto(){return IDProducto;}
     public void setIDProducto(int IDProducto) {this.IDProducto = IDProducto; }
 
-    public String getFecha() {return Fecha;}
-    public void setFecha(String Fecha) {this.Fecha = Fecha; }
+    public String getFecha() {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return Fecha.format(formato);
+    }
+    public void setFecha(LocalDateTime Fecha) {this.Fecha = Fecha; }
 
     public Producto.RecepcionAceptada getRecepcion() {return recepcion;}
     public void setRecepcion(Producto.RecepcionAceptada recepcion) {this.recepcion=recepcion;}
