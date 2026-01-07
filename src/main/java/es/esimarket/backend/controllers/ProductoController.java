@@ -1,5 +1,5 @@
 package es.esimarket.backend.controllers;
-import es.esimarket.backend.controllers.requests.FiltroRequest;
+import es.esimarket.backend.controllers.requests.FiltroProdRequest;
 import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.entities.FotoProd;
 import es.esimarket.backend.entities.Producto;
@@ -78,13 +78,6 @@ public class ProductoController {
         model.addAttribute("isOwner",owner);
 
         return "product-view";
-    }
-
-    @PostMapping("/filter")
-    public ResponseEntity<List<ProductoDTO>> getProductosFiltroGenerico(@RequestBody FiltroRequest request)
-    {
-        List<Producto> productEntities = productoService.FiltroProductosGenerico(request);
-        return ResponseEntity.ok(productoService.mostrar_productos(productEntities));
     }
 
     @GetMapping("/create")

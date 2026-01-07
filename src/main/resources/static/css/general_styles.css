@@ -6,21 +6,15 @@
 }
 
 .menu-superior ul {
-    /* 1. Ocupa todo el espacio restante para permitir el centrado/alineación */
-    flex-grow: 1; 
-    
-    /* 2. Se convierte en un contenedor flex para alinear sus hijos (los <li>) */
+    flex-grow: 1;
     display: flex; 
     align-items: center;
-    
     list-style: none;
     padding: 0;
     margin: 0;
-    
-    /* Restablecemos los estilos absolutos de la solución anterior */
     position: static; 
     width: auto; 
-    pointer-events: auto; /* Permite clicks en todos los botones de la lista */
+    pointer-events: auto;
 }
 
 .menu-superior ul li:nth-child(1) {
@@ -43,11 +37,10 @@
 
 .menu-superior {
     display: grid;
-    /* Columna 1 (Logo): espacio flexible | Col 2 (Menú): autoajuste | Col 3 (Auth): espacio flexible */
     grid-template-columns: 1fr auto 1fr; 
     align-items: center;
     
-    padding: 10px 40px; /* Ajusta el padding según prefieras */
+    padding: 10px 40px;
     background-color: #00587C;
     position: relative;
     z-index: 1001;
@@ -59,7 +52,7 @@
 .header-left {
     display: flex;
     align-items: center;
-    justify-self: start; /* Alineado a la izquierda */
+    justify-self: start;
 }
 
 .header-center ul {
@@ -84,13 +77,11 @@
 }
 
 .user-view {
-    display: none; /* Oculto por defecto, JS lo activa */
-    /* Importante: display:flex se inyectará vía JS o clases auxiliares si es necesario, 
-       pero common.js usa 'display: block'. Para mantener el flex interno usamos esto: */
+    display: none;
 }
 
 
-.user-view[style*="block"] {
+.header-right .user-view[style*="block"] {
     display: flex !important; 
     align-items: center;
     gap: 20px;
@@ -105,7 +96,7 @@
     font-weight: bold;
     cursor: pointer;
     font-family: Arial, sans-serif;
-    text-decoration: none; /* Si usas <a> */
+    text-decoration: none;
     transition: background-color 0.3s;
 }
 
@@ -115,12 +106,8 @@
 
 .menu-superior .guest-view,
 .menu-superior .user-view {
-    /* Aplicamos margin-left: auto a estos elementos, lo que crea un espacio 
-       máximo entre los botones de navegación centrados y estos botones de la derecha. */
     margin-left: auto; 
-    margin-right: 20px; /* Separación del borde de la pantalla */
-    
-    /* Quitar el posicionamiento absoluto si quedó de la solución anterior */
+    margin-right: 20px;
     position: static;
 }
 
@@ -133,7 +120,7 @@
 }
 
 .menu-inferior ul {
-    /* Creamos un contexto de posición */
+    /* Contexto de posición */
     position: relative;
     display: flex;
     justify-content: center; /* Centramos los enlaces principales */
@@ -195,7 +182,7 @@ textarea#message {
 #error-login {
     color: red;
     font-size: 0.9em;
-    height: 1em; /* Reserva espacio */
+    height: 1em;
     margin-top: 5px;
     text-align: center;
     font-weight: bold;
@@ -206,7 +193,7 @@ header{
     justify-items: center;
 }
 
-/*Estilos para los recuadros de login y registro*/
+/* Estilos para los recuadros de login y registro */
 .square{
     border: 1px solid black;
     margin-bottom:30px;
@@ -218,7 +205,7 @@ header{
     box-sizing: border-box;
 }
 
-/*Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto*/
+/* Estilos comunes a los botones para subir los datos de inicio de sesión, registro y formulario de contacto */
 button[type="submit"] {
     border-radius: 20px;
     color: #ffffff;
@@ -239,9 +226,9 @@ button[type="submit"] {
 
 .form-buttons {
     display: flex;
-    justify-content: center; /* Centrados en la pantalla */
+    justify-content: center;
     gap: 15px;               /* Espacio entre botones */
-    margin-top: 30px;        /* Espacio arriba */
+    margin-top: 30px;
     flex-wrap: wrap;         /* Si la pantalla es muy pequeña, bajan de línea */
 }
 
@@ -255,7 +242,7 @@ button[type="submit"] {
     color: white;
     font-family: 'Trebuchet MS', Arial, sans-serif;
     transition: background-color 0.3s, transform 0.1s;
-    min-width: 120px;        /* Para que todos tengan un ancho mínimo similar */
+    min-width: 120px;        /* Para que todos tengan un ancho mínimo */
 }
 
 .btn-common:active {
@@ -288,22 +275,17 @@ html {
 }
 
 body {
-  /* Ocupa como mínimo la altura de viewport */
   min-height: 100vh;
-
-  /* Activa Flexbox */
   display: flex;
   flex-direction: column; /* Apila los elementos verticalmente */
 }
 
 main {
-  /*Le dice a <main> que crezca
-     para ocupar todo el espacio sobrante. */
   flex-grow: 1;
 }
 
 .logo-item{
-    width: 50px; /* Ajustado para mejor proporción */
+    width: 50px;
     height: 50px;
     margin-right: 15px;
 }
@@ -320,7 +302,7 @@ main {
     margin-bottom: 5px;
 }
 
-/*Estilos comunes a los recuadros de input*/
+/* Estilos comunes a los recuadros de input */
 #formulario input[type="text"],
 #formulario input[type="email"],
 #formulario textarea,
@@ -354,7 +336,7 @@ main {
     resize: vertical;
 }
 
-/*Fuente para los placeholders*/
+/* Fuente para los placeholders */
 #formulario input[type="text"]::placeholder,
 #formulario input[type="email"]::placeholder,
 #formulario textarea::placeholder,
@@ -424,14 +406,14 @@ main {
 }
 
 .filter-option {
-    display: flex;       /* Pone los elementos en fila */
-    align-items: center; /* Los centra verticalmente */
-    margin-bottom: 4px;  /* Espacio pequeño entre opciones */
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
 }
 
 .filter-option input[type="checkbox"] {
-    width: auto !important; /* Importante para sobreescribir tu regla global */
-    margin-right: 8px;      /* Espacio entre la cajita y el texto */
+    width: auto !important;
+    margin-right: 8px;      /* Espacio entre la caja y el texto */
     display: inline-block;
     cursor: pointer;
 }
@@ -446,7 +428,7 @@ main {
     flex: 3;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    grid-auto-rows: max-content;  /* La altura de la fila se ajusta al contenido, no al espacio libre */
+    grid-auto-rows: max-content;
     align-content: start;
     gap: 20px; /* Espacio entre las tarjetas */
 }
@@ -480,8 +462,8 @@ main {
 .product-price {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #007BFF; /* Precio en color azul */
-    margin: 0 0 10px 0; /* Espacio antes del vendedor */
+    color: #007BFF;
+    margin: 0 0 10px 0;
 }
 
 .product-seller {
@@ -532,11 +514,11 @@ main {
 
 .profile-wrapper {
     display: flex;
-    justify-content: center; /* Centrado en la pantalla */
+    justify-content: center;
     align-items: center;     /* Centrados verticalmente uno respecto al otro */
-    gap: 50px;               /* Separación entre la foto y el cuadro de datos */
+    gap: 50px;
     padding: 40px 20px;
-    flex-wrap: wrap;         /* Si la pantalla es móvil, baja uno debajo del otro */
+    flex-wrap: wrap;
 }
 
 .imagen-left img {
@@ -547,7 +529,7 @@ main {
 }
 
 .profile-wrapper .square {
-    margin: 0; /* Quitamos los márgenes automáticos para que el flex controle la posición */
+    margin: 0;
     width: 100%;
     max-width: 500px;
 }
@@ -565,11 +547,11 @@ main {
     margin-top: 10px;
 }
 
-/* Creamos un bloque invisible encima del menú que conecta con la foto */
+/* Bloque invisible encima del menú que conecta con la foto */
 .dropdown-content::before {
     content: "";
     position: absolute;
-    top: -15px; /* Cubre el hueco entre la foto y el menú */
+    top: -15px;
     left: 0;
     width: 100%;
     height: 15px;
@@ -600,7 +582,7 @@ main {
     display: block;
 }
 
-/* El icono del ojo */
+/* El ojo */
 .password-toggle-icon {
     position: absolute;
     right: 15px;
@@ -609,7 +591,7 @@ main {
     cursor: pointer;
     color: #666;
     font-size: 1.2rem;
-    user-select: none; /* Para que no se seleccione como texto */
+    user-select: none;
     background: none;
     border: none;
     padding: 0;
@@ -617,7 +599,7 @@ main {
 
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
-    padding-right: 45px !important; /* Espacio extra a la derecha */
+    padding-right: 45px !important;
 }
 
 .input-container {
@@ -626,65 +608,71 @@ main {
 }
 
 .hamburger-icon {
-    display: flex !important;
+    display: none;
     flex-direction: column;
     justify-content: space-between;
     width: 30px;
     height: 21px;
     cursor: pointer;
-    margin-right: 15px; /* Espacio entre las líneas y el logo */
+    margin-right: 15px;
+}
+
+.hamburger-icon[style*="block"] {
+    display: flex !important;
 }
 
 .hamburger-icon span {
     display: block;
     height: 3px;
     width: 100%;
-    background-color: white; /* Color de las líneas */
+    background-color: white;
     border-radius: 3px;
 }
 
 /* Asegurar que header-left alinee todo en fila */
 .header-left {
     display: flex;
-    align-items: center; /* Centrado vertical */
+    align-items: center;
 }
 
-/* Estilos del Menú Lateral (Sidebar) */
+/* Estilos del sidebar */
 .sidebar {
     height: 100%;
     width: 0; /* Empieza cerrado */
+    flex-direction: column;
     position: fixed;
-    z-index: 2000; /* Por encima de todo, incluso del mapa */
+    z-index: 2000;
     top: 0;
     left: 0;
-    background-color: #111; /* Color de fondo oscuro */
+    background-color: #111;
     overflow-x: hidden;
-    transition: 0.5s; /* Animación suave */
+    transition: 0.5s;
     padding-top: 60px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.5);
 }
 
 /* Enlaces dentro del menú */
 .sidebar a {
-    padding: 8px 8px 8px 32px;
+    padding: 15px 32px;
     text-decoration: none;
     font-size: 20px;
     color: #818181;
     display: block;
     transition: 0.3s;
-    font-family: monospace; /* A juego con tu fuente */
+    font-family: monospace;
+    border-bottom: 1px solid #222;
 }
 
 .sidebar a:hover {
     color: #f1f1f1;
-    background-color: #E57200; /* Naranja corporativo al pasar el ratón */
+    background-color: #E57200;
 }
 
-/* Botón de cerrar (X) dentro del menú */
+/* Botón de cerrar dentro del menú */
 .sidebar .closebtn {
     position: absolute;
-    top: 0;
+    top: 10px;
     right: 25px;
     font-size: 36px;
-    margin-left: 50px;
+    border-bottom: none;
 }

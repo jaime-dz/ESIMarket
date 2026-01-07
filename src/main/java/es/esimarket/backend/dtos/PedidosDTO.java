@@ -1,47 +1,88 @@
 package es.esimarket.backend.dtos;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import es.esimarket.backend.entities.Pedidos;
 
 public class PedidosDTO implements Serializable{
 
-    private int IdPedido;
+    private int idPedido;
 
-    private int NTaquilla;
+    private byte[] foto;
 
-    private boolean EnTaquilla;
+    private String nombreComprador;
 
-    private Pedidos.Estado Estado;
+    private String nombreVendedor;
+
+    private boolean esComprador;
+
+    private String nombreProd;
+
+    private Integer nTaquilla;
+
+    private boolean enTaquilla;
+
+    private Pedidos.Estado estado;
 
     public PedidosDTO() {}
 
-    public PedidosDTO(int IdPedido, int NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
+    public PedidosDTO(int IdPedido, byte[] foto, String nombreComprador, String nombreVendedor,boolean esComprador, String nombreProd, Integer NTaquilla,boolean EnTaquilla, Pedidos.Estado Estado)
     {
-        this.IdPedido = IdPedido;
-        this.NTaquilla=NTaquilla;
-        this.EnTaquilla=EnTaquilla;
-        this.Estado=Estado;
+        this.idPedido = IdPedido;
+        this.foto = foto;
+        this.nombreComprador = nombreComprador;
+        this.nombreVendedor = nombreVendedor;
+        this.esComprador = esComprador;
+        this.nombreProd = nombreProd;
+        this.nTaquilla =NTaquilla;
+        this.enTaquilla =EnTaquilla;
+        this.estado =Estado;
     }
 
-    public int getIdPedido() {return IdPedido;}
-    public void setIdPedido(int IdPedido) {this.IdPedido = IdPedido;}
+    public int getIdPedido() {return idPedido;}
+    public void setIdPedido(int IdPedido) {this.idPedido = IdPedido;}
 
-    public int getNTaquilla() {return NTaquilla;}
-    public void setIdTaquilla(int NTaquilla) {this.NTaquilla=NTaquilla;}
+    public String getFotoBase64(){
+        if (this.foto != null && this.foto.length > 0) {
+            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(this.foto);
+        }
+        return null;
+    }
 
-    public boolean getEnTaquilla() {return EnTaquilla;}
-    public void setEnTaquilla(boolean EnTaquilla) {this.EnTaquilla=EnTaquilla;}
+    public String getNombreComprador() {return nombreComprador;}
+    public void setNombreComprador(String nombreComprador) {this.nombreComprador = nombreComprador;}
 
-    public Pedidos.Estado getEstado() {return Estado;}
-    public void setEstado(Pedidos.Estado Estado) {this.Estado=Estado;}
+    public String getNombreVendedor() {return nombreVendedor;}
+    public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
+
+    public boolean isEsComprador() {return esComprador;}
+    public void setEsComprador(boolean esComprador) {this.esComprador = esComprador;}
+
+    public String getNombreProd() {return nombreProd;}
+    public void setNombreProd(String nombreProd) {this.nombreProd = nombreProd;}
+
+    public boolean isEnTaquilla() {return enTaquilla;}
+    public void setEnTaquilla(boolean enTaquilla) {this.enTaquilla = enTaquilla;}
+
+    public Integer getnTaquilla() {return nTaquilla;}
+    public void setIdTaquilla(Integer NTaquilla) {this.nTaquilla =NTaquilla;}
+
+    public Pedidos.Estado getEstado() {return estado;}
+    public void setEstado(Pedidos.Estado Estado) {this.estado =Estado;}
 
     @Override
     public String toString() {
         return "PedidosDTO{" +
-                "NTaquilla=" + NTaquilla +
-                ", EnTaquilla='" + EnTaquilla + '\'' +
-                ", Estado='" + Estado + '\'' +
+                "idPedido=" + idPedido +
+                ", foto=" + Arrays.toString(foto) +
+                ", nombreComprador='" + nombreComprador + '\'' +
+                ", nombreVendedor='" + nombreVendedor + '\'' +
+                ", esComprador=" + esComprador +
+                ", nombreProd='" + nombreProd + '\'' +
+                ", nTaquilla=" + nTaquilla +
+                ", enTaquilla=" + enTaquilla +
+                ", estado=" + estado +
                 '}';
     }
 

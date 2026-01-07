@@ -1,11 +1,13 @@
 package es.esimarket.backend.controllers;
 
+import es.esimarket.backend.controllers.requests.FiltroPedRequest;
 import es.esimarket.backend.controllers.requests.TaquillaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import es.esimarket.backend.dtos.PedidosDTO;
@@ -28,10 +30,21 @@ public class PedidosController{
     @Autowired
     private JwtService jwtservice;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<PedidosDTO>> getPedidos()
+    @GetMapping("/")
+    public String listaPedidos(){
+        return "order-list";
+    }
+
+    @PostMapping("/filter")
+    @ResponseBody
+    public List<PedidosDTO> getPedidos(Model model, @RequestBody(required = false) FiltroPedRequest request )
     {
-        return ResponseEntity.ok(pedidosService.mostrar_pedidos());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
+
+        if ( request == null) request = new FiltroPedRequest("");
+        return pedidosService.filtro_pedidos(uDNI, request);
+
     }
 
     @GetMapping("/byseller")
@@ -39,6 +52,7 @@ public class PedidosController{
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
+
         return ResponseEntity.ok(pedidosService.mostrar_pedidos_vendedor(uDNI));
     }
 
