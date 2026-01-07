@@ -94,6 +94,26 @@ document.addEventListener("DOMContentLoaded", async function() {
             productContainer.innerHTML = "<p>Error de conexión con el servidor.</p>";
         }
     }
+    const filtroSelect = document.getElementById('filtro-ped');
+    const btnAplicarFiltro = document.querySelector('.submit-button button');
+    
+    if (filtroSelect && btnAplicarFiltro) {
+        let containerPedidos = document.getElementById('lista-pedidos-container');
+        if (!containerPedidos) {
+            containerPedidos = document.createElement('div');
+            containerPedidos.id = 'lista-pedidos-container';
+            containerPedidos.style.marginTop = '20px';
+            document.querySelector('.submit-button').after(containerPedidos);
+        }
+
+        gestionarCargaPedidos('todos');
+
+        btnAplicarFiltro.addEventListener('click', (e) => {
+            e.preventDefault();
+            const valorFiltro = filtroSelect.value;
+            gestionarCargaPedidos(valorFiltro);
+        });
+    }
 });
 
 
@@ -277,7 +297,7 @@ export function displayProductsItems(products, container) {
 
         // D. LÓGICA DE ESTADO
         const htmlEstado = (!esServicio && item.estado) 
-            ? `<p class="product-state">${item.estado}</p>` 
+            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>` 
             : ''; 
 
         return `
@@ -336,3 +356,149 @@ window.toggleMenu = function() {
         menu.style.width = "250px";
     }
 }
+
+async function gestionarCargaPedidos(filtro) {
+    const container = document.getElementById('lista-pedidos-container');
+    container.innerHTML = '<p style="text-align:center;">Cargando pedidos...</p>';
+
+    try {
+        const response = await fetch('/orders/filter', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filter: filtro })
+        });
+
+        if (response.ok) {
+            const pedidos = await response.json();
+            renderizarListaPedidos(pedidos, container);
+        } else {
+            console.error("Error status:", response.status);
+            container.innerHTML = '<p style="color:red; text-align:center;">Error al cargar los pedidos.</p>';
+        }
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        container.innerHTML = '<p style="color:red; text-align:center;">Error de conexión con el servidor.</p>';
+    }
+}
+
+function renderizarListaPedidos(pedidos, container) {
+    if (!pedidos || pedidos.length === 0) {
+        container.innerHTML = '<p style="text-align:center;">No se encontraron pedidos con este filtro.</p>';
+        return;
+    }
+
+    const htmlPedidos = pedidos.map(p => {
+        // Preparar imagen
+        const imagen = p.fotoBase64 ? p.fotoBase64 : '/Images/book.jpg';
+        
+        let imagenFinal;
+        if (p.foto) {
+            // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
+            // Le agregamos la cabecera para que el navegador lo entienda como imagen.
+            imagenFinal = 'data:image/jpeg;base64,' + p.foto;
+        } else {
+            // Si item.foto es null, usamos la ruta local por defecto
+            imagenFinal = '/Images/book.jpg';
+        }
+        // Determinar rol y acciones
+        let botonesAccion = '';
+
+        // LÓGICA VENDEDOR: Si soy vendedor y estado es 'PorEntregar' -> Botón Entregar
+        if (!p.esComprador && p.estado === 'PorEntregar') {
+            botonesAccion = `
+                <button onclick="accionEntregarPedido(${p.idPedido}, ${p.enTaquilla})" 
+                        style="background:#E57200; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-top:10px;">
+                    Marcar como Entregado
+                </button>`;
+        }
+        
+        // LÓGICA COMPRADOR: Si soy comprador y estado es 'Entregado' -> Botón Recoger
+        if (p.esComprador && p.estado === 'Entregado') {
+            botonesAccion = `
+                <button onclick="accionRecogerPedido(${p.idPedido})" 
+                        style="background:#28a745; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-top:10px;">
+                    Confirmar Recogida
+                </button>`;
+        }
+
+        // Info de taquilla si aplica
+        const infoTaquilla = p.enTaquilla && p.nTaquilla > 0 
+            ? `<p style="color:#E57200; font-weight:bold;">📍 En Taquilla Nº ${p.nTaquilla}</p>` 
+            : '';
+
+        return `
+            <div class="product-card" style="display:flex; flex-direction:row; width:95%; max-width:800px; margin:10px auto; align-items:center; gap:15px; text-align:left;">
+                <img src="${imagen}" alt="${p.nombreProd}" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+                <div style="flex:1;">
+                    <h3 style="margin:0 0 5px 0;">${p.nombreProd}</h3>
+                    <p style="margin:0; font-size:0.9em; color:#666;">
+                        <strong>Estado:</strong> ${p.estado} <br>
+                        <strong>Vendedor:</strong> ${p.nombreVendedor} | 
+                        <strong>Comprador:</strong> ${p.nombreComprador}
+                    </p>
+                    ${infoTaquilla}
+                </div>
+                <div style="text-align:right;">
+                    ${botonesAccion}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = htmlPedidos;
+}
+
+// Hacemos las funciones globales para que el onclick del HTML las encuentre
+window.accionEntregarPedido = async function(idPedido, requiereTaquilla) {
+    let numTaquilla = 0;
+    
+    // Si el producto requiere taquilla (según tu lógica de negocio), pedimos el número
+    // Nota: Tu DTO tiene 'enTaquilla' como boolean, asumimos que si es true, preguntamos.
+    // Si en tu lógica siempre se puede poner taquilla, quita el 'if'.
+    // Tu controlador espera un path variable: /deliver/{id}/{taquilla}
+    
+    const inputTaquilla = prompt("Introduce el número de taquilla (pon 0 si es entrega en mano):", "0");
+    if (inputTaquilla === null) return; // Cancelado
+    numTaquilla = parseInt(inputTaquilla) || 0;
+
+    try {
+        const response = await fetch(`/orders/deliver/${idPedido}/${numTaquilla}`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            alert("Pedido marcado como entregado.");
+            // Recargar la lista manteniendo el filtro actual
+            const filtroActual = document.getElementById('filtro-ped').value;
+            gestionarCargaPedidos(filtroActual);
+        } else {
+            alert("Error al actualizar el pedido.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Error de conexión.");
+    }
+};
+
+window.accionRecogerPedido = async function(idPedido) {
+    if(!confirm("¿Confirmas que has recogido el producto?")) return;
+
+    try {
+        const response = await fetch(`/orders/pickup/${idPedido}`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            alert("¡Pedido completado!");
+            const filtroActual = document.getElementById('filtro-ped').value;
+            gestionarCargaPedidos(filtroActual);
+        } else {
+            alert("Error al confirmar recogida.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Error de conexión.");
+    }
+};

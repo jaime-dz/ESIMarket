@@ -1,29 +1,29 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.MessageRequest;
-import es.esimarket.backend.dtos.MensajeDTO;
+import es.esimarket.backend.controllers.responses.MessageResponse;
+import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.exceptions.CannotDetermineIfToxicError;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.OllamaService;
 import es.esimarket.backend.services.VariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import es.esimarket.backend.repositories.ChatRepository;
 import es.esimarket.backend.repositories.MensajeRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import es.esimarket.backend.services.MensajeService;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/messages")
@@ -51,8 +51,13 @@ public class MensajeController
     private JdbcTemplate jbdcTemplate;
 
     @GetMapping("/{chat}")
-    public ResponseEntity<List<MensajeDTO>> getMensajes(@PathVariable("chat") int chat){
-        return ResponseEntity.ok(mensajeService.mostrar_mensajes(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora"))));
+    public List<MessageResponse> getMensajes(Model model, @PathVariable("chat") int chat){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+
+       return mensajeService.mostrar_mensajes(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora")),dni);
+
     }
 
     @PostMapping("/")
@@ -81,11 +86,10 @@ public class MensajeController
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        String FechaAct = variosService.ObtenerFecha();
-        String status = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
+        LocalDateTime FechaAct = variosService.ObtenerFecha();
+        Mensaje m  = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
 
-        response.put("message", status);
-        response.put("content",new MensajeDTO(FechaAct,Mrequest.Texto(),dni).toString());
+        response.put("content",(new MessageResponse(Mrequest.Texto(),true,m.getDia(),m.getHoraMin())).toString());
 
         return ResponseEntity.ok(response);
     }

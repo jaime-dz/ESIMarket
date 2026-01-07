@@ -1,6 +1,6 @@
 package es.esimarket.backend.controllers.requests;
 
-public record FiltroRequest (
+public record FiltroProdRequest (
         Long precioSuperior,
         Long precioInferior,
         String nombre,

@@ -51,8 +51,8 @@ public class Pedidos{
     public boolean isEnTaquilla() {return EnTaquilla;}
     public void setEnTaquilla(boolean enTaquilla) {EnTaquilla = enTaquilla;}
 
-    public int getNTaquilla() {return NTaquilla;}
-    public void setNTaquilla(int NTaquilla) {this.NTaquilla = NTaquilla;}
+    public Integer getNTaquilla() {return NTaquilla;}
+    public void setNTaquilla(Integer NTaquilla) {this.NTaquilla = NTaquilla;}
 
     public Estado getEstado() {return Estado;}
     public void setEstado(Estado Estado) {this.Estado=Estado;}

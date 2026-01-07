@@ -39,7 +39,14 @@ public class CompraController
     @Autowired
     private CompraService compraService;
 
-    @GetMapping("/user")
+    @GetMapping("/")
+    public String getCompras()
+    {
+        return "purchase-history";
+    }
+
+    @PostMapping("/user")
+    @ResponseBody
     public ResponseEntity<List<Compra>> getComprasUsuario()
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
