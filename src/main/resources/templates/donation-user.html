@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iniciar sesión</title>
+        <title>Donaciones</title>
         <link rel="stylesheet" href="/css/general_styles.css">
-        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
     </head>
     <body>
         <div id="sideMenu" class="sidebar user-view">
@@ -43,9 +43,12 @@
 
                 <div class="user-view" style="display: none;">
                     
-                    <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
+                    <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
                     
                     <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
                         
                         <div class="dropdown-content">
@@ -58,50 +61,9 @@
             </div>
         </header>
         <main>
-            <h1>Editar Perfil</h1>
-            <div id="profile-edit" class="square">
-                <form id="edit-form" method="PUT">
-                    <div class="nombre">
-                        <label for="nombre">Nombre</label><br>
-                        <input id="nombre" type="text" name="nombre" th:placeholder="${profile.nombre}">
-                    </div>
-                    <br>
-                    <div class="apellidos">
-                        <label for="apellidos">Apellidos</label><br>
-                        <input id="apellidos" type="text" name="apellidos" th:placeholder="${profile.apellidos}">
-                    </div>
-                    <br>
-                    <div class="correo">
-                        <label for="correo">Correo electrónico</label><br>
-                        <input autofocus id="correo" type="email" name="email" th:placeholder="${profile.email}">
-                    </div>
-                    <br>
-                    <div class="carrera">
-                        <label for="carrera">Carrera</label><br>
-                        <select name="carrera" id="carrera">
-                            <option value="" selected disabled th:text="${'Actual: '+profile.carrera}">--- Selecciona tu carrera ---</option>
-                            <option value="GIA">Ingeniería Aeroespacial (GIA)</option>
-                            <option value="GIDIDP">Ingeniería en Diseño Industrial y Desarrollo del Producto (GIDIDP)</option>
-                            <option value="GIE">Ingeniería Eléctrica (GIE)</option>
-                            <option value="GIEI">Ingeniería Electrónica Industrial (GIEI)</option>
-                            <option value="GII">Ingeniería Informática (GII)</option>
-                            <option value="GIM">Ingeniería Mecánica (GIM)</option>
-                            <option value="GITI">Ingeniería en Tecnologías Industriales (GITI)</option>
-                            <option value="GIEyGIEI">Doble Grado en Ingeniería Eléctrica e Ingeniería Electrónica Industrial (GIE+GIEI)</option>                            <option value="GIMyGIE">Doble Grado en Ingeniería Mecánica e Ingeniería Eléctrica (GIM+GIE)</option>
-                            <option value="GIMyGIDIDP">Doble Grado en Ingeniería Mecánica e Ingeniería en Diseño Industrial y Desarrollo del Producto (GIM+GIDIDP)</option>
-                            <option value="GMyGII">Doble Grado en Matemáticas e Ingeniería Informática (GM+GII)</option>
-                        </select>
-                    </div>
-                    <div class="form-buttons">
-                        <button type="submit" class="btn-common btn-orange">Aplicar</button>
-                        
-                        <button type="reset" class="btn-common btn-gray">Resetear</button>
-                        
-                        <button type="button" class="btn-common btn-blue" onclick="window.location.href='/profile/'">Cancelar</button>
-                    </div>
-                </form>
-            </div>
+            <h1>Número de Donaciones: <span id="donation-count">0</span>/5</h1>
         </main>
+
         <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
@@ -121,6 +83,41 @@
             </ul>
         </footer>
         <script src="/js/common.js" type="module"></script>
-        <script src="/js/profile.js" type="module"></script>>
+        <script type="module">
+            document.addEventListener('DOMContentLoaded', () => {
+                const counterElement = document.getElementById('donation-count');
+
+                // Datos que quieres enviar al servidor (si es necesario)
+                // Si no necesitas enviar datos, puedes dejar el body vacío o quitarlo.
+                const datosAEnviar = {
+                    mensaje: "Solicitando donaciones"
+                };
+
+                fetch('/donations/donationByUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosAEnviar) // Convertimos el objeto JS a texto JSON
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Datos recibidos:", data);
+                    
+                    // Asumimos que el backend devuelve el objeto Donaciones con el campo "num"
+                    const numero = (data && data.num !== undefined) ? data.num : 0;
+                    counterElement.innerText = numero;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    counterElement.innerText = "0";
+                });
+            });
+        </script>
     </body>
-</html>
+</html>    
