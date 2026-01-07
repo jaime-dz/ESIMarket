@@ -61,16 +61,19 @@ public class DonacionesController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/donationByUser")
-    public String donacionesPorUsuario (Model model)
+    @GetMapping("/")
+    public String getDonation()
+    {
+        return "donation-user";
+    }
+
+    @PostMapping("/donationByUser")
+    @ResponseBody
+    public Donaciones donacionesPorUsuario (Model model)
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
         
-        Donaciones don = donacionesRepository.findByIDUsuario(uDNI);
-
-        model.addAttribute("donation",don);
-
-        return "donation-user";
+       return donacionesRepository.findByIDUsuario(uDNI);
     }
 }
