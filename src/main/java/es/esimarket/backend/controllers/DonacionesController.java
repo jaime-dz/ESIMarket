@@ -73,6 +73,10 @@ public class DonacionesController {
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
+
+        Usuario u = usuarioRepository.findById(uDNI).orElseThrow(()->new CannotCreateUserError("Usuario no encontrado"));
+
+        model.addAttribute("profile",u);
         
        return donacionesRepository.findByIDUsuario(uDNI);
     }
