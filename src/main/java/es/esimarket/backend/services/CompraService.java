@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.repositories.PedidosRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -45,7 +46,7 @@ public class CompraService {
         Usuario uComprador = usuarioRepository.findByid(uDNI);
         Usuario uVendedor = usuarioRepository.findByid(p.getuDNI_Vendedor());
         Compra c = null;
-        String FechaAct = variosService.ObtenerFecha();
+        LocalDateTime FechaAct = variosService.ObtenerFecha();
 
         if ( p != null && uComprador != null && uVendedor != null) {
 

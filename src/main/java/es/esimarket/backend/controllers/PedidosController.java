@@ -35,7 +35,7 @@ public class PedidosController{
         return "order-list";
     }
 
-    @PostMapping("/filter")
+    @GetMapping("/filter")
     public List<PedidosDTO> getPedidos(Model model, @RequestBody(required = false) FiltroPedRequest request )
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

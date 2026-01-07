@@ -1,22 +1,14 @@
 package es.esimarket.backend.services;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
-import es.esimarket.backend.dtos.MensajeDTO;
-import es.esimarket.backend.entities.Usuario;
-import es.esimarket.backend.mappers.MessageMapper;
-import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.controllers.responses.MessageResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.repositories.MensajeRepository;
-import es.esimarket.backend.services.VariosService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,26 +19,33 @@ public class MensajeService
     private MensajeRepository mensajeRepository;
 
     @Autowired
-    private MessageMapper messageMapper;
+    private VariosService variosService;
 
-    public String CrearMensaje(int chat, String uDNI, String texto, String Fecha)
+    public Mensaje CrearMensaje(int chat, String uDNI, String texto, LocalDateTime Fecha)
     {
         Mensaje m = new Mensaje(chat,uDNI,Fecha,texto);
 
         mensajeRepository.save(m);
 
-        return "Mensaje añadido correctamente";
+        return m;
     }
 
-    public List<MensajeDTO >mostrar_mensajes( List<Mensaje> m ){
+    public List<MessageResponse>mostrar_mensajes(List<Mensaje> m , String dni){
 
-        List<MensajeDTO> messagesDTO = new ArrayList<>();
+        List<MessageResponse> messagesRes = new ArrayList<>();
+        LocalDateTime fechaAct = variosService.ObtenerFecha();
+        LocalDateTime fechaAyer = fechaAct.minusDays(1);
+        String dia = null;
 
         for ( Mensaje mess : m ){
-            messagesDTO.add(messageMapper.toDto(mess));
+
+            if ( fechaAct.toLocalDate().equals(mess.getFecha().toLocalDate())) dia = "Hoy";
+            else if ( fechaAct.toLocalDate().equals(fechaAyer.toLocalDate())) dia = "Ayer";
+            else dia = mess.getFechaDia();
+            messagesRes.add(new MessageResponse(mess.getTexto(),mess.getuDNIremitente().equals(dni),dia,mess.getHoraMin()));
         }
 
-        return messagesDTO;
+        return messagesRes;
     }
 
     /*public ResponseEntity<List<Mensaje>> MostrarChat(int chat)

@@ -9,13 +9,13 @@ import java.util.*;
 @Component
 public class VariosService
 {
-    public String ObtenerFecha()
-    {
-        ZoneId zonaHoraria = ZoneId.of("Europe/Madrid");
 
-        LocalDateTime fechaActual = LocalDateTime.now(zonaHoraria);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return fechaActual.format(formato);
+    public static ZoneId zonaHoraria = ZoneId.of("Europe/Madrid");
+
+    public LocalDateTime ObtenerFecha()
+    {
+        //DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.now(zonaHoraria);
     }
 
     public HashMap<String,String> StringToDictionary(String Cadena)
