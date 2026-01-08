@@ -1,17 +1,13 @@
-/* ==============================================
-   common.js - Lógica Global y de Utilidad
-   ============================================== */
+/* common.js - Lógica Global y de Utilidad */
 
 document.addEventListener("DOMContentLoaded", async function() {
 
-    // 1. GESTIÓN DE SESIÓN Y NAVEGACIÓN
     verificarSesionLocal();
     await validarSesionConServidor();
     if (typeof actualizarBarraNavegacion === 'function') {
         actualizarBarraNavegacion();
     }
     
-    // 2. LOGOUT (Si existe el botón)
     const botonLogout = document.getElementById('btn-logout');
     if (botonLogout) {
         botonLogout.addEventListener('click', (e) => {
@@ -20,23 +16,18 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
     }
 
-    // 3. BUSCADOR (Lógica completa)
     const inputBusqueda = document.getElementById("search-input");
     const botonBorrar = document.getElementById("clearBtn");
 
-    // Función que filtra las tarjetas visualmente
     function filtrarProductos(texto) {
         const busqueda = texto.toLowerCase();
-        // Seleccionamos todas las tarjetas que ya están pintadas en pantalla
         const tarjetas = document.querySelectorAll('.product-card');
 
         tarjetas.forEach(card => {
-            // Buscamos el nombre dentro de la tarjeta
             const nombreProducto = card.querySelector('.product-name').textContent.toLowerCase();
             
-            // Si coincide, mostramos (block/flex), si no, ocultamos (none)
             if (nombreProducto.includes(busqueda)) {
-                card.style.display = 'flex'; // O 'block' según tu diseño original
+                card.style.display = 'flex';
             } else {
                 card.style.display = 'none';
             }
@@ -44,37 +35,30 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     if(inputBusqueda && botonBorrar) {
-        // Evento al escribir
         inputBusqueda.addEventListener("input", function() {
             const texto = inputBusqueda.value;
             
-            // 1. Mostrar u ocultar la X
             if (texto.length > 0) {
                 botonBorrar.style.display = "block";
             } else {
                 botonBorrar.style.display = "none";
             }
 
-            // 2. Filtrar los productos
             filtrarProductos(texto);
         });
         
-        // Evento al borrar con la X
         botonBorrar.addEventListener("click", function() {
             inputBusqueda.value = "";
             botonBorrar.style.display = "none";
             
-            // Importante: Volver a mostrar todos los productos
             filtrarProductos(""); 
             
             inputBusqueda.focus();
         });
     }
 
-    // 4. GESTIÓN MENU FOOTER
     ocultarEnlacePaginaActual();
 
-    // 5. CARGA DE PRODUCTOS (Solo si existe el contenedor .product-grid-container)
     const productContainer = document.querySelector('.product-grid-container');
     
     if (productContainer) {
@@ -117,9 +101,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 
-/* ==============================================
-   FUNCIONES EXPORTABLES (Para usar en otros JS)
-   ============================================== */
+/* FUNCIONES EXPORTABLES */
 
 export async function enviarFormularioComoJSON(evento) {
     evento.preventDefault();
@@ -146,7 +128,6 @@ export async function enviarFormularioComoJSON(evento) {
             credentials: 'include' 
         });
         
-        // 1. ÉXITO
         if (respuesta.ok) {
             console.log('Solicitud exitosa. Status:', respuesta.status);
             
@@ -157,7 +138,6 @@ export async function enviarFormularioComoJSON(evento) {
             return;
         }
 
-        // 2. ERROR
         let mensajeError = "Error";
         try {
             const errorData = await respuesta.json();
@@ -210,13 +190,9 @@ export async function cerrarSesion() {
 }
 
 
-/* ==============================================
-   FUNCIONES INTERNAS (Helpers)
-   ============================================== */
+/* FUNCIONES INTERNAS */
 
 function actualizarBarraNavegacion() {
-    // CAMBIO: Leemos la cookie 'isLoggedIn' en lugar del localStorage
-    // Asumimos que si la cookie existe y tiene valor 'true', el usuario está logueado
     const cookieVal = getCookie('isLoggedIn');
     const estaLogueado = cookieVal === 'true'; 
 
@@ -233,7 +209,6 @@ function actualizarBarraNavegacion() {
 }
 
 function verificarSesionLocal() {
-    // CAMBIO: Usamos getCookie
     const cookieVal = getCookie('isLoggedIn');
     const estaLogueado = cookieVal === 'true';
 
@@ -271,7 +246,6 @@ function ocultarEnlacePaginaActual() {
     });
 }
 
-// Función encargada de pintar el HTML de los productos
 export function displayProductsItems(products, container) {
     if (!products || products.length === 0) {
         container.innerHTML = "<p>No hay productos disponibles.</p>";
@@ -279,23 +253,16 @@ export function displayProductsItems(products, container) {
     }
 
     const displayProducts = products.map(function(item) {
-        // A. DETECTAR TIPO
         const esServicio = item.tipo && item.tipo.toLowerCase() === 'servicio';
 
-        // B. LÓGICA DE FOTO
         let imagenFinal;
         if (item.foto) {
-            // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
-            // Le agregamos la cabecera para que el navegador lo entienda como imagen.
             imagenFinal = 'data:image/jpeg;base64,' + item.foto;
         } else {
-            // Si item.foto es null, usamos la ruta local por defecto
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
         }
-        // C. SUFIJO DE PRECIO
         const sufijoPrecio = esServicio ? '/h' : '';
 
-        // D. LÓGICA DE ESTADO
         const htmlEstado = (!esServicio && item.estado) 
             ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>` 
             : ''; 
@@ -317,9 +284,7 @@ export function displayProductsItems(products, container) {
     container.innerHTML = displayProducts.join("");
 }
 
-// Agrega esto en la sección de FUNCIONES INTERNAS
 async function validarSesionConServidor() {
-    // CAMBIO: Si no hay cookie, no hacemos la llamada extra al servidor
     if (getCookie('isLoggedIn') !== 'true') return;
 
     try {
@@ -331,8 +296,6 @@ async function validarSesionConServidor() {
 
         if (response.status === 401 || response.status === 403) {
             console.warn("La sesión ha expirado en el servidor.");
-            // Ya no borramos nada manualmente porque el navegador 
-            // gestionará la expiración de la cookie si el servidor lo indica
             actualizarBarraNavegacion(); 
             window.location.href = "/home/";
         }
@@ -390,22 +353,16 @@ function renderizarListaPedidos(pedidos, container) {
     }
 
     const htmlPedidos = pedidos.map(p => {
-        // Preparar imagen
         const imagen = p.fotoBase64 ? p.fotoBase64 : '/Images/book.jpg';
         
         let imagenFinal;
         if (p.foto) {
-            // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
-            // Le agregamos la cabecera para que el navegador lo entienda como imagen.
             imagenFinal = 'data:image/jpeg;base64,' + p.foto;
         } else {
-            // Si item.foto es null, usamos la ruta local por defecto
             imagenFinal = '/Images/book.jpg';
         }
-        // Determinar rol y acciones
         let botonesAccion = '';
 
-        // LÓGICA VENDEDOR: Si soy vendedor y estado es 'PorEntregar' -> Botón Entregar
         if (!p.esComprador && p.estado === 'PorEntregar') {
             botonesAccion = `
                 <button onclick="accionEntregarPedido(${p.idPedido}, ${p.enTaquilla})" 
@@ -414,7 +371,6 @@ function renderizarListaPedidos(pedidos, container) {
                 </button>`;
         }
         
-        // LÓGICA COMPRADOR: Si soy comprador y estado es 'Entregado' -> Botón Recoger
         if (p.esComprador && p.estado === 'Entregado') {
             botonesAccion = `
                 <button onclick="accionRecogerPedido(${p.idPedido})" 
@@ -423,7 +379,6 @@ function renderizarListaPedidos(pedidos, container) {
                 </button>`;
         }
 
-        // Info de taquilla si aplica
         const infoTaquilla = p.enTaquilla && p.nTaquilla > 0 
             ? `<p style="color:#E57200; font-weight:bold;">📍 En Taquilla Nº ${p.nTaquilla}</p>` 
             : '';
@@ -450,14 +405,9 @@ function renderizarListaPedidos(pedidos, container) {
     container.innerHTML = htmlPedidos;
 }
 
-// Hacemos las funciones globales para que el onclick del HTML las encuentre
 window.accionEntregarPedido = async function(idPedido, requiereTaquilla) {
     let numTaquilla = 0;
     
-    // Si el producto requiere taquilla (según tu lógica de negocio), pedimos el número
-    // Nota: Tu DTO tiene 'enTaquilla' como boolean, asumimos que si es true, preguntamos.
-    // Si en tu lógica siempre se puede poner taquilla, quita el 'if'.
-    // Tu controlador espera un path variable: /deliver/{id}/{taquilla}
     
     const inputTaquilla = prompt("Introduce el número de taquilla (pon 0 si es entrega en mano):", "0");
     if (inputTaquilla === null) return; // Cancelado
@@ -470,7 +420,6 @@ window.accionEntregarPedido = async function(idPedido, requiereTaquilla) {
 
         if (response.ok) {
             alert("Pedido marcado como entregado.");
-            // Recargar la lista manteniendo el filtro actual
             const filtroActual = document.getElementById('filtro-ped').value;
             gestionarCargaPedidos(filtroActual);
         } else {

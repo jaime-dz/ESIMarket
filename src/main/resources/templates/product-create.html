@@ -177,7 +177,6 @@
 
             document.addEventListener('DOMContentLoaded', () => {
                 
-                // --- REFERENCIAS ---
                 const form = document.getElementById('publish-ad');
                 const categoriaSelect = document.getElementById('categoria');
                 const contenedorEstado = document.getElementById('contenedor-estado');
@@ -194,7 +193,6 @@
                 let imagenUsuarioBase64 = ""; 
                 const MAX_SIZE_MB = 2;
 
-                // --- 1. LÓGICA DE CATEGORÍA ---
                 function actualizarFormulario() {
                     const esServicio = categoriaSelect.value === 'servicio';
                     if (esServicio) {
@@ -216,7 +214,6 @@
                 categoriaSelect.addEventListener('change', actualizarFormulario);
                 actualizarFormulario();
 
-                // --- 2. GESTIÓN DE IMAGEN DEL USUARIO ---
                 fotoInput.addEventListener('change', function(e) {
                     const file = e.target.files[0];
                     errorFoto.style.display = 'none';
@@ -231,15 +228,12 @@
                             return;
                         }
                         const reader = new FileReader();
-                        reader.readAsDataURL(file); // Esto genera "data:image/png;base64,....."
+                        reader.readAsDataURL(file);
                         reader.onload = function(event) {
                             const rawData = event.target.result;
                             imgPreview.src = rawData;
                             imgPreview.style.display = 'block';
                             
-                            // --- !!! CORRECCIÓN CRÍTICA !!! ---
-                            // Separamos por la coma y cogemos SOLO la parte [1] (el código)
-                            // Si algo falla, dejamos la variable vacía para no enviar basura.
                             const partes = rawData.split(',');
                             if (partes.length > 1) {
                                 imagenUsuarioBase64 = partes[1];
@@ -248,25 +242,21 @@
                     }
                 });
 
-                // --- 3. ENVÍO DEL FORMULARIO ---
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault(); 
                     if (errorFoto.style.display === 'block') return;
 
-                    // CASO A: El usuario subió foto manualmente
                     if (imagenUsuarioBase64 && imagenUsuarioBase64.length > 0) {
-                        fotoFinal.disabled = false; // Aseguramos que se envíe
+                        fotoFinal.disabled = false;
                         fotoFinal.value = imagenUsuarioBase64;
                         enviarFormularioComoJSON(e);
                     } 
-                    // CASO B: Usamos imagen por defecto
                     else {
                         const esServicio = categoriaSelect.value === 'servicio';
                         const rutaImagenDefault = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
                         
                         try {
                             const response = await fetch(rutaImagenDefault);
-                            // Si la imagen no existe (404), lanzamos error para ir al catch
                             if (!response.ok) throw new Error("Imagen default no encontrada");
                             
                             const blob = await response.blob();
@@ -276,21 +266,16 @@
                             reader.onloadend = function() {
                                 const partes = reader.result.split(',');
                                 
-                                // --- !!! VALIDACIÓN DE SEGURIDAD !!! ---
                                 if (partes.length > 1) {
                                     fotoFinal.disabled = false;
-                                    fotoFinal.value = partes[1]; // Solo la parte Base64
+                                    fotoFinal.value = partes[1];
                                 } else {
-                                    // Si la conversión falla, deshabilitamos el input
-                                    // para enviar 'null' en vez de basura
                                     fotoFinal.disabled = true; 
                                 }
                                 enviarFormularioComoJSON(e);
                             };
                         } catch (error) {
                             console.error("Error procesando imagen por defecto:", error);
-                            // Si falla la carga, deshabilitamos el campo 'foto'
-                            // Así el JSON será { ... "foto": null ... } o simplemente no irá el campo
                             fotoFinal.disabled = true; 
                             enviarFormularioComoJSON(e);
                         }

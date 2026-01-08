@@ -100,18 +100,17 @@
         async function gestionarCargaPedidos(filtroOverride = null) {
             const select = document.getElementById('filtro-ped');
             const filtro = filtroOverride || select.value || "todos";
-            const container = document.getElementById('lista-pedidos'); // El div que añadimos
+            const container = document.getElementById('lista-pedidos');
             
             container.innerHTML = "<p>Cargando pedidos...</p>";
 
             try {
-                // Usamos POST porque cambiamos el controlador a @PostMapping
                 const response = await fetch('/orders/filter', {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ filtro: filtro }) // Ajusta según tu FiltroPedRequest
+                    body: JSON.stringify({ filtro: filtro })
                 });
 
                 if (!response.ok) throw new Error("Error cargando pedidos");
@@ -123,7 +122,6 @@
                     return;
                 }
 
-                // Generar HTML
                 const html = pedidos.map(p => `
                     <div class="pedido-card" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
                         <h3>${p.nombreProd}</h3>
@@ -146,7 +144,6 @@
             }
         }
 
-        // Cargar al inicio
         document.addEventListener("DOMContentLoaded", () => gestionarCargaPedidos());
             </script>
 </body>
