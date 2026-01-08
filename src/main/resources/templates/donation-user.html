@@ -86,9 +86,6 @@
         <script type="module">
             document.addEventListener('DOMContentLoaded', () => {
                 const counterElement = document.getElementById('donation-count');
-
-                // Datos que quieres enviar al servidor (si es necesario)
-                // Si no necesitas enviar datos, puedes dejar el body vacío o quitarlo.
                 const datosAEnviar = {
                     mensaje: "Solicitando donaciones"
                 };
@@ -98,7 +95,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(datosAEnviar) // Convertimos el objeto JS a texto JSON
+                    body: JSON.stringify(datosAEnviar)
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -109,7 +106,6 @@
                 .then(data => {
                     console.log("Datos recibidos:", data);
                     
-                    // Asumimos que el backend devuelve el objeto Donaciones con el campo "num"
                     const numero = (data && data.num !== undefined) ? data.num : 0;
                     counterElement.innerText = numero;
                 })

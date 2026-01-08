@@ -147,13 +147,11 @@
                 const input = document.getElementById(inputId);
                 
                 if (input.type === "password") {
-                    // Cambiar a texto visible
                     input.type = "text";
-                    iconElement.textContent = "👁️"; // Icono de ojo tachado o similar
+                    iconElement.textContent = "👁️";
                 } else {
-                    // Volver a ocultar
                     input.type = "password";
-                    iconElement.textContent = "🙈"; // Icono de ojo normal
+                    iconElement.textContent = "🙈";
                 }
             }
         </script>
