@@ -8,32 +8,36 @@ public class ServicioDTO implements Serializable {
 
     private int idProd;
     String nombreProd;
-    private String DNIcomprador;
+    private String nombreComprador;
+    private String nombreVendedor;
     
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime fecha;
 
     private Boolean finalizado;
 
     ServicioDTO() {}
 
-    public ServicioDTO(int idProd, String nombreProd, String DNIcomprador, LocalDateTime fecha, Boolean finalizado) {
+    public ServicioDTO(int idProd, String nombreProd, String nombreComprador, String nombreVendedor, LocalDateTime fecha, Boolean finalizado) {
         this.idProd = idProd;
         this.nombreProd = nombreProd;
-        this.DNIcomprador = DNIcomprador;
+        this.nombreComprador = nombreComprador;
+        this.nombreVendedor = nombreVendedor;
         this.fecha = fecha;
         this.finalizado = finalizado;
     }
 
     public int getIdProd() {return idProd;}
     public String getNombreProd() {return nombreProd;}
-    public String getDNIcomprador() {return DNIcomprador;}
+    public String getNombreComprador() {return nombreComprador;}
+    public String getNombreVendedor() {return nombreVendedor;}
     public LocalDateTime getFecha() {return fecha;}
     public Boolean getFinalizado() {return finalizado;}
 
     public void setIdProd(int idProd) {this.idProd = idProd;}
     public void setNombreProd(String nombreProd) {this.nombreProd = nombreProd;}
-    public void setDNIcomprador(String DNIcomprador) {this.DNIcomprador = DNIcomprador;}
+    public void setNombreComprador(String nombreComprador) {this.nombreComprador = nombreComprador;}
+    public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
     public void setFecha(LocalDateTime fecha) {this.fecha = fecha;}
     public void setFinalizado(Boolean finalizado) {this.finalizado = finalizado;}
 
@@ -42,7 +46,8 @@ public class ServicioDTO implements Serializable {
         return "ServicioDTO{" +
                 "idProd=" + idProd +
                 ", nombreProd='" + nombreProd + '\'' +
-                ", DNIcomprador='" + DNIcomprador + '\'' +
+                ", nombreComprador='" + nombreComprador + '\'' +
+                ", nombreVendedor='" + nombreVendedor + '\'' +
                 ", fecha=" + fecha +
                 ", finalizado=" + finalizado +
                 '}';

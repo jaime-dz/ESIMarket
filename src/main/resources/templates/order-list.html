@@ -10,9 +10,9 @@
 <body>
     <div id="sideMenu" class="sidebar user-view">
         <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
-        <a href="/purchase/user">Historial de compras</a>
+        <a href="/purchase/">Historial de compras</a>
         <a href="/orders/">Lista de pedidos</a>
-        <a href="/service/user">Lista de servicios</a>
+        <a href="/service/">Lista de servicios</a>
         <a href="/donations/">Donaciones</a>
         <a href="/chat/">Chats</a>
     </div>
@@ -110,7 +110,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ filtro: filtro })
+                    body: JSON.stringify({ filter: filtro })
                 });
 
                 if (!response.ok) throw new Error("Error cargando pedidos");
