@@ -517,7 +517,7 @@ window.comprarProducto = async function(idProducto) {
 
         if (response.ok) {
             alert("¡Compra realizada con éxito!");
-            window.location.href = "/purchase/";
+            window.location.href = "/home/";
         } else {
             const errorText = await response.text();
             alert("Error al realizar la compra: " + (errorText || "Inténtalo de nuevo."));
@@ -528,7 +528,6 @@ window.comprarProducto = async function(idProducto) {
     }
 };
 
-/* --- LÓGICA DEL MODAL DE COMPRA --- */
 
 // 1. Abrir Modal
 window.abrirModalCompra = function(idProducto) {
@@ -574,44 +573,38 @@ window.toggleTruequeModal = function() {
 
 // 4. Enviar Compra (Fetch)
 window.enviarCompra = async function() {
-    // Recoger ID del input oculto
-    const idProducto = document.getElementById('modal-product-id').value;
-    
-    // Recoger valores
-    const pagoSelect = document.getElementById('modal-select-pago');
-    const recepcionSelect = document.getElementById('modal-select-recepcion');
-    const horasInput = document.getElementById('modal-input-horas');
-    const truequeInput = document.getElementById('modal-input-trueque-id');
-
-    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas";
-    const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
-    const horas = horasInput ? parseInt(horasInput.value) : null;
-    
-    let idProdTrueque = null;
-
-    // Validación de Trueque
-    if (tipoPago === 'Trueque') {
-        if (!truequeInput || !truequeInput.value) {
-            alert("Por favor, introduce el ID del producto que ofreces para el trueque.");
-            return;
-        }
-        idProdTrueque = parseInt(truequeInput.value);
-    }
-
-    // Construir Payload
-    const payload = {
-        idProd: parseInt(idProducto),
-        tipoPago: tipoPago,
-        recepcion: recepcion,
-        horas: horas,
-        idProdTrueque: idProdTrueque
-    };
-
-    // Botón en estado de carga (opcional visual)
     const btnConfirmar = document.querySelector('.modal-footer .btn-estilo:last-child');
     const textoOriginal = btnConfirmar.innerText;
     btnConfirmar.innerText = "Procesando...";
     btnConfirmar.disabled = true;
+
+    // 1. Obtener elementos (el de recepción puede no existir si es servicio)
+    const inputPago = document.getElementById('select-pago');
+    const inputRecepcion = document.getElementById('select-recepcion');
+    const inputHoras = document.getElementById('modal-input-horas');
+    const idProducto = document.getElementById('btn-comprar').getAttribute('data-id');
+
+    // 2. Extraer valores con seguridad
+    const tipoPago = inputPago ? inputPago.value : null;
+    
+    // IMPORTANTE: Si no existe el input o está vacío, enviamos null (no "")
+    let recepcion = null;
+    if (inputRecepcion && inputRecepcion.value !== "") {
+        recepcion = inputRecepcion.value;
+    }
+
+    // Horas: si no existe input (no es servicio), null o 1 según prefieras
+    let horas = inputHoras ? parseInt(inputHoras.value) : 1;
+    if (isNaN(horas) || horas < 1) horas = 1;
+
+    // 3. Preparar el objeto para enviar
+    const payload = {
+        idProd: parseInt(idProducto),
+        tipoPago: tipoPago,
+        recepcion: recepcion, // Ahora esto seguro que es null o un valor válido
+        horas: horas,
+        idProdTrueque: null 
+    };
 
     try {
         const response = await fetch(`/purchase/`, {
@@ -622,17 +615,20 @@ window.enviarCompra = async function() {
 
         if (response.ok) {
             alert("¡Compra realizada con éxito!");
-            window.location.href = "/purchase/";
+            window.location.href = "/home/";
         } else {
-            const errorText = await response.text();
-            alert("Error: " + (errorText || "No se pudo completar la compra."));
-            // Restaurar botón
-            btnConfirmar.innerText = textoOriginal;
-            btnConfirmar.disabled = false;
+            let mensajeUsuario = "No se pudo completar la compra.";
+            
+            // Personalización de errores
+            if (response.status === 400) mensajeUsuario = "Error en los datos (400). Revisa el método de pago.";
+            if (response.status === 500) mensajeUsuario = "Error interno del servidor (500).";
+            
+            alert(mensajeUsuario);
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Error de conexión con el servidor.");
+        alert("Error de conexión.");
+    } finally {
         btnConfirmar.innerText = textoOriginal;
         btnConfirmar.disabled = false;
     }

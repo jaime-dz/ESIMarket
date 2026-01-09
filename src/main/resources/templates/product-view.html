@@ -117,8 +117,8 @@
                     <div style="margin-bottom:10px;">
                         <label for="select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
                         <select id="select-pago" onchange="toggleTruequeField()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                            <option value="Monedas" th:if="${product.pagoAceptado.name() == 'Monedas' or product.pagoAceptado.name() == 'Ambos'}">Monedas</option>
-                            <option value="Trueque" th:if="${product.pagoAceptado.name() == 'Trueque' or product.pagoAceptado.name() == 'Ambos'}">Trueque</option>
+                            <option value="Monedas" th:if="${product.pago.name() == 'Monedas' or product.pago.name() == 'Ambos'}">Monedas</option>
+                            <option value="Trueque" th:if="${product.pago.name() == 'Trueque' or product.pago.name() == 'Ambos'}">Trueque</option>
                         </select>
                     </div>
 
@@ -127,12 +127,21 @@
                         <input type="number" id="input-trueque-id" placeholder="Introduce el ID de tu producto" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
                     </div>
 
-                    <div style="margin-bottom:10px;">
-                        <label for="select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Entrega:</label>
+                    <div style="margin-bottom:10px;" 
+                        th:if="${product.tipo != null and #strings.toLowerCase(product.tipo) != 'servicio'}">
+                        
+                        <label for="select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Recepción:</label>
+                        
                         <select id="select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                            <option value="enMano" th:if="${product.recepcionAceptada.name() == 'enMano'}">En Mano</option>
-                             <option value="enTaquilla" th:if="${product.recepcionAceptada.name() == 'enTaquilla'}">En Taquilla</option>
-                             <option value="enMano" th:if="${product.recepcionAceptada == null}">En Mano</option>
+                            <option value="enMano" 
+                                    th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos')}">
+                                En Mano
+                            </option>
+                            
+                            <option value="enTaquilla" 
+                                    th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enTaquilla' or product.recepcionAceptada.name() == 'Ambos')}">
+                                En Taquilla
+                            </option>
                         </select>
                     </div>
 
@@ -188,15 +197,15 @@
             <div class="modal-body">
                 <input type="hidden" id="modal-product-id">
 
-                <div style="margin-bottom:15px;">
-                    <label for="modal-select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
-                    <select id="modal-select-pago" onchange="toggleTruequeModal()" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                <div style="margin-bottom:10px;">
+                    <label for="select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
+                    <select id="select-pago" onchange="toggleTruequeField()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
                         <option value="Monedas" 
-                                th:if="${product.pagoAceptado != null and (product.pagoAceptado.name() == 'Monedas' or product.pagoAceptado.name() == 'Ambos')}">
+                                th:if="${product.pago != null and (product.pago.name() == 'Monedas' or product.pago.name() == 'Ambos')}">
                             Monedas
                         </option>
                         <option value="Trueque" 
-                                th:if="${product.pagoAceptado != null and (product.pagoAceptado.name() == 'Trueque' or product.pagoAceptado.name() == 'Ambos')}">
+                                th:if="${product.pago != null and (product.pago.name() == 'Trueque' or product.pago.name() == 'Ambos')}">
                             Trueque
                         </option>
                     </select>
@@ -207,11 +216,13 @@
                     <input type="number" id="modal-input-trueque-id" placeholder="Ej: 45" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
                 </div>
 
-                <div style="margin-bottom:15px;">
-                    <label for="modal-select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Entrega:</label>
-                    <select id="modal-select-recepcion" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                <div style="margin-bottom:10px;" 
+                    th:if="${product.tipo != null and #strings.toLowerCase(product.tipo) != 'servicio'}">
+                    
+                    <label for="select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Recepción:</label>
+                    <select id="select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
                         <option value="enMano" 
-                                th:if="${product.recepcionAceptada == null or product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos'}">
+                                th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos')}">
                             En Mano
                         </option>
                         <option value="enTaquilla" 
@@ -223,7 +234,14 @@
 
                 <div th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="margin-bottom:15px;">
                     <label for="modal-input-horas" style="font-weight:bold; display:block; margin-bottom:5px;">Horas a contratar:</label>
-                    <input type="number" id="modal-input-horas" value="1" min="1" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                    
+                    <input type="number" id="modal-input-horas" value="1" min="1" 
+                        oninput="actualizarPrecioTotal()"
+                        style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                </div>
+
+                <div style="margin-top: 15px; font-size: 1.2em; font-weight: bold; text-align: right; color: #00587C;">
+                    Total: <span id="precio-total-display" th:text="${product.precio}">0</span> Monedas
                 </div>
             </div>
 
@@ -234,5 +252,33 @@
         </div>
     </div>
     <script src="/js/common.js" type="module"></script>
+    <script th:inline="javascript">
+        const precioBase = [[${product.precio}]];
+
+        function actualizarPrecioTotal() {
+            const inputHoras = document.getElementById('modal-input-horas');
+            const displayPrecio = document.getElementById('precio-total-display');
+            
+            // Valor por defecto
+            let horas = 1;
+            
+            // Solo intentamos leer el valor si el input existe (es un Servicio)
+            if (inputHoras) {
+                const valor = parseInt(inputHoras.value);
+                // Si es un número válido y mayor que 0, lo usamos
+                if (!isNaN(valor) && valor > 0) {
+                    horas = valor;
+                }
+            }
+
+            // Calculamos el total
+            const total = precioBase * horas;
+            
+            // Actualizamos el texto en pantalla si existe el elemento
+            if (displayPrecio) {
+                displayPrecio.innerText = total;
+            }
+        }
+    </script>
 </body>
 </html>
