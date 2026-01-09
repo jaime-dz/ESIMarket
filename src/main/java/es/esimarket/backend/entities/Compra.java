@@ -18,7 +18,7 @@ public class Compra {
     private String uDNIComprador;
 
     @Column(name = "IDProducto", nullable = false)
-    private int IDProducto;
+    private Integer IDProducto;
 
     @Column(name = "Fecha", nullable = false)
     private LocalDateTime Fecha;
@@ -56,8 +56,8 @@ public class Compra {
     public String getuDNIComprador() {return uDNIComprador;}
     public void setuDNIComprador(String uDNIComprador) { this.uDNIComprador = uDNIComprador; }
 
-    public int getIDProducto(){return IDProducto;}
-    public void setIDProducto(int IDProducto) {this.IDProducto = IDProducto; }
+    public Integer getIDProducto(){return IDProducto;}
+    public void setIDProducto(Integer IDProducto) {this.IDProducto = IDProducto; }
 
     public String getFecha() {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

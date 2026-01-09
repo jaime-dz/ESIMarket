@@ -10,12 +10,13 @@
     <body>
         <div id="sideMenu" class="sidebar user-view">
             <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
-            <a href="/purchase/user">Historial de compras</a>
+            <a href="/purchase/">Historial de compras</a>
             <a href="/orders/">Lista de pedidos</a>
-            <a href="/service/user">Lista de servicios</a>
+            <a href="/service/">Lista de servicios</a>
             <a href="/donations/">Donaciones</a>
             <a href="/chat/">Chats</a>
         </div>
+
         <header class="menu-bar menu-superior">
             <div class="header-left">
                 <div class="hamburger-icon user-view" onclick="toggleMenu()">
@@ -30,86 +31,93 @@
 
             <nav class="header-center">
                 <ul>
-                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                    <li><a href="/home/">Inicio</a></li>
+                    <li><a href="/home/about">Sobre nosotros</a></li>
                 </ul>
             </nav>
 
             <div class="header-right">
-                
                 <div class="guest-view">
                     <a href="/auth/login">Iniciar sesión</a>
                     <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
                 </div>
 
                 <div class="user-view" style="display: none;">
-                    
                     <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
-                    
                     <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
                         <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
-                        
                         <div class="dropdown-content">
                             <a href="/profile/">Mi Perfil</a>
                             <a href="#" id="btn-logout">Cerrar sesión</a>
                         </div>
                     </div>
                 </div>
-
             </div>
-        </header>
-        <main>
-    <div class="profile-wrapper">
-        
-        <div class="imagen-left">
-            <img src="/Images/huevoverde.jpeg" width="256px" height="256px" alt="Foto de perfil"/>
-        </div>
+        </header> <main>
+            <div class="profile-wrapper">
 
-        <div class="square">
-            <h1>Mis Datos</h1><br><br>
-            <p>Nombre: <span th:text="${profile.nombre}"></span></p><br>
-            <p>Apellidos: <span th:text="${profile.apellidos}"></span></p><br>
-            <p>Usuario: <span th:text="${profile.usuario}"></span></p><br>
-            <p>Correo Electrónico: <span th:text="${profile.email}"></span></p><br>
-            <p>Carrera: <span th:text="${profile.carrera}"></span></p><br>
-            <p>Saldo: <span th:text="${profile.saldo + ' ⚙️'}"></span></p><br>
-            
-            <div class="form-buttons">
-                <button type="button" 
-                        id="edit-profile" 
-                        class="btn-common btn-orange" 
-                        onclick="window.location.href='/profile/edit'">
-                    Editar Perfil
-                </button>
-                <button type="button" 
-                        id="change-password" 
-                        class="btn-common btn-gray" 
-                        onclick="window.location.href='/profile/edit/password'">
-                    Cambiar Contraseña
-                </button>
-            </div><br><br>
-        </div>
+                <div class="imagen-left">
+                    <img src="/Images/huevoverde.jpeg" width="256px" height="256px" alt="Foto de perfil"/>
+                </div>
 
-    </div> </main>
-        
-        
+                <div class="form-container">
+                    <h2>Mi Perfil</h2>
+
+                    <div class="profile-data">
+                        <div class="profile-box">
+                            <span class="box-label">Nombre</span>
+                            <span class="box-value" th:text="${profile.nombre}">Nombre</span>
+                        </div>
+
+                        <div class="profile-box">
+                            <span class="box-label">Apellidos</span>
+                            <span class="box-value" th:text="${profile.apellidos}">Apellidos</span>
+                        </div>
+
+                        <div class="profile-box full-width">
+                            <span class="box-label">Correo Electrónico</span>
+                            <span class="box-value" th:text="${profile.correo}">correo@ejemplo.com</span>
+                        </div>
+
+                        <div class="profile-box">
+                            <span class="box-label">Carrera</span>
+                            <span class="box-value" th:text="${profile.carrera}">Carrera</span>
+                        </div>
+
+                        <div class="profile-box">
+                            <span class="box-label">Saldo Disponible</span>
+                            <span class="box-value" style="color: #E57200;" th:text="${profile.saldoMoneda + ' ⚙️'}">0 ⚙️</span>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons" style="margin-top: 20px;">
+                        <button type="button" class="btn-common btn-orange" onclick="window.location.href='/profile/edit'">
+                            Editar Perfil
+                        </button>
+                        <button type="button" id="change-password" class="btn-common btn-gray" onclick="window.location.href='/profile/edit/password'">
+                            Cambiar Contraseña
+                        </button>
+                    </div>
+                </div>
+
+            </div> </main>
+
         <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
                 <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
-
-                <li class="guest-view">
-                    <a th:href="@{/auth/login}">Iniciar sesión</a>
-                </li>
-                <li class="guest-view">
-                    <a th:href="@{/auth/signup}">Registrarse</a>
-                </li>
-                
+                <li class="guest-view"><a th:href="@{/auth/login}">Iniciar sesión</a></li>
+                <li class="guest-view"><a th:href="@{/auth/signup}">Registrarse</a></li>
                 <li class="sn">
                     <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
                     <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
                 </li>
             </ul>
         </footer>
+
         <script src="/js/common.js" type="module"></script>
         <script src="/js/profile.js" type="module"></script>
     </body>

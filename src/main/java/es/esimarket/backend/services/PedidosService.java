@@ -4,23 +4,17 @@ import java.util.List;
 
 import es.esimarket.backend.controllers.requests.FiltroPedRequest;
 import es.esimarket.backend.controllers.requests.TaquillaRequest;
-import es.esimarket.backend.entities.FotoProd;
+import es.esimarket.backend.entities.*;
 import es.esimarket.backend.exceptions.CannotCompleteActionError;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
 import es.esimarket.backend.exceptions.CannotCreatePhotoError;
 import es.esimarket.backend.exceptions.CannotCreateProductError;
-import es.esimarket.backend.repositories.CompraRepository;
-import es.esimarket.backend.repositories.FotoProdRepository;
-import es.esimarket.backend.repositories.PedidosRepository;
-import es.esimarket.backend.repositories.ProductoRepository;
+import es.esimarket.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import es.esimarket.backend.dtos.PedidosDTO;
-import es.esimarket.backend.entities.Compra;
-import es.esimarket.backend.entities.Pedidos;
-import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.mappers.PedidosMapper;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +26,9 @@ public class PedidosService{
 
     @Autowired
     private CompraRepository compraRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private FotoProdRepository fotoProdRepository;
@@ -49,35 +46,34 @@ public class PedidosService{
 
         StringBuilder sql = new StringBuilder("SELECT p.*, pr.uDNIVendedor, c.uDNIcomprador FROM pedido p ");
         sql.append("JOIN compra c ON p.IdCompra = c.IdCompra ");
-        sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
+        sql.append("JOIN producto pr ON c.IDproducto = pr.ID WHERE ( c.uDNIcomprador = ? OR pr.uDNIVendedor = ? )");
         List<Object> params = new ArrayList<>();
 
-        String[] filters = new String[]{"todos", "por entregar","por recoger"};
+        params.add(dni);
+        params.add(dni);
 
-        if ( request.filter() != null && ( request.filter().equals("todos") || request.filter().equals("por entregar") || request.filter().equals("por recoger") ) ){
+        String[] filters = new String[]{"Todos", "PorEntregar","Entregado", "Recogido"};
+
+        if ( request.filter() != null && ( request.filter().equals("Todos") || request.filter().equals("PorEntregar") || request.filter().equals("Entregado") || request.filter().equals("Recogido") ) ){
             switch (request.filter()) {
-                case "por entregar":
+                case "PorEntregar":
                     // El usuario es el VENDEDOR y el estado es 'PorEntregar'
-                    sql.append("WHERE pr.uDNIVendedor = ? AND p.Estado = 'PorEntregar'");
-                    params.add(dni);
+                    sql.append("AND  p.Estado = 'PorEntregar'");
                     break;
 
-                case "por recoger":
+                case "Entregado":
                     // El usuario es el COMPRADOR y el estado es 'Entregado' (listo para recoger)
-                    sql.append("WHERE c.uDNIcomprador = ? AND p.Estado = 'Entregado'");
-                    params.add(dni);
+                    sql.append("AND p.Estado = 'Entregado'");
                     break;
 
+                case "Recogido":
+                    sql.append("AND p.Estado = 'Recogido'");
+                    break;
                 default:
-                    // El usuario es el COMPRADOR O el VENDEDOR
-                    sql.append("WHERE c.uDNIcomprador = ? OR pr.uDNIVendedor = ?");
-                    params.add(dni);
-                    params.add(dni); // Añadimos el DNI dos veces para los dos '?'
                     break;
             }
 
         }
-
 
         List<Pedidos> peds = jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Pedidos.class), params.toArray());
         List<PedidosDTO> PedidosDTOs = new ArrayList<>();
@@ -87,6 +83,8 @@ public class PedidosService{
             Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
             Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
             FotoProd fp = fotoProdRepository.findById(prod.getID()).orElse(null);
+            Usuario uC = usuarioRepository.findByid(c.getuDNIComprador());
+            Usuario uV = usuarioRepository.findByid(prod.getuDNI_Vendedor());
             byte[] Foto = null;
             Integer NTaq = null;
             if ( fp != null ) {
@@ -97,7 +95,7 @@ public class PedidosService{
             }
             
             
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),Foto,c.getuDNIComprador(),prod.getuDNI_Vendedor(),c.getuDNIComprador().equals(dni),prod.getNombre(),NTaq,p.isEnTaquilla(),p.getEstado()));
+            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),Foto,uC.getNombre(),uV.getNombre(),c.getuDNIComprador().equals(dni),prod.getNombre(),NTaq,p.isEnTaquilla(),p.getEstado()));
         }
 
         return PedidosDTOs;

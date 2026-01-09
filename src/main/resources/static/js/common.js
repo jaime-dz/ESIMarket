@@ -320,6 +320,7 @@ window.toggleMenu = function() {
     }
 }
 
+/*
 async function gestionarCargaPedidos(filtro) {
     const container = document.getElementById('lista-pedidos-container');
     container.innerHTML = '<p style="text-align:center;">Cargando pedidos...</p>';
@@ -346,6 +347,7 @@ async function gestionarCargaPedidos(filtro) {
     }
 }
 
+*/
 function renderizarListaPedidos(pedidos, container) {
     if (!pedidos || pedidos.length === 0) {
         container.innerHTML = '<p style="text-align:center;">No se encontraron pedidos con este filtro.</p>';
@@ -405,49 +407,218 @@ function renderizarListaPedidos(pedidos, container) {
     container.innerHTML = htmlPedidos;
 }
 
-window.accionEntregarPedido = async function(idPedido, requiereTaquilla) {
-    let numTaquilla = 0;
-    
-    
-    const inputTaquilla = prompt("Introduce el número de taquilla (pon 0 si es entrega en mano):", "0");
-    if (inputTaquilla === null) return; // Cancelado
-    numTaquilla = parseInt(inputTaquilla) || 0;
 
-    try {
-        const response = await fetch(`/orders/deliver/${idPedido}/${numTaquilla}`, {
-            method: 'PUT'
-        });
-
-        if (response.ok) {
-            alert("Pedido marcado como entregado.");
-            const filtroActual = document.getElementById('filtro-ped').value;
-            gestionarCargaPedidos(filtroActual);
+window.toggleTruequeField = function() {
+    const select = document.getElementById('select-pago');
+    const field = document.getElementById('trueque-field');
+    if (select && field) {
+        if (select.value === 'Trueque') {
+            field.style.display = 'block';
         } else {
-            alert("Error al actualizar el pedido.");
+            field.style.display = 'none';
+            // Limpiamos el valor si se oculta
+            const input = document.getElementById('input-trueque-id');
+            if (input) input.value = '';
         }
-    } catch (e) {
-        console.error(e);
-        alert("Error de conexión.");
     }
 };
 
-window.accionRecogerPedido = async function(idPedido) {
-    if(!confirm("¿Confirmas que has recogido el producto?")) return;
+window.comprarProducto = async function(idProducto) {
+    // 1. Recoger valores del DOM
+    const pagoSelect = document.getElementById('select-pago');
+    const recepcionSelect = document.getElementById('select-recepcion');
+    const horasInput = document.getElementById('input-horas');
+    const truequeInput = document.getElementById('input-trueque-id');
+
+    // 2. Preparar variables
+    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas"; // Valor por defecto
+    const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
+    
+    // Parseo de números
+    const horas = horasInput ? parseInt(horasInput.value) : null;
+    
+    // Solo enviamos ID de trueque si el usuario seleccionó "Trueque"
+    let idProdTrueque = null;
+    if (tipoPago === 'Trueque' && truequeInput) {
+        if (!truequeInput.value) {
+            alert("Por favor, introduce el ID del producto que ofreces para el trueque.");
+            return;
+        }
+        idProdTrueque = parseInt(truequeInput.value);
+    }
+
+    if (!confirm("¿Estás seguro de que deseas realizar esta compra?")) {
+        return;
+    }
+
+    // 3. Construir el Payload (debe coincidir con CompraRequest.java)
+    const payload = {
+        idProd: idProducto,          // Integer
+        tipoPago: tipoPago,          // Enum (Monedas, Trueque)
+        recepcion: recepcion,        // Enum (enMano, enTaquilla)
+        horas: horas,                // Long (puede ser null)
+        idProdTrueque: idProdTrueque // Integer (puede ser null)
+    };
 
     try {
-        const response = await fetch(`/orders/pickup/${idPedido}`, {
-            method: 'PUT'
+        const response = await fetch(`/purchase/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
 
         if (response.ok) {
-            alert("¡Pedido completado!");
-            const filtroActual = document.getElementById('filtro-ped').value;
-            gestionarCargaPedidos(filtroActual);
+            alert("¡Compra realizada con éxito!");
+            window.location.href = "/home/";
         } else {
-            alert("Error al confirmar recogida.");
+            const errorText = await response.text();
+            alert("Error al realizar la compra: " + (errorText || "Inténtalo de nuevo."));
         }
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("Error de conexión con el servidor.");
+    }
+};
+
+
+// 1. Abrir Modal
+window.abrirModalCompra = function(idProducto) {
+    const modal = document.getElementById('modalCompra');
+    const inputId = document.getElementById('modal-product-id');
+    
+    if(modal && inputId) {
+        inputId.value = idProducto; // Guardamos el ID para usarlo al enviar
+        
+        // Resetear formulario por si acaso
+        const truequeInput = document.getElementById('modal-input-trueque-id');
+        if(truequeInput) truequeInput.value = '';
+        
+        // Ejecutar la lógica de visualización del campo trueque inicial
+        toggleTruequeModal();
+        
+        // Mostrar modal (flex para que centre)
+        modal.style.display = 'flex';
+    }
+};
+
+// 2. Cerrar Modal
+window.cerrarModalCompra = function() {
+    const modal = document.getElementById('modalCompra');
+    if(modal) {
+        modal.style.display = 'none';
+    }
+};
+
+// 3. Controlar visibilidad del campo Trueque dentro del modal
+window.toggleTruequeModal = function() {
+    const select = document.getElementById('modal-select-pago');
+    const field = document.getElementById('modal-trueque-field');
+    
+    if (select && field) {
+        if (select.value === 'Trueque') {
+            field.style.display = 'block';
+        } else {
+            field.style.display = 'none';
+        }
+    }
+};
+
+// 4. Enviar Compra (Fetch)
+window.enviarCompra = async function() {
+    const btnConfirmar = document.querySelector('.modal-footer .btn-estilo:last-child');
+    const textoOriginal = btnConfirmar.innerText;
+    btnConfirmar.innerText = "Procesando...";
+    btnConfirmar.disabled = true;
+
+    // 1. Obtener elementos (el de recepción puede no existir si es servicio)
+    const inputPago = document.getElementById('select-pago');
+    const inputRecepcion = document.getElementById('select-recepcion');
+    const inputHoras = document.getElementById('modal-input-horas');
+    const idProducto = document.getElementById('btn-comprar').getAttribute('data-id');
+
+    // 2. Extraer valores con seguridad
+    const tipoPago = inputPago ? inputPago.value : null;
+    
+    // IMPORTANTE: Si no existe el input o está vacío, enviamos null (no "")
+    let recepcion = null;
+    if (inputRecepcion && inputRecepcion.value !== "") {
+        recepcion = inputRecepcion.value;
+    }
+
+    // Horas: si no existe input (no es servicio), null o 1 según prefieras
+    let horas = inputHoras ? parseInt(inputHoras.value) : 1;
+    if (isNaN(horas) || horas < 1) horas = 1;
+
+    // 3. Preparar el objeto para enviar
+    const payload = {
+        idProd: parseInt(idProducto),
+        tipoPago: tipoPago,
+        recepcion: recepcion, // Ahora esto seguro que es null o un valor válido
+        horas: horas,
+        idProdTrueque: null 
+    };
+
+    try {
+        const response = await fetch(`/purchase/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("¡Compra realizada con éxito!");
+            window.location.href = "/home/";
+        } else {
+            let mensajeUsuario = "No se pudo completar la compra.";
+            
+            // Personalización de errores
+            if (response.status === 400) mensajeUsuario = "Error en los datos (400). Revisa el método de pago.";
+            if (response.status === 500) mensajeUsuario = "Error interno del servidor (500).";
+            
+            alert(mensajeUsuario);
+        }
+    } catch (error) {
+        console.error("Error:", error);
         alert("Error de conexión.");
+    } finally {
+        btnConfirmar.innerText = textoOriginal;
+        btnConfirmar.disabled = false;
+    }
+};
+
+// Cerrar modal si hacen click fuera del contenido (en el fondo oscuro)
+window.onclick = function(event) {
+    const modal = document.getElementById('modalCompra');
+    if (event.target == modal) {
+        cerrarModalCompra();
+    }
+}
+
+window.eliminarProducto = async function(idProducto) {
+    // 1. Confirmación de seguridad
+    const confirmacion = confirm("¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.");
+    
+    if (!confirmacion) return;
+
+    try {
+        // 2. Petición al servidor (Asumiendo que tu backend escucha DELETE en /product/{id})
+        const response = await fetch(`/products/delete/${idProducto}`, {
+            method: 'DELETE', 
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert("Anuncio eliminado correctamente.");
+            window.location.href = "/home/"; // Te devuelve al inicio
+        } else {
+            alert("Hubo un error al intentar eliminar el producto.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor.");
     }
 };
