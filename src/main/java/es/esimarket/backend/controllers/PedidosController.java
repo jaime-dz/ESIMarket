@@ -64,7 +64,7 @@ public class PedidosController{
         return ResponseEntity.ok(pedidosService.mostrar_pedidos_comprador(uDNI));
     }
 
-    @PutMapping("/deliver/{IdPedido}/{NTaquilla}")
+    @PatchMapping("/deliver/{IdPedido}/{NTaquilla}")
     public ResponseEntity<String> patchPedidoVendedor( @PathVariable(name = "IdPedido") int IdPedido,@PathVariable(name = "NTaquilla") int NTaquilla)
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -73,7 +73,7 @@ public class PedidosController{
         return ResponseEntity.ok(pedidosService.entregarPedido(IdPedido,NTaquilla,dni));  //mirar si convviene mandarle el udni aunque no lo uses
     }
 
-    @PutMapping("/pickup/{IdPedido}")
+    @PatchMapping("/pickup/{IdPedido}")
     public ResponseEntity<String> patchPedidoComprador( @PathVariable(name = "IdPedido") int IdPedido)
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

@@ -35,26 +35,20 @@ public class ProfileController {
     @GetMapping("/")
     public String getProfile( Model model) throws CannotCreateUserError {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        /*Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
         Usuario u = usuarioRepository.findByid(dni);
 
         if ( u == null )  throw new CannotCreateUserError("Usuario no encontrado");
 
-        model.addAttribute("profile", new ProfileResponse(u.getNombre(),u.getApellidos(),u.getId(),u.getCorreo(),u.getCarrera(),u.getSaldoMoneda()));
-
+        model.addAttribute("profileD", new ProfileResponse(u.getNombre(),u.getApellidos(),u.getId(),u.getCorreo(),u.getCarrera(),u.getSaldoMoneda()));
+        */
         return "profile";
     }
 
     @GetMapping("/edit")
-    public String editProfile(Model model) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String dni = auth.getName();
-        Usuario u = usuarioRepository.findByid(dni);
-
-        model.addAttribute("profile", new ProfileResponse(u.getNombre(),u.getApellidos(),u.getId(),u.getCorreo(),u.getCarrera(),u.getSaldoMoneda()));
-
+    public String editProfile(Model model)
+    {
         return "profile-edit";
     }
 
