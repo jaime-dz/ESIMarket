@@ -1231,3 +1231,61 @@ main {
 .btn-eliminar:hover {
     background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
 }
+
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 15px; /* Espacio entre cuadros */
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.profile-box {
+    background-color: #f8f9fa; /* Fondo gris muy clarito */
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;       /* Bordes redondeados */
+    padding: 15px;
+    display: flex;
+    flex-direction: column;    /* Etiqueta arriba, dato abajo */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto al pasar el ratón por encima (opcional) */
+.profile-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-color: #00587C;
+}
+
+/* Estilo para el título del dato (ej: "NOMBRE") */
+.box-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* Estilo para el valor del dato (ej: "Pepe") */
+.box-value {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Clase especial para que el correo ocupe todo el ancho */
+.full-width {
+    grid-column: span 2;
+}
+
+/* Responsividad: En móviles, todo a 1 columna */
+@media (max-width: 600px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    .full-width {
+        grid-column: span 1;
+    }
+}
