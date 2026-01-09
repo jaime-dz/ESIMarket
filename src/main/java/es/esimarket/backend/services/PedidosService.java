@@ -76,6 +76,12 @@ public class PedidosService{
                     break;
             }
 
+        }else{
+
+            sql.append("WHERE c.uDNIcomprador = ? OR pr.uDNIVendedor = ?");
+            params.add(dni);
+            params.add(dni);
+
         }
 
 

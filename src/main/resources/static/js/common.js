@@ -320,6 +320,7 @@ window.toggleMenu = function() {
     }
 }
 
+/*
 async function gestionarCargaPedidos(filtro) {
     const container = document.getElementById('lista-pedidos-container');
     container.innerHTML = '<p style="text-align:center;">Cargando pedidos...</p>';
@@ -346,6 +347,7 @@ async function gestionarCargaPedidos(filtro) {
     }
 }
 
+*/
 function renderizarListaPedidos(pedidos, container) {
     if (!pedidos || pedidos.length === 0) {
         container.innerHTML = '<p style="text-align:center;">No se encontraron pedidos con este filtro.</p>';

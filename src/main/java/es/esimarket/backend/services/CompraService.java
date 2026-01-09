@@ -1,7 +1,10 @@
 package es.esimarket.backend.services;
 import es.esimarket.backend.controllers.requests.CompraRequest;
+import es.esimarket.backend.dtos.CompraDTO;
+import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.entities.*;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
+import es.esimarket.backend.exceptions.CannotCreateProductError;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.repositories.PedidosRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -35,14 +39,39 @@ public class CompraService {
     @Autowired
     private VariosService variosService;
 
+    public List<CompraDTO> mostrar_compras_usu(String dni){
+
+        List<Compra> comprasEntities = compraRepository.findByuDNIComprador(dni);
+        List<CompraDTO> compraDTOS = new ArrayList<>();
+
+        for ( Compra c : comprasEntities ){
+
+            Producto pC = productoRepository.findByID(c.getIDProducto());
+
+            String nombreTrueque = null;
+            if (c.getIdProdTrueque() != null) {
+                Producto pT = productoRepository.findByID(c.getIdProdTrueque());
+                if (pT != null) {
+                    nombreTrueque = pT.getNombre();
+                }
+            }
+
+            compraDTOS.add(new CompraDTO(c.getIDCompra(),c.getIDProducto(),pC.getNombre(),c.getFecha(),c.getTipoPago(),c.getRecepcion(),nombreTrueque,pC.getTipo()));
+        }
+
+        return compraDTOS;
+    }
+
     public Boolean UsuPuedeHacerCompra(Usuario u, Producto p)
     {
         return u.getSaldoMoneda() >= p.getPrecio();
     }
 
+    @Transactional
     public String HacerCompra(String uDNI, CompraRequest request)
     {
         Producto p = productoRepository.findByID(request.idProd());
+        Producto pT = null;
         Usuario uComprador = usuarioRepository.findByid(uDNI);
         Usuario uVendedor = usuarioRepository.findByid(p.getuDNI_Vendedor());
         Compra c = null;
@@ -67,6 +96,8 @@ public class CompraService {
 
                 c = new Compra(uDNI,request.idProd(),FechaAct,request.recepcion(),request.tipoPago(), request.idProdTrueque());
 
+                pT = productoRepository.findById(request.idProdTrueque()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
+
 
             }else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
 
@@ -86,6 +117,7 @@ public class CompraService {
             }else throw new CannotCompletePurchaseError("Tipo de producto invalido");
 
             p.setDisponible(false);
+            if ( pT != null ) pT.setDisponible(false);
             productoRepository.save(p);
 
             usuarioRepository.save(uComprador);
@@ -105,14 +137,15 @@ public class CompraService {
             throw new CannotCompletePurchaseError("Tipo de recepcion invalida");
         if(request.recepcion()==Producto.RecepcionAceptada.enTaquilla)
         {
+            compraRepository.save(c);
             pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
 
         }else if ( request.recepcion()==Producto.RecepcionAceptada.enMano){
 
+            compraRepository.save(c);
             pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
         }else throw new CannotCompletePurchaseError("Tipo de recepcion no encontrado");
 
-        compraRepository.save(c);
 
         return pe;
     }

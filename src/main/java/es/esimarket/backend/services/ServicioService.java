@@ -1,19 +1,24 @@
 package es.esimarket.backend.services;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import es.esimarket.backend.dtos.ServicioDTO;
-import es.esimarket.backend.entities.Producto;
+import es.esimarket.backend.entities.*;
+import es.esimarket.backend.exceptions.CannotCompleteActionError;
 import es.esimarket.backend.exceptions.CannotCreateProductError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.mappers.ServiceMapper;
+import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.repositories.ProductoRepository;
+import es.esimarket.backend.repositories.UsuarioRepository;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-
-import es.esimarket.backend.entities.Servicio;
 
 import es.esimarket.backend.repositories.ServicioRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +33,15 @@ public class ServicioService{
     private ProductoRepository productoRepository;
 
     @Autowired
+    private CompraRepository compraRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
     private ServiceMapper serviceMapper;
 
     @Autowired
@@ -35,15 +49,17 @@ public class ServicioService{
 
     public void CrearServicioPendiente(int idProd, String DNIcomprador)
     {
-        LocalDateTime ahora = LocalDateTime.now();
-        Servicio s = new Servicio(idProd,DNIcomprador,ahora,false);
+        Servicio s = new Servicio(idProd,DNIcomprador,null,false);
 
         servicioRepository.save(s);
     }
 
-    public String modificarFecha(int idProd, String DNIcomprador,LocalDateTime fecha)
+    public String modificarFecha(int idProd, String DNIcomprador,String fechaString)
     {
         Servicio s = servicioRepository.findByidProdAndDNIcomprador(idProd, DNIcomprador);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+        LocalDateTime fecha = LocalDateTime.parse(fechaString, formatter);
 
         s.setFecha(fecha);
 
@@ -53,28 +69,44 @@ public class ServicioService{
     }
 
     @Transactional
-    public String finalizarServicio(int idProd, String DNIcomprador)
+    public String finalizarServicio(int idProd, String dniSolicitante)
     {
-        Servicio s = servicioRepository.findByidProdAndDNIcomprador(idProd, DNIcomprador);
         Producto p = productoRepository.findByID(idProd);
 
-        s.setFinalizado(true);
+        if (!p.getuDNI_Vendedor().equals(dniSolicitante))
+            throw new CannotCompleteActionError("No eres el propietario de este producto");
 
+        Servicio s = servicioRepository.findByIdProd(idProd);
+
+        if (s == null) throw new CannotCompleteActionError("Servicio no encontrado");
+
+        s.setFinalizado(true);
         servicioRepository.save(s);
-        if ( p != null ) productoRepository.delete(p);
 
         return "Se ha finalizado el servicio";
     }
 
-    public List<ServicioDTO> mostrar_servicios_usuario(String DNIcomprador)
+    public List<ServicioDTO> mostrar_servicios_usuario(String DNI)
     {
-        List<Servicio> services = servicioRepository.findByDNIcompradorAndFinalizadoFalse(DNIcomprador);
+
+        StringBuilder sql = new StringBuilder("SELECT s.* FROM servicios s JOIN producto p ON s.IdProd = p.ID WHERE ( s.DNIcomprador = ? OR p.uDNIVendedor = ? ) AND s.Finalizado = 0 ");
+        List<Object> params = new ArrayList<>();
+
+        params.add(DNI);
+        params.add(DNI);
+
+        List<Servicio> services = jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Servicio.class), params.toArray());
+
         List<ServicioDTO> DTOservices = new ArrayList<>();
 
         for( Servicio s : services){
 
             Producto p = productoRepository.findById(s.getIdProd()).orElseThrow(()-> new CannotCreateProductError("El producto no existe"));
-            DTOservices.add(serviceMapper.toDTO(s,p));
+            Compra c = compraRepository.findByIDProducto(s.getIdProd());
+            Usuario uC = usuarioRepository.findById(c.getuDNIComprador()).orElseThrow(()->new CannotCreateUserError("Usuario no encontrado"));
+            Usuario uV = usuarioRepository.findById(p.getuDNI_Vendedor()).orElseThrow(()->new CannotCreateUserError("Usuario no encontrado"));
+
+            DTOservices.add(new ServicioDTO(s.getIdProd(),p.getNombre(),(c.getuDNIComprador().equals(DNI)) ? null : uC.getNombre(),(p.getuDNI_Vendedor().equals(DNI)) ? null : uV.getNombre(),s.getFecha(),false));
         }
 
         return DTOservices;

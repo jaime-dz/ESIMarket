@@ -61,7 +61,11 @@ public class ProductoService {
 
             FotoProd fp = fotoProdRepository.findByIdProd(p.getID());
             Usuario u = usuarioRepository.findByid(p.getuDNI_Vendedor());
-            productDTOs.add(productMapper.toDTO(p,fp,u));
+
+            if ( p.isDisponible() ){
+                productDTOs.add(productMapper.toDTO(p,fp,u));
+            }
+
         }
 
         return productDTOs;
