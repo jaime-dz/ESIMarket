@@ -59,24 +59,28 @@
                 </div>
 
             </div>
-        </header>
+    </header>
+        <main class="main-content" style="padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%;">
 
-    <main style="max-width: 800px; margin: 40px auto; padding: 20px;">
-        <div class="desplegable-pedidos">
-            <label for="filtro-ped">Selecciona uno</label>
-            <select name="filtro-ped" id="filtro-ped">
-                <option value="todos">Todos</option>
-                <option value="por entregar">Por entregar</option>
-                <option value="por recoger">Por recoger</option>
-            </select>
-        </div>
-        <div class="submit-button">
-            <button type="button" onclick="gestionarCargaPedidos()">Aplicar</button>
-        </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px;">
+                <h2 style="color: #00587C; margin: 0;">Mis Pedidos</h2>
 
-        <div id="lista-pedidos" class="pedidos-container" style="margin-top: 20px;">
-        </div>
-    </main>
+                <div>
+                    <label for="filtroEstado" style="color:#555; font-weight:bold;">Estado:</label>
+                    <select id="filtroEstado" onchange="gestionarCargaPedidos()" style="padding: 5px; border-radius: 5px; border: 1px solid #ddd;">
+                        <option value="Todos">Todos</option>
+                        <option value="PorEntregar">Por Entregar</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Recogido">Recogido</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="pedidos-container">
+                <div class="loader"></div>
+                <p style="text-align: center;">Cargando pedidos...</p>
+            </div>
+        </main>
     <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
@@ -97,44 +101,150 @@
         </footer>
     <script src="/js/common.js" type="module"></script>
     <script>
-        async function gestionarCargaPedidos(filtroOverride = null) {
-            const select = document.getElementById('filtro-ped');
-            const filtro = filtroOverride || select.value || "todos";
-            const container = document.getElementById('lista-pedidos');
-            
-            container.innerHTML = "<p>Cargando pedidos...</p>";
+        async function accionEntregarPedido(idPedido, esTaquilla) {
+            let nTaquilla = 0;
+
+            // Si el pedido requiere taquilla, pedimos el número al usuario
+            if (esTaquilla) {
+                const input = prompt("📦 Este pedido es en Taquilla.\nPor favor, introduce el número de taquilla donde has dejado el producto:");
+
+                // Si le da a Cancelar, paramos
+                if (input === null) return;
+
+                // Validamos que sea un número
+                nTaquilla = parseInt(input);
+                if (isNaN(nTaquilla)) {
+                    alert("Error: Debes introducir un número de taquilla válido.");
+                    return;
+                }
+            } else {
+                // Si es en mano, confirmamos normal y enviamos 0 como taquilla
+                if(!confirm("¿Confirmas que has entregado el producto en mano?")) return;
+            }
 
             try {
-                const response = await fetch('/orders/filter', {
-                    method: 'POST', 
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ filter: filtro })
+                // ENDPOINT ACTUALIZADO: /orders/deliver/{id}/{taquilla}
+                const response = await fetch(`/orders/deliver/${idPedido}/${nTaquilla}`, { method: 'POST' });
+
+                if(response.ok) {
+                    gestionarCargaPedidos();
+                } else {
+                    const textoError = await response.text();
+                    alert("Error al marcar entregado: " + textoError);
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Error de conexión con el servidor");
+            }
+        }
+
+        async function accionRecogerPedido(idPedido) {
+            if(!confirm("¿Confirmas que has recogido el producto?")) return;
+            try {
+                // ENDPOINT ACTUALIZADO: /orders/pickup/{id}
+                const response = await fetch(`/orders/pickup/${idPedido}`, { method: 'POST' });
+
+                if(response.ok) {
+                    gestionarCargaPedidos();
+                } else {
+                    const textoError = await response.text();
+                    alert("Error al confirmar recogida: " + textoError);
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Error de conexión");
+            }
+        }
+
+            // --- CARGA Y RENDERIZADO ---
+        async function gestionarCargaPedidos() {
+            const container = document.getElementById("pedidos-container");
+            const estadoFiltro = document.getElementById("filtroEstado").value;
+
+            container.innerHTML = '<div style="text-align:center; padding:20px;"><div class="loader"></div><p>Cargando...</p></div>';
+
+            try {
+                const response = await fetch("/orders/user", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estado: estadoFiltro })
                 });
 
                 if (!response.ok) throw new Error("Error cargando pedidos");
 
                 const pedidos = await response.json();
-                
-                if (pedidos.length === 0) {
-                    container.innerHTML = "<p>No hay pedidos con este filtro.</p>";
+
+                if (!pedidos || pedidos.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            <h3>No hay pedidos</h3>
+                            <p>No se encontraron pedidos con el filtro "${estadoFiltro}".</p>
+                        </div>`;
                     return;
                 }
 
-                const html = pedidos.map(p => `
-                    <div class="pedido-card" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
-                        <h3>${p.nombreProd}</h3>
-                        <p>Estado: <strong>${p.estado}</strong></p>
-                        <p>Comprador: ${p.nombreComprador} | Vendedor: ${p.nombreVendedor}</p>
-                        
-                        ${p.esComprador && p.estado === 'Entregado' ? 
-                        `<button onclick="accionRecogerPedido(${p.idPedido})">Confirmar Recogida</button>` : ''}
-                        
-                        ${!p.esComprador && p.estado === 'PorEntregar' ? 
-                        `<button onclick="accionEntregarPedido(${p.idPedido})">Marcar Entregado</button>` : ''}
-                    </div>
-                `).join('');
+                const html = pedidos.map(p => {
+                    const esComprador = p.esComprador;
+
+                    let badgeHtml = '';
+                    let otroUsuarioInfo = '';
+
+                    if (esComprador) {
+                        badgeHtml = '<span class="role-badge badge-comprador">Eres Comprador</span>';
+                        otroUsuarioInfo = `<p><strong>Vendedor:</strong> ${p.nombreVendedor}</p>`;
+                    } else {
+                        badgeHtml = '<span class="role-badge badge-vendedor">Eres Vendedor</span>';
+                        otroUsuarioInfo = `<p><strong>Comprador:</strong> ${p.nombreComprador}</p>`;
+                    }
+
+                    // Info Taquilla (Visualización)
+                    let taquillaHtml = "";
+                    // p.enTaquilla nos dice si el TIPO de entrega es taquilla
+                    // p.nTaquilla es el numero real (si ya se ha asignado)
+                    if (p.enTaquilla) {
+                        if (p.nTaquilla && p.nTaquilla > 0) {
+                            taquillaHtml = `<p style="color:#E57200; font-weight:bold; margin-top:5px;">📦 En Taquilla Nº ${p.nTaquilla}</p>`;
+                        } else {
+                            taquillaHtml = `<p style="color:#666; font-style:italic; font-size:0.9em;">(Entrega en taquilla)</p>`;
+                        }
+                    } else {
+                        taquillaHtml = `<p style="color:#666; font-style:italic; font-size:0.9em;">(Entrega en mano)</p>`;
+                    }
+
+                    // Botones
+                    let botonHtml = "";
+
+                    if (esComprador && p.estado === 'Entregado') {
+                        // Acción Recoger (Cliente)
+                        botonHtml = `<button class="btn-finalizar" onclick="accionRecogerPedido(${p.idPedido})">Confirmar Recogida</button>`;
+                    }
+                    else if (!esComprador && p.estado === 'PorEntregar') {
+                        // Acción Entregar (Vendedor)
+                        // IMPORTANTE: Pasamos 'p.enTaquilla' (true/false) a la función para saber si pedir número
+                        botonHtml = `<button class="btn-finalizar" onclick="accionEntregarPedido(${p.idPedido}, ${p.enTaquilla})">Marcar Entregado</button>`;
+                    }
+                    else if (p.estado === 'Recogido') {
+                        botonHtml = `<span style="color:green; font-weight:bold;">✔ Completado</span>`;
+                    }
+                    else {
+                         botonHtml = `<span style="color:#999; font-style:italic;">Esperando acción...</span>`;
+                    }
+
+                    return `
+                        <div class="servicio-card">
+                            <div class="servicio-info">
+                                ${badgeHtml}
+                                <h3>${p.nombreProd}</h3>
+                                <p><strong>Estado:</strong> <span style="color:#00587C; font-weight:600;">${p.estado}</span></p>
+                                ${otroUsuarioInfo}
+                                ${taquillaHtml}
+                            </div>
+                            <div class="servicio-actions">
+                                ${botonHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
                 container.innerHTML = html;
 
@@ -145,6 +255,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => gestionarCargaPedidos());
-            </script>
+    </script>
 </body>
 </html>

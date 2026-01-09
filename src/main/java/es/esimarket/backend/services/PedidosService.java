@@ -52,22 +52,25 @@ public class PedidosService{
         sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
         List<Object> params = new ArrayList<>();
 
-        String[] filters = new String[]{"todos", "por entregar","por recoger"};
+        String[] filters = new String[]{"Todos", "PorEntregar","Entregado", "Recogido"};
 
-        if ( request.filter() != null && ( request.filter().equals("todos") || request.filter().equals("por entregar") || request.filter().equals("por recoger") ) ){
+        if ( request.filter() != null && ( request.filter().equals("Todos") || request.filter().equals("PorEntregar") || request.filter().equals("Entregado") || request.filter().equals("Recogido") ) ){
             switch (request.filter()) {
-                case "por entregar":
+                case "PorEntregar":
                     // El usuario es el VENDEDOR y el estado es 'PorEntregar'
                     sql.append("WHERE pr.uDNIVendedor = ? AND p.Estado = 'PorEntregar'");
                     params.add(dni);
                     break;
 
-                case "por recoger":
+                case "Entregado":
                     // El usuario es el COMPRADOR y el estado es 'Entregado' (listo para recoger)
                     sql.append("WHERE c.uDNIcomprador = ? AND p.Estado = 'Entregado'");
                     params.add(dni);
                     break;
 
+                case "Recogido":
+                    sql.append("WHERE p.Estado = 'Recogido'");
+                    break;
                 default:
                     // El usuario es el COMPRADOR O el VENDEDOR
                     sql.append("WHERE c.uDNIcomprador = ? OR pr.uDNIVendedor = ?");
