@@ -16,6 +16,7 @@ public class ProductoDTO implements Serializable {
     private String nombreVendedor;
     private String tipo;
     private Producto.estado estado;
+    private Producto.PagoAceptado pago;
     private Producto.RecepcionAceptada recepcionAceptada;
     private byte[] foto;
 
@@ -28,18 +29,20 @@ public class ProductoDTO implements Serializable {
         this.nombre = p.getNombre();
         this.tipo = p.getTipo();
         this.estado = p.getEstado();
+        this.pago = p.getPagoAceptado();
         this.recepcionAceptada=p.getRecepcionAceptada();
         this.foto = (fp != null) ? fp.getFoto() : null;
         this.nombreVendedor = (u != null) ? u.getNombre() : "Vendedor desconocido";
     }
 
-    public ProductoDTO(int id, int precio, String descripcion, String nombre, String tipo, Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto, String NombreV) {
+    public ProductoDTO(int id, int precio, String descripcion, String nombre, String tipo,Producto.PagoAceptado pago ,Producto.estado estado,Producto.RecepcionAceptada recepcionAceptada , byte[] foto, String NombreV) {
         this.id = id;
         this.precio = precio;
         this.descripcion = descripcion;
         this.nombre = nombre;
         this.tipo = tipo;
         this.estado = estado;
+        this.pago = pago;
         this.recepcionAceptada = recepcionAceptada;
         this.foto = foto;
         this.nombreVendedor = NombreV;
@@ -59,6 +62,7 @@ public class ProductoDTO implements Serializable {
     public String getNombreVendedor() {return nombreVendedor;}
     public String getTipo() {return tipo;}
     public Producto.estado getEstado() {return estado;}
+    public Producto.PagoAceptado getPago() {return pago;}
     public Producto.RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
     public byte[] getFoto() {return foto;}
 
@@ -70,6 +74,7 @@ public class ProductoDTO implements Serializable {
     public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
     public void setTipo(String tipo) {this.tipo = tipo;}
     public void setEstado(Producto.estado estado) {this.estado = estado;}
+    public void setPago(Producto.PagoAceptado pago) {this.pago = pago;}
     public void setRecepcionAceptada(Producto.RecepcionAceptada recepcionAceptada) {this.recepcionAceptada = recepcionAceptada;}
     public void setFoto(byte[] foto) {this.foto = foto;}
 
@@ -83,9 +88,9 @@ public class ProductoDTO implements Serializable {
                 ", nombreVendedor='" + nombreVendedor + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", estado=" + estado +
+                ", pago=" + pago +
                 ", recepcionAceptada=" + recepcionAceptada +
                 ", foto=" + Arrays.toString(foto) +
                 '}';
     }
-
 }

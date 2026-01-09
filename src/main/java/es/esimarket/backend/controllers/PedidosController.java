@@ -37,7 +37,7 @@ public class PedidosController{
 
     @PostMapping("/filter")
     @ResponseBody
-    public List<PedidosDTO> getPedidos(Model model, @RequestBody(required = false) FiltroPedRequest request )
+    public List<PedidosDTO> getPedidos(@RequestBody(required = false) FiltroPedRequest request )
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
