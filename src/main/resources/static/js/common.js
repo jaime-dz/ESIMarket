@@ -453,3 +453,195 @@ window.accionRecogerPedido = async function(idPedido) {
         alert("Error de conexión.");
     }
 };
+
+window.toggleTruequeField = function() {
+    const select = document.getElementById('select-pago');
+    const field = document.getElementById('trueque-field');
+    if (select && field) {
+        if (select.value === 'Trueque') {
+            field.style.display = 'block';
+        } else {
+            field.style.display = 'none';
+            // Limpiamos el valor si se oculta
+            const input = document.getElementById('input-trueque-id');
+            if (input) input.value = '';
+        }
+    }
+};
+
+window.comprarProducto = async function(idProducto) {
+    // 1. Recoger valores del DOM
+    const pagoSelect = document.getElementById('select-pago');
+    const recepcionSelect = document.getElementById('select-recepcion');
+    const horasInput = document.getElementById('input-horas');
+    const truequeInput = document.getElementById('input-trueque-id');
+
+    // 2. Preparar variables
+    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas"; // Valor por defecto
+    const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
+    
+    // Parseo de números
+    const horas = horasInput ? parseInt(horasInput.value) : null;
+    
+    // Solo enviamos ID de trueque si el usuario seleccionó "Trueque"
+    let idProdTrueque = null;
+    if (tipoPago === 'Trueque' && truequeInput) {
+        if (!truequeInput.value) {
+            alert("Por favor, introduce el ID del producto que ofreces para el trueque.");
+            return;
+        }
+        idProdTrueque = parseInt(truequeInput.value);
+    }
+
+    if (!confirm("¿Estás seguro de que deseas realizar esta compra?")) {
+        return;
+    }
+
+    // 3. Construir el Payload (debe coincidir con CompraRequest.java)
+    const payload = {
+        idProd: idProducto,          // Integer
+        tipoPago: tipoPago,          // Enum (Monedas, Trueque)
+        recepcion: recepcion,        // Enum (enMano, enTaquilla)
+        horas: horas,                // Long (puede ser null)
+        idProdTrueque: idProdTrueque // Integer (puede ser null)
+    };
+
+    try {
+        const response = await fetch(`/purchase/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("¡Compra realizada con éxito!");
+            window.location.href = "/purchase/";
+        } else {
+            const errorText = await response.text();
+            alert("Error al realizar la compra: " + (errorText || "Inténtalo de nuevo."));
+        }
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("Error de conexión con el servidor.");
+    }
+};
+
+/* --- LÓGICA DEL MODAL DE COMPRA --- */
+
+// 1. Abrir Modal
+window.abrirModalCompra = function(idProducto) {
+    const modal = document.getElementById('modalCompra');
+    const inputId = document.getElementById('modal-product-id');
+    
+    if(modal && inputId) {
+        inputId.value = idProducto; // Guardamos el ID para usarlo al enviar
+        
+        // Resetear formulario por si acaso
+        const truequeInput = document.getElementById('modal-input-trueque-id');
+        if(truequeInput) truequeInput.value = '';
+        
+        // Ejecutar la lógica de visualización del campo trueque inicial
+        toggleTruequeModal();
+        
+        // Mostrar modal (flex para que centre)
+        modal.style.display = 'flex';
+    }
+};
+
+// 2. Cerrar Modal
+window.cerrarModalCompra = function() {
+    const modal = document.getElementById('modalCompra');
+    if(modal) {
+        modal.style.display = 'none';
+    }
+};
+
+// 3. Controlar visibilidad del campo Trueque dentro del modal
+window.toggleTruequeModal = function() {
+    const select = document.getElementById('modal-select-pago');
+    const field = document.getElementById('modal-trueque-field');
+    
+    if (select && field) {
+        if (select.value === 'Trueque') {
+            field.style.display = 'block';
+        } else {
+            field.style.display = 'none';
+        }
+    }
+};
+
+// 4. Enviar Compra (Fetch)
+window.enviarCompra = async function() {
+    // Recoger ID del input oculto
+    const idProducto = document.getElementById('modal-product-id').value;
+    
+    // Recoger valores
+    const pagoSelect = document.getElementById('modal-select-pago');
+    const recepcionSelect = document.getElementById('modal-select-recepcion');
+    const horasInput = document.getElementById('modal-input-horas');
+    const truequeInput = document.getElementById('modal-input-trueque-id');
+
+    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas";
+    const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
+    const horas = horasInput ? parseInt(horasInput.value) : null;
+    
+    let idProdTrueque = null;
+
+    // Validación de Trueque
+    if (tipoPago === 'Trueque') {
+        if (!truequeInput || !truequeInput.value) {
+            alert("Por favor, introduce el ID del producto que ofreces para el trueque.");
+            return;
+        }
+        idProdTrueque = parseInt(truequeInput.value);
+    }
+
+    // Construir Payload
+    const payload = {
+        idProd: parseInt(idProducto),
+        tipoPago: tipoPago,
+        recepcion: recepcion,
+        horas: horas,
+        idProdTrueque: idProdTrueque
+    };
+
+    // Botón en estado de carga (opcional visual)
+    const btnConfirmar = document.querySelector('.modal-footer .btn-estilo:last-child');
+    const textoOriginal = btnConfirmar.innerText;
+    btnConfirmar.innerText = "Procesando...";
+    btnConfirmar.disabled = true;
+
+    try {
+        const response = await fetch(`/purchase/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("¡Compra realizada con éxito!");
+            window.location.href = "/purchase/";
+        } else {
+            const errorText = await response.text();
+            alert("Error: " + (errorText || "No se pudo completar la compra."));
+            // Restaurar botón
+            btnConfirmar.innerText = textoOriginal;
+            btnConfirmar.disabled = false;
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor.");
+        btnConfirmar.innerText = textoOriginal;
+        btnConfirmar.disabled = false;
+    }
+};
+
+// Cerrar modal si hacen click fuera del contenido (en el fondo oscuro)
+window.onclick = function(event) {
+    const modal = document.getElementById('modalCompra');
+    if (event.target == modal) {
+        cerrarModalCompra();
+    }
+}

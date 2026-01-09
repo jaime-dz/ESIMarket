@@ -16,6 +16,7 @@
         <a href="/donations/">Donaciones</a>
         <a href="/chat/">Chats</a>
     </div>
+
     <header class="menu-bar menu-superior">
             <div class="header-left">
                 <div class="hamburger-icon user-view" onclick="toggleMenu()">
@@ -30,7 +31,8 @@
 
             <nav class="header-center">
                 <ul>
-                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                    <li><a href="/home/">Inicio</a></li> 
+                    <li><a href="/home/about">Sobre nosotros</a></li>
                 </ul>
             </nav>
 
@@ -42,7 +44,6 @@
                 </div>
 
                 <div class="user-view" style="display: none;">
-                    
                     <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
                     
                     <div class="profile-container">
@@ -57,52 +58,106 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-        </header>
+    </header>
 
-    <main style="max-width: 800px; margin: 40px auto; padding: 20px;">
+    <main style="max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%; box-sizing: border-box;">
         
-        <div id="product-detail-container" style="display: flex; gap: 30px;">
+        <div class="product-detail-wrapper">
             
-            <div style="flex: 1;">
-                <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+            <div class="detail-image-col">
+                <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto">
                 
                 <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) == 'servicio'}"
-                     src="/Images/engranaje.jpg" 
-                     alt="Servicio" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                     src="/Images/engranaje.jpg" alt="Servicio">
 
                 <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) != 'servicio'}"
-                     src="/Images/book.jpg" 
-                     alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                     src="/Images/book.jpg" alt="Producto">
             </div>
 
-            <div style="flex: 1;">
-                <h1 th:text="${product.nombre}" style="color: #E57200;">Nombre del Producto</h1>
+            <div class="detail-info-col">
+                <h1 class="detail-title" th:text="${product.nombre}">Nombre del Producto</h1>
                 
-                <h3 style="color: #333; text-align: center;">
+                <div class="detail-price-box">
                     <span th:text="${product.precio}">0</span> 
                     <span>⚙️</span>
-                    <span th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}">/h</span>
-                </h3>
+                    <span th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="font-size: 0.6em; color: #666;">/ hora</span>
+                </div>
 
-                <p><strong>Vendedor:</strong> <span th:text="${product.nombreVendedor}">Usuario</span></p>
-                <p><strong>Categoría:</strong> <span th:text="${product.tipo}">-</span></p>
+                <div class="detail-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Vendedor</span>
+                        <span class="meta-value" th:text="${product.nombreVendedor}">Usuario</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Categoría</span>
+                        <span class="meta-value" th:text="${product.tipo}">-</span>
+                    </div>
+                    <div class="meta-item" th:if="${product.tipo.toLowerCase() != 'servicio'}">
+                        <span class="meta-label">Estado</span>
+                        <span class="meta-value" th:text="${product.estado}">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Pago Aceptado</span>
+                        <span class="meta-value" th:text="${product.pago}">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Entrega</span>
+                        <span class="meta-value" th:text="${product.recepcionAceptada}">-</span>
+                    </div>
+                </div>
                 
-                <p th:if="${product.tipo.toLowerCase() != 'servicio'}">
-                    <strong>Estado:</strong> <span th:text="${product.estado}">-</span>
-                </p>
-                
-                <hr>
-                
-                <h4>Descripción:</h4>
-                <p th:text="${product.descripcion ?: 'Sin descripción detallada.'}"></p>
+                <div class="description-box">
+                    <h4 style="margin-top:0; color:#E57200;">Descripción</h4>
+                    <p style="margin-bottom:0; text-align: left;" th:text="${product.descripcion ?: 'El vendedor no ha añadido una descripción detallada para este producto.'}"></p>
+                </div>
 
-                <br>
-                <button onclick="window.history.back()" style="padding: 10px 20px; cursor: pointer;">Volver</button>
+                <div th:if="${!isOwner}" class="purchase-options" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #eee;">
+                    
+                    <div style="margin-bottom:10px;">
+                        <label for="select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
+                        <select id="select-pago" onchange="toggleTruequeField()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                            <option value="Monedas" th:if="${product.pagoAceptado.name() == 'Monedas' or product.pagoAceptado.name() == 'Ambos'}">Monedas</option>
+                            <option value="Trueque" th:if="${product.pagoAceptado.name() == 'Trueque' or product.pagoAceptado.name() == 'Ambos'}">Trueque</option>
+                        </select>
+                    </div>
+
+                    <div id="trueque-field" style="display:none; margin-bottom:10px;">
+                        <label for="input-trueque-id" style="font-weight:bold; display:block; margin-bottom:5px; color:#E57200;">ID de tu producto para intercambio:</label>
+                        <input type="number" id="input-trueque-id" placeholder="Introduce el ID de tu producto" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                    </div>
+
+                    <div style="margin-bottom:10px;">
+                        <label for="select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Entrega:</label>
+                        <select id="select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                            <option value="enMano" th:if="${product.recepcionAceptada.name() == 'enMano'}">En Mano</option>
+                             <option value="enTaquilla" th:if="${product.recepcionAceptada.name() == 'enTaquilla'}">En Taquilla</option>
+                             <option value="enMano" th:if="${product.recepcionAceptada == null}">En Mano</option>
+                        </select>
+                    </div>
+
+                    <div th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="margin-bottom:10px;">
+                        <label for="input-horas" style="font-weight:bold; display:block; margin-bottom:5px;">Horas a contratar:</label>
+                        <input type="number" id="input-horas" value="1" min="1" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button th:if="${!isOwner}" 
+                            th:onclick="'comprarProducto(' + ${product.id} + ')'" 
+                            class="btn-estilo">
+                        Confirmar Compra
+                    </button>
+
+                    <button onclick="window.history.back()" 
+                            class="btn-estilo btn-volver">
+                        Volver
+                    </button>
+                </div>
             </div>
         </div>
     </main>
+
     <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
@@ -121,6 +176,63 @@
                 </li>
             </ul>
         </footer>
+    <div id="modalCompra" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModalCompra()">&times;</span>
+            
+            <div class="modal-header">
+                <h2>Confirmar Compra</h2>
+                <p>Por favor, configura los detalles de tu pedido.</p>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="modal-product-id">
+
+                <div style="margin-bottom:15px;">
+                    <label for="modal-select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
+                    <select id="modal-select-pago" onchange="toggleTruequeModal()" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                        <option value="Monedas" 
+                                th:if="${product.pagoAceptado != null and (product.pagoAceptado.name() == 'Monedas' or product.pagoAceptado.name() == 'Ambos')}">
+                            Monedas
+                        </option>
+                        <option value="Trueque" 
+                                th:if="${product.pagoAceptado != null and (product.pagoAceptado.name() == 'Trueque' or product.pagoAceptado.name() == 'Ambos')}">
+                            Trueque
+                        </option>
+                    </select>
+                </div>
+
+                <div id="modal-trueque-field" style="display:none; margin-bottom:15px; background: #fff3e0; padding: 10px; border-radius: 5px;">
+                    <label for="modal-input-trueque-id" style="font-weight:bold; display:block; margin-bottom:5px; color:#E57200;">ID de tu producto a intercambiar:</label>
+                    <input type="number" id="modal-input-trueque-id" placeholder="Ej: 45" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <label for="modal-select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Entrega:</label>
+                    <select id="modal-select-recepcion" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                        <option value="enMano" 
+                                th:if="${product.recepcionAceptada == null or product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos'}">
+                            En Mano
+                        </option>
+                        <option value="enTaquilla" 
+                                th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enTaquilla' or product.recepcionAceptada.name() == 'Ambos')}">
+                            En Taquilla
+                        </option>
+                    </select>
+                </div>
+
+                <div th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="margin-bottom:15px;">
+                    <label for="modal-input-horas" style="font-weight:bold; display:block; margin-bottom:5px;">Horas a contratar:</label>
+                    <input type="number" id="modal-input-horas" value="1" min="1" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="cerrarModalCompra()" class="btn-estilo btn-volver" style="padding: 10px 20px;">Cancelar</button>
+                <button onclick="enviarCompra()" class="btn-estilo" style="padding: 10px 20px;">Confirmar</button>
+            </div>
+        </div>
+    </div>
     <script src="/js/common.js" type="module"></script>
 </body>
 </html>
