@@ -61,40 +61,38 @@
             </div>
         </header>
         <main>
-    <div class="profile-wrapper">
-        
-        <div class="imagen-left">
-            <img src="/Images/huevoverde.jpeg" width="256px" height="256px" alt="Foto de perfil"/>
-        </div>
+            <div class="profile-wrapper">
 
-        <div class="form-container">
-            <h1>Mis Datos</h1><br><br>
-            <p>Nombre: <span th:text="${profile.nombre}"></span></p><br>
-            <p>Apellidos: <span th:text="${profile.apellidos}"></span></p><br>
-            <p>Usuario: <span th:text="${profile.id}"></span></p><br>
-            <p>Correo Electrónico: <span th:text="${profile.correo}"></span></p><br>
-            <p>Carrera: <span th:text="${profile.carrera}"></span></p><br>
-            <p>Saldo: <span th:text="${profile?.saldoMoneda + ' ⚙️'}"></span></p><br>
-            
-            <div class="form-buttons">
-                <button type="button" 
-                        id="edit-profile" 
-                        class="btn-common btn-orange" 
-                        onclick="window.location.href='/profile/edit'">
-                    Editar Perfil
-                </button>
-                <button type="button" 
-                        id="change-password" 
-                        class="btn-common btn-gray" 
-                        onclick="window.location.href='/profile/edit/password'">
-                    Cambiar Contraseña
-                </button>
-            </div><br><br>
-        </div>
+                <div class="imagen-left">
+                    <img src="/Images/huevoverde.jpeg" width="256px" height="256px" alt="Foto de perfil"/>
+                </div>
 
-    </div> </main>
-        
-        
+                <div class="form-container">
+                    <h1>Mis Datos</h1><br><br>
+                    <p>Nombre: <span th:text="${profile.nombre}"></span></p><br>
+                    <p>Apellidos: <span th:text="${profile.apellidos}"></span></p><br>
+                    <p>Usuario: <span th:text="${profile.id}"></span></p><br>
+                    <p>Correo Electrónico: <span th:text="${profile.correo}"></span></p><br>
+                    <p>Carrera: <span th:text="${profile.carrera}"></span></p><br>
+                    <p>Saldo: <span th:text="${profile?.saldoMoneda + ' ⚙️'}"></span></p><br>
+
+                    <div class="form-buttons">
+                        <button type="button"
+                                id="edit-profile"
+                                class="btn-common btn-orange"
+                                onclick="window.location.href='/profile/edit'">
+                            Editar Perfil
+                        </button>
+                        <button type="button"
+                                id="change-password"
+                                class="btn-common btn-gray"
+                                onclick="window.location.href='/profile/edit/password'">
+                            Cambiar Contraseña
+                        </button>
+                    </div><br><br>
+                </div>
+            </div>
+        </main>
         <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
