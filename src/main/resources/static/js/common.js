@@ -407,52 +407,6 @@ function renderizarListaPedidos(pedidos, container) {
     container.innerHTML = htmlPedidos;
 }
 
-window.accionEntregarPedido = async function(idPedido, requiereTaquilla) {
-    let numTaquilla = 0;
-    
-    
-    const inputTaquilla = prompt("Introduce el número de taquilla (pon 0 si es entrega en mano):", "0");
-    if (inputTaquilla === null) return; // Cancelado
-    numTaquilla = parseInt(inputTaquilla) || 0;
-
-    try {
-        const response = await fetch(`/orders/deliver/${idPedido}/${numTaquilla}`, {
-            method: 'PUT'
-        });
-
-        if (response.ok) {
-            alert("Pedido marcado como entregado.");
-            const filtroActual = document.getElementById('filtro-ped').value;
-            gestionarCargaPedidos(filtroActual);
-        } else {
-            alert("Error al actualizar el pedido.");
-        }
-    } catch (e) {
-        console.error(e);
-        alert("Error de conexión.");
-    }
-};
-
-window.accionRecogerPedido = async function(idPedido) {
-    if(!confirm("¿Confirmas que has recogido el producto?")) return;
-
-    try {
-        const response = await fetch(`/orders/pickup/${idPedido}`, {
-            method: 'PUT'
-        });
-
-        if (response.ok) {
-            alert("¡Pedido completado!");
-            const filtroActual = document.getElementById('filtro-ped').value;
-            gestionarCargaPedidos(filtroActual);
-        } else {
-            alert("Error al confirmar recogida.");
-        }
-    } catch (e) {
-        console.error(e);
-        alert("Error de conexión.");
-    }
-};
 
 window.toggleTruequeField = function() {
     const select = document.getElementById('select-pago');

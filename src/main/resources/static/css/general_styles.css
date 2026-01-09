@@ -1167,3 +1167,46 @@ main {
     justify-content: flex-end;
     gap: 10px;
 }
+
+.profile-wrapper {
+    /*display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    padding: 40px 20px;
+    flex-wrap: wrap;*/
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.profile-wrapper .form-container {
+    margin: 0;
+    flex: 0 1 500px;
+    max-width: 500px;
+}
+
+.form-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Opcional: una sombra suave queda muy bien con bordes curvos */
+}
+
+
+.form-container img {
+    display: block;       /* Hace que la imagen se comporte como un bloque */
+    margin-left: auto;    /* Margen izquierdo automático */
+    margin-right: auto;   /* Margen derecho automático -> Esto la centra */
+    margin-bottom: 20px;  /* Un poco de espacio debajo para que no se pegue al texto */
+}
