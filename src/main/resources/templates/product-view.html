@@ -62,17 +62,23 @@
     </header>
 
     <main style="max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%; box-sizing: border-box;">
-        
-        <div class="product-detail-wrapper">
+    
+        <div class="product-detail-wrapper" style="position: relative;">
             
+            <button th:if="${product.isDisponible and isOwner}" 
+                    class="btn-eliminar"
+                    th:onclick="'eliminarProducto(' + ${product.id} + ')'">
+                ELIMINAR
+            </button>
+
             <div class="detail-image-col">
                 <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto">
                 
                 <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) == 'servicio'}"
-                     src="/Images/engranaje.jpg" alt="Servicio">
+                    src="/Images/engranaje.jpg" alt="Servicio">
 
                 <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) != 'servicio'}"
-                     src="/Images/book.jpg" alt="Producto">
+                    src="/Images/book.jpg" alt="Producto">
             </div>
 
             <div class="detail-info-col">

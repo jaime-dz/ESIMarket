@@ -595,3 +595,30 @@ window.onclick = function(event) {
         cerrarModalCompra();
     }
 }
+
+window.eliminarProducto = async function(idProducto) {
+    // 1. Confirmación de seguridad
+    const confirmacion = confirm("¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.");
+    
+    if (!confirmacion) return;
+
+    try {
+        // 2. Petición al servidor (Asumiendo que tu backend escucha DELETE en /product/{id})
+        const response = await fetch(`/products/delete/${idProducto}`, {
+            method: 'DELETE', 
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert("Anuncio eliminado correctamente.");
+            window.location.href = "/home/"; // Te devuelve al inicio
+        } else {
+            alert("Hubo un error al intentar eliminar el producto.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor.");
+    }
+};

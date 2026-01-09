@@ -1210,3 +1210,24 @@ main {
     margin-right: auto;   /* Margen derecho automático -> Esto la centra */
     margin-bottom: 20px;  /* Un poco de espacio debajo para que no se pegue al texto */
 }
+
+/* Botón de Eliminar (Estilo Flotante) */
+.btn-eliminar {
+    position: absolute; /* Clave para que se vaya a la esquina */
+    top: 20px;
+    right: 20px;
+    background-color: #dc3545; /* Rojo intenso */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 100; /* Asegura que esté por encima de la imagen */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+}
+
+.btn-eliminar:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
