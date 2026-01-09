@@ -460,6 +460,8 @@ main {
     color: #333;
     margin: 0 0 5px 0;
     justify-content: center;
+    flex: 1;
+    margin: 0;
 }
 
 .product-price {
@@ -710,7 +712,9 @@ main {
     border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
 }
 
 .card-header h3 {
@@ -727,6 +731,10 @@ main {
     border-radius: 4px;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+.btn-borrar {
+    flex-shrink: 0; /* Evita que el botón se aplaste si el texto es muy largo */
 }
 
 .card-body {
@@ -989,7 +997,7 @@ main {
 
 .detail-title {
     color: #00587C;
-    font-size: 2rem;
+    font-size: 2em;
     margin: 0 0 10px 0;
     font-family: Verdana, sans-serif;
     text-align: left; /* Sobrescribir el center general */

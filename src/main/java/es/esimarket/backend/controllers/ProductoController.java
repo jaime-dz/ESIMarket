@@ -95,6 +95,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/delete/{idProd}")
+    @ResponseBody
     public void  deleteProducto( @PathVariable int idProd) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

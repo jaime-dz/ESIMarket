@@ -64,12 +64,15 @@
     <main style="max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%; box-sizing: border-box;">
     
         <div class="product-detail-wrapper" style="position: relative;">
+            <div class="card-header">
+                <h1 class="detail-title" th:text="${product.nombre}">Nombre del Producto</h1>
+                <button th:if="${product.isDisponible and isOwner}" 
+                        class="btn-eliminar"
+                        th:onclick="'eliminarProducto(' + ${product.id} + ')'">
+                    ELIMINAR
+                </button>
+            </div>
             
-            <button th:if="${product.isDisponible and isOwner}" 
-                    class="btn-eliminar"
-                    th:onclick="'eliminarProducto(' + ${product.id} + ')'">
-                ELIMINAR
-            </button>
 
             <div class="detail-image-col">
                 <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto">
@@ -82,11 +85,11 @@
             </div>
 
             <div class="detail-info-col">
-                <h1 class="detail-title" th:text="${product.nombre}">Nombre del Producto</h1>
+                
                 
                 <div class="detail-price-box">
-                    <span th:text="${product.precio}">0</span> 
-                    <span>⚙️</span>
+                    <span style="font-size: 0.6em;" th:text="${product.precio}">0</span> 
+                    <span style="font-size: 0.6em;">⚙️</span>
                     <span th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="font-size: 0.6em; color: #666;">/ hora</span>
                 </div>
 
