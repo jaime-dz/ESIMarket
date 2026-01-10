@@ -56,6 +56,12 @@ public class ChatController
     }
 
     @GetMapping("/")
+    public String getChatsUser(){
+        return "chat-list";
+    }
+
+    @PostMapping("/user")
+    @ResponseBody
     public ResponseEntity<List<ChatDTO>> getChats() throws CannotCreateChatError
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

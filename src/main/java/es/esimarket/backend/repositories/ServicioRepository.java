@@ -10,6 +10,5 @@ import es.esimarket.backend.entities.Servicio;
 @Repository
 public interface ServicioRepository extends JpaRepository<Servicio, Integer>{
     Servicio findByIdProd(int id);
-    Servicio findByidProdAndDNIcomprador(int idProd,String DNIcomprador);
     List<Servicio> findByDNIcompradorAndFinalizadoFalse(String DNIcomprador);
 }

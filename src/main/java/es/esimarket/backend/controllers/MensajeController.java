@@ -50,7 +50,8 @@ public class MensajeController
     @Autowired
     private JdbcTemplate jbdcTemplate;
 
-    @GetMapping("/{chat}")
+    @PostMapping("/{chat}")
+    @ResponseBody
     public List<MessageResponse> getMensajes(Model model, @PathVariable("chat") int chat){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -70,7 +71,7 @@ public class MensajeController
 
         String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
 
-
+        /*
         String respuestaIA = null;
         try {
             respuestaIA = ollamaService.isToxic(prompt + Mrequest.Texto());
@@ -85,7 +86,7 @@ public class MensajeController
             response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-
+        */
         LocalDateTime FechaAct = variosService.ObtenerFecha();
         Mensaje m  = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
 

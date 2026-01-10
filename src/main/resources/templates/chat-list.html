@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Chats - ESI Market</title>
+    <link rel="stylesheet" href="/css/general_styles.css">
+    <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
+
+    <style>
+        /* --- AJUSTES GLOBALES PARA VISTA FULL-SCREEN --- */
+        body {
+            overflow: hidden; /* Evita doble scroll */
+        }
+
+        /* Forzamos al main a ocupar todo anulando estilos generales */
+        main {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .chat-interface-container {
+            display: flex;
+            /* Ajusta 130px según la altura real de tu header + footer */
+            height: calc(100vh - 130px);
+            width: 100vw;
+            background-color: #fff;
+            margin: 0;
+            border: none;
+        }
+
+        /* --- COLUMNA IZQUIERDA (LISTA) --- */
+        .chat-sidebar {
+            width: 30%;
+            min-width: 300px;
+            max-width: 450px;
+            border-right: 1px solid #e9edef;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-sidebar-header {
+            padding: 10px 16px;
+            background-color: #f0f2f5;
+            height: 60px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e9edef;
+            border-right: 1px solid #e9edef;
+        }
+
+        .chat-list-scroll {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover { background-color: #f5f6f6; }
+        .chat-item.active { background-color: #f0f2f5; border-left: 4px solid #00587C;}
+
+        .chat-avatar {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-name { font-size: 16px; font-weight: 500; color: #111b21; margin-bottom: 4px; }
+        .chat-subtitle { font-size: 14px; color: #667781; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* --- COLUMNA DERECHA (CONVERSACIÓN) --- */
+        .chat-main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #efeae2;
+            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+            background-blend-mode: overlay;
+            position: relative;
+            height: 100%;
+        }
+
+        .chat-main-header {
+            height: 60px;
+            min-height: 60px;
+            background-color: #f0f2f5;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #d1d7db;
+            z-index: 10;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px 50px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* --- BURBUJAS DE MENSAJE --- */
+        .message-bubble {
+            max-width: 60%;
+            padding: 8px 12px;
+            border-radius: 7.5px;
+            font-size: 14.2px;
+            line-height: 19px;
+            position: relative;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+            word-wrap: break-word;
+        }
+
+        .message-received {
+            align-self: flex-start;
+            background-color: #ffffff;
+            border-top-left-radius: 0;
+        }
+
+        .message-sent {
+            align-self: flex-end;
+            background-color: #d9fdd3;
+            border-top-right-radius: 0;
+        }
+
+        .msg-meta {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 11px;
+            color: #667781;
+            margin-top: 4px;
+            margin-left: 10px;
+        }
+
+        .date-divider {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .date-divider span {
+            background-color: rgba(255,255,255,0.9);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #54656f;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        /* --- INPUT AREA --- */
+        .chat-input-area {
+            min-height: 62px;
+            background-color: #f0f2f5;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #fff;
+            background-color: #fff;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .btn-send {
+            background: none; border: none; cursor: pointer; color: #54656f; padding: 8px;
+        }
+        .btn-send:hover { color: #00587C; }
+
+        .hidden { display: none !important; }
+
+        #empty-state {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; text-align: center; color: #41525d;
+        }
+
+        /* Ajustes Móvil */
+        .btn-back { display: none; margin-right: 15px; font-size: 20px; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            .chat-interface-container { height: calc(100vh - 130px); width: 100%; margin-top:0; }
+            .chat-sidebar { width: 100%; max-width: none; }
+            .chat-main-area { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; padding-top: 0; }
+            .chat-main-area.active { display: flex; }
+            .btn-back { display: block; }
+            .messages-container { padding: 10px 15px; }
+            .message-bubble { max-width: 85%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sideMenu" class="sidebar user-view">
+        <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+        <a href="/purchase/">Historial de compras</a>
+        <a href="/orders/">Lista de pedidos</a>
+        <a href="/service/">Lista de servicios</a>
+        <a href="/donations/">Donaciones</a>
+        <a href="/chat/">Chats</a>
+    </div>
+
+    <header class="menu-bar menu-superior">
+        <div class="header-left">
+            <div class="hamburger-icon user-view" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+            <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+            <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+        </div>
+
+        <nav class="header-center">
+            <ul>
+                <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-right">
+
+            <div class="guest-view">
+                <a href="/auth/login">Iniciar sesión</a>
+                <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+            </div>
+
+            <div class="user-view" style="display: none;">
+
+                <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+
+                <div class="profile-container">
+                    <div class="coins-info">
+                        <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                    </div>
+                    <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
+
+                    <div class="dropdown-content">
+                        <a href="/profile/">Mi Perfil</a>
+                        <a href="#" id="btn-logout">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <main style="padding: 0; width: 100%; margin: 0; border: none;">
+
+        <div class="chat-interface-container">
+
+            <div class="chat-sidebar" id="sidebar">
+                <div class="chat-sidebar-header">
+                    <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                    <h3 style="margin:0; color:#54656f; font-size: 1.1rem;">Mis Chats</h3>
+                </div>
+
+                <div id="chats-list" class="chat-list-scroll">
+                    <div style="padding:20px; text-align:center;">Cargando...</div>
+                </div>
+            </div>
+
+            <div class="chat-main-area" id="main-area">
+
+                <div id="empty-state">
+                    <img src="/Images/logo64.png" style="opacity:0.5; width:100px; margin-bottom:20px;">
+                    <h2 style="color: #41525d; font-weight: 300;">ESI Market Web</h2>
+                    <p style="font-size: 14px; color: #667781;">Selecciona un chat para comenzar la conversación.</p>
+                </div>
+
+                <div id="chat-interface" class="hidden" style="display:flex; flex-direction:column; height:100%; width:100%;">
+
+                    <div class="chat-main-header">
+                        <span class="btn-back" onclick="cerrarChatMovil()">&#8592;</span>
+                        <img id="header-avatar" src="/Images/huevoverde.jpeg" class="chat-avatar" style="width:40px; height:40px; border:none;">
+                        <div style="flex:1;">
+                            <div id="header-title" style="font-weight:bold; color:#111b21; font-size: 16px;">Nombre Producto</div>
+                            <div id="header-subtitle" style="font-size:13px; color:#667781;">Usuario</div>
+                        </div>
+                        <div style="color: #54656f; font-size: 20px; letter-spacing: 15px;">🔍⋮</div>
+                    </div>
+
+                    <div id="messages-area" class="messages-container"></div>
+
+                    <div class="chat-input-area">
+                        <span style="font-size: 24px; color: #54656f; cursor: pointer;">😊</span>
+                        <span style="font-size: 24px; color: #54656f; cursor: pointer;">📎</span>
+                        <input type="text" id="msg-input" class="chat-input" placeholder="Escribe un mensaje aquí...">
+                        <button class="btn-send" onclick="enviarMensaje()">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/common.js" type="module"></script>
+    <script>
+        let currentChatId = null;
+
+        // 1. CARGAR LISTA DE CHATS
+        async function cargarChats() {
+            const container = document.getElementById("chats-list");
+            try {
+                const response = await fetch('/chat/user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if(!response.ok) throw new Error("Error fetching chats");
+                const chats = await response.json();
+
+                if (!chats || chats.length === 0) {
+                    container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">No tienes conversaciones.</div>';
+                    return;
+                }
+
+                container.innerHTML = chats.map(c => `
+                    <div class="chat-item" onclick="seleccionarChat(this, ${c.id}, '${c.nombreProducto}', '${c.nombreUsu} ${c.apellidosUsu}')">
+                        <img class="chat-avatar" src="/Images/huevoverde.jpeg">
+                        <div class="chat-info">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span class="chat-name">${c.nombreProducto}</span>
+                                <span style="font-size:11px; color:#999;">📅</span>
+                            </div>
+                            <div class="chat-subtitle">
+                                ${c.nombreUsu} ${c.apellidosUsu}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div style="padding:20px; color:red;">Error al cargar chats</div>';
+            }
+        }
+
+        // 2. SELECCIONAR CHAT
+        window.seleccionarChat = async function(element, chatId, producto, usuario) {
+            currentChatId = chatId;
+
+            document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('header-title').innerText = producto;
+            document.getElementById('header-subtitle').innerText = usuario;
+
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('chat-interface').classList.remove('hidden');
+            document.getElementById('chat-interface').style.display = 'flex';
+
+            if(window.innerWidth <= 768) {
+                document.getElementById('main-area').classList.add('active');
+            }
+
+            await cargarMensajes(chatId);
+        };
+
+        // 3. CARGAR MENSAJES (POST)
+        async function cargarMensajes(chatId) {
+            const area = document.getElementById('messages-area');
+            area.innerHTML = '<div style="text-align:center; margin-top:20px;">Cargando...</div>';
+
+            try {
+                // --- CAMBIO AQUI: POST ---
+                const response = await fetch(`/messages/${chatId}`, {
+                    method: 'POST', // <-- Solicitado: Fetch como POST
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if(!response.ok) throw new Error("Error cargando mensajes");
+
+                const mensajes = await response.json();
+
+                area.innerHTML = '';
+
+                let lastDate = '';
+
+                mensajes.forEach(msg => {
+                    if(msg.day !== lastDate) {
+                        area.innerHTML += `
+                            <div class="date-divider">
+                                <span>${msg.day}</span>
+                            </div>`;
+                        lastDate = msg.day;
+                    }
+
+                    const bubbleClass = msg.isUser ? 'message-sent' : 'message-received';
+
+                    const htmlMsg = `
+                        <div class="message-bubble ${bubbleClass}">
+                            <div>${msg.message}</div>
+                            <div class="msg-meta">
+                                <span>${msg.hour}</span>
+                            </div>
+                        </div>
+                    `;
+                    area.innerHTML += htmlMsg;
+                });
+
+                area.scrollTop = area.scrollHeight;
+
+            } catch (error) {
+                console.error(error);
+                area.innerHTML = '<div style="text-align:center; color:#d85;">Error al cargar mensajes.</div>';
+            }
+        }
+
+        // 4. ENVIAR MENSAJE (Optimizado)
+        window.enviarMensaje = async function() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if(!text || !currentChatId) return;
+
+            input.value = '';
+
+            try {
+                const payload = { idChat: currentChatId, Texto: text };
+
+                const response = await fetch('/messages/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if(response.ok) {
+                    const area = document.getElementById('messages-area');
+                    const now = new Date();
+                    const timeString = now.getHours().toString().padStart(2, '0') + ':' +
+                                       now.getMinutes().toString().padStart(2, '0');
+
+                    // Lógica de "Hoy"
+                    const lastDivider = area.querySelector('.date-divider:last-of-type span');
+                    const lastDateText = lastDivider ? lastDivider.innerText : '';
+
+                    if (lastDateText !== 'Hoy') {
+                        area.insertAdjacentHTML('beforeend', `
+                            <div class="date-divider">
+                                <span>Hoy</span>
+                            </div>
+                        `);
+                    }
+
+                    const htmlMsg = `
+                        <div class="message-bubble message-sent">
+                            <div>${text}</div>
+                            <div class="msg-meta">
+                                <span>${timeString}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    area.insertAdjacentHTML('beforeend', htmlMsg);
+                    area.scrollTop = area.scrollHeight;
+
+                } else {
+                    if(data.error) alert("Error: " + data.error);
+                }
+
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        document.getElementById('msg-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') enviarMensaje();
+        });
+
+
+        window.cerrarChat = function() {
+            if (!currentChatId) return; // Si no hay chat, no hacemos nada
+
+            currentChatId = null;
+
+            // 1. UI: Quitar selección de la lista (Barra izquierda)
+            document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+
+            // 2. UI: Ocultar interfaz de chat y mostrar estado vacío (Zona derecha)
+            document.getElementById('chat-interface').classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+
+            // 3. UI Móvil: Ocultar la capa superior
+            document.getElementById('main-area').classList.remove('active');
+        };
+
+        // Escuchar tecla ESCAPE
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                cerrarChat();
+            }
+        });
+
+        // Mantenemos la referencia para el botón de móvil (por compatibilidad con tu HTML)
+        window.cerrarChatMovil = window.cerrarChat;
+
+        // Inicialización
+        document.addEventListener("DOMContentLoaded", cargarChats);
+
+        document.addEventListener("DOMContentLoaded", cargarChats);
+    </script>
+
+</body>
+</html>

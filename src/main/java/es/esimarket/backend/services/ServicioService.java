@@ -54,12 +54,15 @@ public class ServicioService{
         servicioRepository.save(s);
     }
 
-    public String modificarFecha(int idProd, String DNIcomprador,String fechaString)
+    public String modificarFecha(int idProd, String DNI,String fechaString)
     {
-        Servicio s = servicioRepository.findByidProdAndDNIcomprador(idProd, DNIcomprador);
+        Producto p = productoRepository.findById(idProd).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
-        LocalDateTime fecha = LocalDateTime.parse(fechaString, formatter);
+        if ( !DNI.equals(p.getuDNI_Vendedor()) ) throw new CannotCompleteActionError("No eres el propietario del producto");
+
+        Servicio s = servicioRepository.findByIdProd(p.getID());
+
+        LocalDateTime fecha = LocalDateTime.parse(fechaString);
 
         s.setFecha(fecha);
 
@@ -89,7 +92,7 @@ public class ServicioService{
     public List<ServicioDTO> mostrar_servicios_usuario(String DNI)
     {
 
-        StringBuilder sql = new StringBuilder("SELECT s.* FROM servicios s JOIN producto p ON s.IdProd = p.ID WHERE ( s.DNIcomprador = ? OR p.uDNIVendedor = ? ) AND s.Finalizado = 0 ");
+        StringBuilder sql = new StringBuilder("SELECT s.* FROM servicios s JOIN producto p ON s.IdProd = p.ID WHERE ( s.DNIcomprador = ? OR p.uDNIVendedor = ? ) AND s.Finalizado = 0 ORDER BY s.Fecha DESC");
         List<Object> params = new ArrayList<>();
 
         params.add(DNI);
