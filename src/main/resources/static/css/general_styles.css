@@ -857,37 +857,6 @@ main {
     70% { transform: scale(1); }
 }
 
-.servicio-card {
-    background: white;
-    border-left: 5px solid #00587C;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    transition: transform 0.2s;
-}
-
-.servicio-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-}
-
-.servicio-info h3 {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 1.2rem;
-}
-
-.servicio-info p {
-    margin: 4px 0;
-    color: #555;
-    font-size: 0.95rem;
-}
 
 .role-badge {
     display: inline-block;
@@ -1295,5 +1264,54 @@ main {
     }
     .full-width {
         grid-column: span 1;
+    }
+}
+.servicio-card {
+    background: white;
+    border-left: 5px solid #00587C;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    display: flex; /* Mantiene los elementos en línea */
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 20px; /* Esto define la distancia FIJA entre el texto y el botón */
+}
+
+/* Esto asegura que el texto se quede a la izquierda y anula tu centrado global */
+.servicio-info {
+    flex-grow: 1; /* Ocupa todo el espacio disponible */
+    text-align: left !important; /* El !important fuerza la alineación izquierda */
+}
+
+/* Aseguramos que los párrafos y títulos dentro de la tarjeta NO se centren */
+.servicio-info p,
+.servicio-info h3 {
+    text-align: left;
+    margin: 5px 0;
+}
+
+.servicio-actions {
+    min-width: fit-content; /* El botón ocupa solo lo que necesita */
+    margin-left: auto; /* TRUCO: Si quieres el botón a la derecha del todo, deja esto.
+                          Si quieres el botón PEGADO al texto (sin hueco), BORRA esta línea. */
+}
+
+.servicio-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+/* Versión móvil */
+@media (max-width: 600px) {
+    .servicio-card {
+        flex-direction: column; /* En móvil, uno debajo de otro */
+        align-items: flex-start;
+    }
+    .servicio-actions {
+        width: 100%;
+        margin-left: 0;
+        text-align: right;
     }
 }

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Chats</title>
+    <link rel="stylesheet" href="/css/general_styles.css">
+    <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
+</head>
+<body>
+<div id="sideMenu" class="sidebar user-view">
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+    <a href="/purchase/">Historial de compras</a>
+    <a href="/orders/">Lista de pedidos</a>
+    <a href="/service/">Lista de servicios</a>
+    <a href="/donations/">Donaciones</a>
+    <a href="/chat/">Chats</a>
+</div>
+<header class="menu-bar menu-superior">
+    <div class="header-left">
+        <div class="hamburger-icon user-view" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+        <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+        <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+    </div>
+
+    <nav class="header-center">
+        <ul>
+            <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+        </ul>
+    </nav>
+
+    <div class="header-right">
+
+        <div class="guest-view">
+            <a href="/auth/login">Iniciar sesión</a>
+            <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+        </div>
+
+        <div class="user-view" style="display: none;">
+
+            <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+
+            <div class="profile-container">
+                <div class="coins-info">
+                    <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                </div>
+                <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+
+                <div class="dropdown-content">
+                    <a href="/profile/">Mi Perfil</a>
+                    <a href="#" id="btn-logout">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</header>
+<main class="main-content" style="padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%;">
+    <h2 style="color: #00587C; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+        Mis Conversaciones
+    </h2>
+
+    <div id="chats-container">
+        <div style="text-align: center; color: #666; margin-top: 40px;">
+            <div class="loader"></div>
+            <p>Cargando chats...</p>
+        </div>
+    </div>
+</main>
+
+<footer class="menu-bar menu-inferior">
+    <ul>
+        <li><a th:href="@{/home/}">Inicio</a></li>
+        <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+        <li class="guest-view">
+            <a th:href="@{/auth/login}">Iniciar sesión</a>
+        </li>
+        <li class="guest-view">
+            <a th:href="@{/auth/signup}">Registrarse</a>
+        </li>
+
+        <li class="sn">
+            <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+            <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+        </li>
+    </ul>
+</footer>
+<script src="/js/common.js" type="module"></script>
+<script src="/js/filter.js" type="module"></script>
+<script type="module">
+    async function cargarChats() {
+       const container = document.getElementById("chats-container");
+
+       try {
+           const response = await fetch('/chat/user', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' }
+           });
+
+           // Si tu backend lanza excepción cuando no hay chats, el status no será 200 (será 500 o 400)
+           if (!response.ok) {
+               throw new Error("Sin chats");
+           }
+
+           const chats = await response.json();
+           console.log("Chats cargados:", chats); // Para depuración
+
+           if (!chats || chats.length === 0) {
+               throw new Error("Lista vacía");
+           }
+
+           const html = chats.map(c => {
+               const esVendedor = c.owner || c.isOwner;
+               const rolTexto = esVendedor ? "Vendedor" : "Interesado";
+               // Usamos clases en lugar de colores directos para poder editarlos en CSS si queremos
+               const colorBadge = esVendedor ? "#E57200" : "#00587C";
+
+               return `
+               <div class="servicio-card">
+                   <div class="servicio-info">
+                       <span class="role-badge" style="background-color: ${colorBadge}; color: white;">
+                            ${rolTexto}
+                       </span>
+                       <h3>${c.nombreProducto}</h3>
+                       <p>Conversación con: <strong>${c.nombreUsu} ${c.apellidosUsu}</strong></p>
+                       <p class="meta-info">Carrera: ${c.carreraUsu || 'No especificada'}</p>
+                   </div>
+
+                   <div class="servicio-actions">
+                       <a href="/chat/view/${c.id}" class="btn-estilo btn-blue">
+                           Abrir Chat 💬
+                       </a>
+                   </div>
+               </div>
+               `;
+           }).join('');
+
+           container.innerHTML = html;
+
+       } catch (error) {
+           console.log("Info carga:", error.message);
+           // Si falla (o no hay chats), mostramos mensaje amigable
+           container.innerHTML = `
+               <div style="text-align: center; padding: 40px; color: #666; background: #f9f9f9; border-radius: 8px;">
+                   <h3>No tienes chats activos</h3>
+                   <p>Cuando te intereses por un producto o alguien pregunte por los tuyos, aparecerán aquí.</p>
+               </div>`;
+       }
+   }
+
+   document.addEventListener("DOMContentLoaded", cargarChats);
+</script>
+</body>
+</html>

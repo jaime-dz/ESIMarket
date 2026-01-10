@@ -7,42 +7,45 @@ public class ChatDTO implements Serializable {
 
     private int id;
     private String nombreProducto;
-    private String nombreVendedor;
-    private String apellidosVendedor;
-    private Usuario.Carrera carreraVendedor;
+    private String nombreUsu;
+    private String apellidosUsu;
+    private Usuario.Carrera carreraUsu;
+    private boolean isOwner;
 
     public ChatDTO() {}
 
-    public ChatDTO(int id, String nombreProducto, String nombreVendedor, String apellidosVendedor, Usuario.Carrera carreraVendedor) {
+    public ChatDTO(int id, String nombreProducto, String nombreVendedor, String apellidosVendedor, Usuario.Carrera carreraVendedor, boolean isOwner) {
         this.id = id;
         this.nombreProducto = nombreProducto;
-        this.nombreVendedor = nombreVendedor;
-        this.apellidosVendedor = apellidosVendedor;
-        this.carreraVendedor = carreraVendedor;
+        this.nombreUsu = nombreVendedor;
+        this.apellidosUsu = apellidosVendedor;
+        this.carreraUsu = carreraVendedor;
+        this.isOwner = isOwner;
     }
 
     public int getId() {return id;}
     public String getNombreProducto() {return nombreProducto;}
-    public String getNombreVendedor() {return nombreVendedor;}
-    public String getApellidosVendedor() {return apellidosVendedor;}
-    public Usuario.Carrera getCarreraVendedor() {return carreraVendedor;}
-
+    public String getNombreUsu() {return nombreUsu;}
+    public String getApellidosUsu() {return apellidosUsu;}
+    public Usuario.Carrera getCarreraUsu() {return carreraUsu;}
+    public boolean isOwner() {return isOwner;}
 
     public void setId(int id) {this.id = id;}
     public void setNombreProducto(String nombreProducto) {this.nombreProducto = nombreProducto;}
-    public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
-    public void setApellidosVendedor(String apellidosVendedor) {this.apellidosVendedor = apellidosVendedor;}
-    public void setCarreraVendedor(Usuario.Carrera carreraVEndedor) {this.carreraVendedor = carreraVEndedor;}
+    public void setNombreUsu(String nombreUsu) {this.nombreUsu = nombreUsu;}
+    public void setApellidosUsu(String apellidosUsu) {this.apellidosUsu = apellidosUsu;}
+    public void setCarreraUsu(Usuario.Carrera carreraVEndedor) {this.carreraUsu = carreraVEndedor;}
+    public void setOwner(boolean owner) {isOwner = owner;}
 
     @Override
     public String toString() {
         return "ChatDTO{" +
                 "id=" + id +
                 ", nombreProducto='" + nombreProducto + '\'' +
-                ", nombreVendedor='" + nombreVendedor + '\'' +
-                ", apellidosVendedor='" + apellidosVendedor + '\'' +
-                ", carreraVendedor=" + carreraVendedor +
+                ", nombreUsu='" + nombreUsu + '\'' +
+                ", apellidosUsu='" + apellidosUsu + '\'' +
+                ", carreraUsu=" + carreraUsu +
+                ", isOwner=" + isOwner +
                 '}';
     }
-
 }
