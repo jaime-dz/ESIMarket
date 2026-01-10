@@ -34,7 +34,11 @@ public class DonacionesController {
     private JwtService jwtService;
 
     @PutMapping("/make/{dni}/{dineroDonado}")
+    @ResponseBody
     public ResponseEntity<Void> realizarDonacion( @PathVariable(name="dni") String dniObj , @PathVariable(name="dineroDonado") double dinero) throws CannotMakeDonationError {
+
+        if ( dinero <= 0 )
+            throw new CannotMakeDonationError("No puedes hacer una donación de 0€");
 
         Usuario u = usuarioRepository.findByid(dniObj);
 
@@ -69,15 +73,13 @@ public class DonacionesController {
 
     @PostMapping("/donationByUser")
     @ResponseBody
-    public Donaciones donacionesPorUsuario (Model model)
+    public Integer donacionesPorUsuario ()
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
 
         Usuario u = usuarioRepository.findById(uDNI).orElseThrow(()->new CannotCreateUserError("Usuario no encontrado"));
-
-        model.addAttribute("profile",u);
         
-       return donacionesRepository.findByIDUsuario(uDNI);
+       return donacionesRepository.findByIDUsuario(uDNI).getNum();
     }
 }
