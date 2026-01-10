@@ -416,7 +416,6 @@ window.toggleTruequeField = function() {
             field.style.display = 'block';
         } else {
             field.style.display = 'none';
-            // Limpiamos el valor si se oculta
             const input = document.getElementById('input-trueque-id');
             if (input) input.value = '';
         }
@@ -424,20 +423,16 @@ window.toggleTruequeField = function() {
 };
 
 window.comprarProducto = async function(idProducto) {
-    // 1. Recoger valores del DOM
     const pagoSelect = document.getElementById('select-pago');
     const recepcionSelect = document.getElementById('select-recepcion');
     const horasInput = document.getElementById('input-horas');
     const truequeInput = document.getElementById('input-trueque-id');
 
-    // 2. Preparar variables
-    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas"; // Valor por defecto
+    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas";
     const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
     
-    // Parseo de números
     const horas = horasInput ? parseInt(horasInput.value) : null;
     
-    // Solo enviamos ID de trueque si el usuario seleccionó "Trueque"
     let idProdTrueque = null;
     if (tipoPago === 'Trueque' && truequeInput) {
         if (!truequeInput.value) {
@@ -451,13 +446,12 @@ window.comprarProducto = async function(idProducto) {
         return;
     }
 
-    // 3. Construir el Payload (debe coincidir con CompraRequest.java)
     const payload = {
-        idProd: idProducto,          // Integer
-        tipoPago: tipoPago,          // Enum (Monedas, Trueque)
-        recepcion: recepcion,        // Enum (enMano, enTaquilla)
-        horas: horas,                // Long (puede ser null)
-        idProdTrueque: idProdTrueque // Integer (puede ser null)
+        idProd: idProducto,
+        tipoPago: tipoPago,
+        recepcion: recepcion,
+        horas: horas,
+        idProdTrueque: idProdTrueque
     };
 
     try {
@@ -483,27 +477,21 @@ window.comprarProducto = async function(idProducto) {
 };
 
 
-// 1. Abrir Modal
 window.abrirModalCompra = function(idProducto) {
     const modal = document.getElementById('modalCompra');
     const inputId = document.getElementById('modal-product-id');
     
     if(modal && inputId) {
-        inputId.value = idProducto; // Guardamos el ID para usarlo al enviar
-        
-        // Resetear formulario por si acaso
+        inputId.value = idProducto;
         const truequeInput = document.getElementById('modal-input-trueque-id');
         if(truequeInput) truequeInput.value = '';
         
-        // Ejecutar la lógica de visualización del campo trueque inicial
         toggleTruequeModal();
         
-        // Mostrar modal (flex para que centre)
         modal.style.display = 'flex';
     }
 };
 
-// 2. Cerrar Modal
 window.cerrarModalCompra = function() {
     const modal = document.getElementById('modalCompra');
     if(modal) {
@@ -511,7 +499,6 @@ window.cerrarModalCompra = function() {
     }
 };
 
-// 3. Controlar visibilidad del campo Trueque dentro del modal
 window.toggleTruequeModal = function() {
     const select = document.getElementById('modal-select-pago');
     const field = document.getElementById('modal-trueque-field');
@@ -525,37 +512,31 @@ window.toggleTruequeModal = function() {
     }
 };
 
-// 4. Enviar Compra (Fetch)
 window.enviarCompra = async function() {
     const btnConfirmar = document.querySelector('.modal-footer .btn-estilo:last-child');
     const textoOriginal = btnConfirmar.innerText;
     btnConfirmar.innerText = "Procesando...";
     btnConfirmar.disabled = true;
 
-    // 1. Obtener elementos (el de recepción puede no existir si es servicio)
     const inputPago = document.getElementById('select-pago');
     const inputRecepcion = document.getElementById('select-recepcion');
     const inputHoras = document.getElementById('modal-input-horas');
     const idProducto = document.getElementById('btn-comprar').getAttribute('data-id');
 
-    // 2. Extraer valores con seguridad
     const tipoPago = inputPago ? inputPago.value : null;
     
-    // IMPORTANTE: Si no existe el input o está vacío, enviamos null (no "")
     let recepcion = null;
     if (inputRecepcion && inputRecepcion.value !== "") {
         recepcion = inputRecepcion.value;
     }
 
-    // Horas: si no existe input (no es servicio), null o 1 según prefieras
     let horas = inputHoras ? parseInt(inputHoras.value) : 1;
     if (isNaN(horas) || horas < 1) horas = 1;
 
-    // 3. Preparar el objeto para enviar
     const payload = {
         idProd: parseInt(idProducto),
         tipoPago: tipoPago,
-        recepcion: recepcion, // Ahora esto seguro que es null o un valor válido
+        recepcion: recepcion,
         horas: horas,
         idProdTrueque: null 
     };
@@ -573,7 +554,6 @@ window.enviarCompra = async function() {
         } else {
             let mensajeUsuario = "No se pudo completar la compra.";
             
-            // Personalización de errores
             if (response.status === 400) mensajeUsuario = "Error en los datos (400). Revisa el método de pago.";
             if (response.status === 500) mensajeUsuario = "Error interno del servidor (500).";
             
@@ -588,7 +568,6 @@ window.enviarCompra = async function() {
     }
 };
 
-// Cerrar modal si hacen click fuera del contenido (en el fondo oscuro)
 window.onclick = function(event) {
     const modal = document.getElementById('modalCompra');
     if (event.target == modal) {
@@ -597,13 +576,11 @@ window.onclick = function(event) {
 }
 
 window.eliminarProducto = async function(idProducto) {
-    // 1. Confirmación de seguridad
     const confirmacion = confirm("¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.");
     
     if (!confirmacion) return;
 
     try {
-        // 2. Petición al servidor (Asumiendo que tu backend escucha DELETE en /product/{id})
         const response = await fetch(`/products/delete/${idProducto}`, {
             method: 'DELETE', 
             headers: {
@@ -613,7 +590,7 @@ window.eliminarProducto = async function(idProducto) {
 
         if (response.ok) {
             alert("Anuncio eliminado correctamente.");
-            window.location.href = "/home/"; // Te devuelve al inicio
+            window.location.href = "/home/";
         } else {
             alert("Hubo un error al intentar eliminar el producto.");
         }
@@ -624,20 +601,15 @@ window.eliminarProducto = async function(idProducto) {
 };
 
 document.addEventListener("DOMContentLoaded", function() {
-    // 1. Buscamos la imagen del header por su clase
     const headerImg = document.querySelector('.profile-avatar');
 
-    // Verificamos si la imagen existe y si tiene un usuario asociado (data-id)
     if (headerImg && headerImg.dataset.id) {
         
-        // Creamos la clave única para este usuario
         const usuarioID = "avatar_" + headerImg.dataset.id;
         
-        // 2. Revisamos el LocalStorage
         let miHuevo = localStorage.getItem(usuarioID);
 
         if (!miHuevo) {
-            // SI NO TIENE: Elegimos uno al azar y guardamos
             const huevos = [
                 '/Images/huevoazul.jpeg',
                 '/Images/huevorosa.jpeg',
@@ -650,10 +622,8 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem(usuarioID, miHuevo);
         }
 
-        // 3. Actualizamos la imagen del Header
         headerImg.src = miHuevo;
 
-        // 4. Si estamos en la página de perfil (que tiene la imagen grande), la actualizamos también
         const mainProfileImg = document.querySelector('.imagen-left img');
         if (mainProfileImg) {
             mainProfileImg.src = miHuevo;
