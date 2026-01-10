@@ -622,3 +622,41 @@ window.eliminarProducto = async function(idProducto) {
         alert("Error de conexión con el servidor.");
     }
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Buscamos la imagen del header por su clase
+    const headerImg = document.querySelector('.profile-avatar');
+
+    // Verificamos si la imagen existe y si tiene un usuario asociado (data-id)
+    if (headerImg && headerImg.dataset.id) {
+        
+        // Creamos la clave única para este usuario
+        const usuarioID = "avatar_" + headerImg.dataset.id;
+        
+        // 2. Revisamos el LocalStorage
+        let miHuevo = localStorage.getItem(usuarioID);
+
+        if (!miHuevo) {
+            // SI NO TIENE: Elegimos uno al azar y guardamos
+            const huevos = [
+                '/Images/huevoazul.jpeg',
+                '/Images/huevorosa.jpeg',
+                '/Images/huevoamarillo.jpeg',
+                '/Images/huevoverde.jpeg',
+                '/Images/huevorojo.jpeg'
+            ];
+            const random = Math.floor(Math.random() * huevos.length);
+            miHuevo = huevos[random];
+            localStorage.setItem(usuarioID, miHuevo);
+        }
+
+        // 3. Actualizamos la imagen del Header
+        headerImg.src = miHuevo;
+
+        // 4. Si estamos en la página de perfil (que tiene la imagen grande), la actualizamos también
+        const mainProfileImg = document.querySelector('.imagen-left img');
+        if (mainProfileImg) {
+            mainProfileImg.src = miHuevo;
+        }
+    }
+});
