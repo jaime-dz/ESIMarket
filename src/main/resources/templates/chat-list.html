@@ -273,7 +273,10 @@
 
             <div class="chat-sidebar" id="sidebar">
                 <div class="chat-sidebar-header">
-                    <img src="/Images/huevoverde.jpeg" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                    <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
                     <h3 style="margin:0; color:#54656f; font-size: 1.1rem;">Mis Chats</h3>
                 </div>
 
