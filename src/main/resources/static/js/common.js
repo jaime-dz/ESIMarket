@@ -462,16 +462,13 @@ window.cerrarModalCompra = function() {
 window.toggleTruequeModal = function() {
     const select = document.getElementById('modal-select-pago');
     const field = document.getElementById('modal-trueque-field');
-    // Seleccionamos el contenedor del precio total
     const totalContainer = document.getElementById('modal-total-container');
 
     if (select) {
         if (select.value === 'Trueque') {
-            // Si es Trueque: mostramos campo de ID y OCULTAMOS el precio
             if (field) field.style.display = 'block';
             if (totalContainer) totalContainer.style.display = 'none';
         } else {
-            // Si es Monedas: ocultamos campo de ID y MOSTRAMOS el precio
             if (field) field.style.display = 'none';
             if (totalContainer) totalContainer.style.display = 'block';
         }
@@ -484,15 +481,12 @@ window.enviarCompra = async function() {
     btnConfirmar.innerText = "Procesando...";
     btnConfirmar.disabled = true;
 
-    // LEER DE LOS ELEMENTOS DEL MODAL (con prefijo modal-)
     const inputPago = document.getElementById('modal-select-pago');
     const inputRecepcion = document.getElementById('modal-select-recepcion');
     const inputHoras = document.getElementById('modal-input-horas');
 
-    // El ID del producto está en el input hidden del modal
     const inputIdProd = document.getElementById('modal-product-id');
 
-    // El input del trueque también en el modal
     const inputTruequeId = document.getElementById('modal-input-trueque-id');
 
     const idProducto = inputIdProd ? inputIdProd.value : null;
@@ -506,7 +500,6 @@ window.enviarCompra = async function() {
     let horas = inputHoras ? parseInt(inputHoras.value) : 1;
     if (isNaN(horas) || horas < 1) horas = 1;
 
-    // Lógica para capturar el ID del producto de trueque
     let idProdTrueque = null;
     if (tipoPago === 'Trueque' && inputTruequeId && inputTruequeId.value) {
         idProdTrueque = parseInt(inputTruequeId.value);

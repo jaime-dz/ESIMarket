@@ -64,6 +64,7 @@ public class ProfileController {
     }
 
     @PostMapping("/edit/password")
+    @ResponseBody
     public ResponseEntity<String> changePassword( @RequestParam(value = "newPassword") String newPassword ){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -108,6 +109,7 @@ public class ProfileController {
     }
 
     @PutMapping("/edit")
+    @ResponseBody
     public ResponseEntity<Void> modProfile(@RequestBody ProfileResponse p ) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
