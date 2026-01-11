@@ -331,7 +331,7 @@
             if (!currentChatId) return;
 
             try {
-                const response = await fetch(`/chat/mensajes/${currentChatId}`);
+                const response = await fetch(`/chat/user`);
                 if (response.ok) {
                     const mensajes = await response.json();
                     const area = document.getElementById('messages-area');
