@@ -1177,65 +1177,62 @@ main {
     padding: 30px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Opcional: una sombra suave queda muy bien con bordes curvos */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
 }
 
 
 .form-container img {
-    display: block;       /* Hace que la imagen se comporte como un bloque */
-    margin-left: auto;    /* Margen izquierdo automático */
-    margin-right: auto;   /* Margen derecho automático -> Esto la centra */
-    margin-bottom: 20px;  /* Un poco de espacio debajo para que no se pegue al texto */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
 }
 
-/* Botón de Eliminar (Estilo Flotante) */
 .btn-eliminar {
-    position: absolute; /* Clave para que se vaya a la esquina */
+    position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #dc3545; /* Rojo intenso */
+    background-color: #dc3545;
     color: white;
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
-    z-index: 100; /* Asegura que esté por encima de la imagen */
+    z-index: 100;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: background-color 0.3s;
 }
 
 .btn-eliminar:hover {
-    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+    background-color: #c82333;
 }
 
 
 .profile-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-    gap: 15px; /* Espacio entre cuadros */
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
     margin-bottom: 25px;
     width: 100%;
 }
 
 .profile-box {
-    background-color: #f8f9fa; /* Fondo gris muy clarito */
+    background-color: #f8f9fa;
     border: 1px solid #e0e0e0;
-    border-radius: 10px;       /* Bordes redondeados */
+    border-radius: 10px;
     padding: 15px;
     display: flex;
-    flex-direction: column;    /* Etiqueta arriba, dato abajo */
+    flex-direction: column;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Efecto al pasar el ratón por encima (opcional) */
 .profile-box:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-color: #00587C;
 }
 
-/* Estilo para el título del dato (ej: "NOMBRE") */
 .box-label {
     font-size: 0.85rem;
     color: #666;
@@ -1245,19 +1242,16 @@ main {
     letter-spacing: 0.5px;
 }
 
-/* Estilo para el valor del dato (ej: "Pepe") */
 .box-value {
     font-size: 1.1rem;
     color: #333;
     font-weight: 600;
 }
 
-/* Clase especial para que el correo ocupe todo el ancho */
 .full-width {
     grid-column: span 2;
 }
 
-/* Responsividad: En móviles, todo a 1 columna */
 @media (max-width: 600px) {
     .profile-grid {
         grid-template-columns: 1fr;
@@ -1272,20 +1266,18 @@ main {
     padding: 20px;
     margin-bottom: 15px;
     border-radius: 8px;
-    display: flex; /* Mantiene los elementos en línea */
+    display: flex;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: transform 0.2s, box-shadow 0.2s;
-    gap: 20px; /* Esto define la distancia FIJA entre el texto y el botón */
+    gap: 20px;
 }
 
-/* Esto asegura que el texto se quede a la izquierda y anula tu centrado global */
 .servicio-info {
-    flex-grow: 1; /* Ocupa todo el espacio disponible */
-    text-align: left !important; /* El !important fuerza la alineación izquierda */
+    flex-grow: 1;
+    text-align: left !important;
 }
 
-/* Aseguramos que los párrafos y títulos dentro de la tarjeta NO se centren */
 .servicio-info p,
 .servicio-info h3 {
     text-align: left;
@@ -1293,9 +1285,8 @@ main {
 }
 
 .servicio-actions {
-    min-width: fit-content; /* El botón ocupa solo lo que necesita */
-    margin-left: auto; /* TRUCO: Si quieres el botón a la derecha del todo, deja esto.
-                          Si quieres el botón PEGADO al texto (sin hueco), BORRA esta línea. */
+    min-width: fit-content;
+    margin-left: auto;
 }
 
 .servicio-card:hover {
@@ -1303,10 +1294,9 @@ main {
     box-shadow: 0 5px 15px rgba(0,0,0,0.12);
 }
 
-/* Versión móvil */
 @media (max-width: 600px) {
     .servicio-card {
-        flex-direction: column; /* En móvil, uno debajo de otro */
+        flex-direction: column;
         align-items: flex-start;
     }
     .servicio-actions {
@@ -1314,4 +1304,84 @@ main {
         margin-left: 0;
         text-align: right;
     }
+}
+
+.btn-red {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-red:hover {
+    background-color: #c82333;
+}
+
+.profile-actions-container {
+    display: flex;
+    justify-content: space-between; /* Empuja los elementos a los extremos */
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.left-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* 1. El fondo oscuro (Contenedor Flex) */
+#modalEliminarPerfil {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    
+    /* MAGIA FLEXBOX: Centrado perfecto sin saltos */
+    justify-content: center;
+    align-items: center;
+}
+
+/* 2. La caja blanca */
+#modalEliminarPerfil .modal-content {
+    background-color: #fefefe;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center;
+    
+    /* Eliminamos position:absolute y transform porque Flexbox ya lo hace */
+    position: relative; 
+    margin: 0; 
+}
+
+/* Añade esto dentro de <style> en chat-list.html */
+
+.badge-rol {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+/* Estilo para Vendedor (Verde) */
+.rol-vendedor {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+/* Estilo para Comprador (Azul) */
+.rol-comprador {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
 }

@@ -6,6 +6,7 @@ import es.esimarket.backend.entities.Donaciones;
 import es.esimarket.backend.entities.Token;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.exceptions.BadInputError;
 import es.esimarket.backend.exceptions.CannotCreateTokenError;
 import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.mappers.UserMapper;
@@ -60,7 +61,7 @@ public class AuthService {
 
     public TokenResponse registerUser(RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError {
 
-        if ( !request.username().matches("^[uU]\\d{8}$")) throw new CannotCreateUserError("Usuario invalido, debe de ser u + nºdni");
+        if ( !request.username().matches("^[uU]\\d{8}$")) throw new BadInputError("Usuario invalido, debe de ser u + nºdni");
 
         byte[] salt = LoginEncriptado.GenerateSalt();
         String password = passwordEncoder.encode(Base64.getEncoder().encodeToString(salt) + " " + request.password());
@@ -96,12 +97,8 @@ public class AuthService {
 
         // SOLO PARA DESARROLLO. MODIFCAR AL FINAL
 
-        if(u==null) {
-            throw new CannotCreateUserError("Usuario o contraseña incorrectos ( USU NO EMCONTRADO ) ");
-        }
-
-        if (!passwordEncoder.matches(request.password(), Base64.getEncoder().encodeToString(u.getSalt()) + " " + u.getContrasenna())) {
-            throw new CannotCreateUserError("Usuario o contraseña incorrectos");
+        if (u==null || !passwordEncoder.matches(request.password(), Base64.getEncoder().encodeToString(u.getSalt()) + " " + u.getContrasenna())) {
+            throw new BadInputError("Usuario o contraseña incorrectos");
         }
 
         var jwtToken = jwtService.generateToken(u);
@@ -178,6 +175,12 @@ public class AuthService {
 
         return new TokenResponse(accessToken,new_refreshToken);
 
+    }
+
+    @Transactional
+    public void eliminar_usuario( String dni )
+    {
+        userRepository.deleteById(dni);
     }
 
     @Scheduled(cron = "0 0 4 * * ?")

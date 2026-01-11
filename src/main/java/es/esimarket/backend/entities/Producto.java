@@ -34,7 +34,7 @@ public class Producto{
     private String uDNI_Vendedor;
 
     @Column(name="Precio")
-    private int Precio;
+    private Integer Precio;
 
     @Column(name="Descripcion")
     private String Descripcion;
@@ -62,7 +62,7 @@ public class Producto{
 
     public Producto(){}
 
-    public Producto( String uDNI_Vendedor, int precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado,RecepcionAceptada recepcionAceptada) {
+    public Producto( String uDNI_Vendedor, Integer precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado,RecepcionAceptada recepcionAceptada) {
         this.uDNI_Vendedor = uDNI_Vendedor;
         this.Precio = precio;
         this.Descripcion = descripcion;
@@ -80,8 +80,8 @@ public class Producto{
     public String getuDNI_Vendedor(){return uDNI_Vendedor;}
     public void setuDNI_Vendedor(String uDNI_Vendedor){this.uDNI_Vendedor=uDNI_Vendedor;}
 
-    public int getPrecio(){return Precio;}
-    public void setPrecio(int Precio){this.Precio=Precio;}
+    public Integer getPrecio(){return Precio;}
+    public void setPrecio(Integer Precio){this.Precio=Precio;}
 
     public String getDescripcion(){return Descripcion;}
     public void setDescripcion(String Descripcion){this.Descripcion=Descripcion;}

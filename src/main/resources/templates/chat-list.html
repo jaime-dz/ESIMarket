@@ -252,7 +252,10 @@
                     <div class="coins-info">
                         <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
                     </div>
-                    <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                    <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
 
                     <div class="dropdown-content">
                         <a href="/profile/">Mi Perfil</a>
@@ -270,7 +273,10 @@
 
             <div class="chat-sidebar" id="sidebar">
                 <div class="chat-sidebar-header">
-                    <img src="/Images/huevoverde.jpeg" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                    <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
                     <h3 style="margin:0; color:#54656f; font-size: 1.1rem;">Mis Chats</h3>
                 </div>
 
@@ -454,8 +460,11 @@
                                        now.getMinutes().toString().padStart(2, '0');
 
                     // Lógica de "Hoy"
-                    const lastDivider = area.querySelector('.date-divider:last-of-type span');
-                    const lastDateText = lastDivider ? lastDivider.innerText : '';
+                    const dividers = area.querySelectorAll('.date-divider span');
+                    // Seleccionamos manualmente el último de la lista
+                    const lastDivider = dividers.length > 0 ? dividers[dividers.length - 1] : null;
+                    // Obtenemos el texto (usamos trim() por seguridad para quitar espacios extra)
+                    const lastDateText = lastDivider ? lastDivider.innerText.trim() : '';
 
                     if (lastDateText !== 'Hoy') {
                         area.insertAdjacentHTML('beforeend', `

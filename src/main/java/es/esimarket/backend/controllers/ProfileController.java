@@ -3,10 +3,13 @@ import es.esimarket.backend.controllers.responses.ProfileResponse;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.services.AuthService;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.LoginEncriptado;
 import es.esimarket.backend.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +28,9 @@ public class ProfileController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private LoginEncriptado loginEncriptado;
@@ -58,6 +64,7 @@ public class ProfileController {
     }
 
     @PostMapping("/edit/password")
+    @ResponseBody
     public ResponseEntity<String> changePassword( @RequestParam(value = "newPassword") String newPassword ){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -81,13 +88,45 @@ public class ProfileController {
 
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser()
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String uDNI = auth.getName();
+
+        authService.eliminar_usuario(uDNI);
+
+        ResponseCookie jwtCookie = crearCookie("accessToken", "", 0,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", "", 0,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", null,0,false);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
+                .build();
+
+    }
+
     @PutMapping("/edit")
+    @ResponseBody
     public ResponseEntity<Void> modProfile(@RequestBody ProfileResponse p ) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String uDNI = auth.getName();
         profileService.editarUsuario(uDNI, p);
         return ResponseEntity.ok().build();
+    }
+
+    private ResponseCookie crearCookie(String nombre, String valor, long duracion, boolean httponly) {
+        return ResponseCookie.from(nombre, valor)
+                .httpOnly(httponly) // Seguridad: JS no puede leerla
+                .secure(false)  // false para localhost, true para producción (HTTPS)
+                .path("/")
+                .maxAge(duracion / 1000) // Segundos
+                .sameSite("Strict")
+                .build();
+
     }
 
 }

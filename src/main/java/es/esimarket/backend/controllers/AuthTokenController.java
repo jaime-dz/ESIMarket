@@ -39,11 +39,6 @@ public class AuthTokenController {
     @Autowired
     private AuthService authService;
 
-    @GetMapping("/usuarios")
-    public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        return ResponseEntity.ok(authService.mostrar_usuarios());
-    }
-
     @GetMapping("/signup")
     public String signupG() { return "signup"; }
 
@@ -84,6 +79,7 @@ public class AuthTokenController {
     }
 
     @DeleteMapping("/logout")
+    @ResponseBody
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @CookieValue(name = "accessToken", required = false) String accessToken) throws  CannotCreateUserError, CannotCreateTokenError
     {
 

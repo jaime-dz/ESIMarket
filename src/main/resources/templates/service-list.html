@@ -49,7 +49,10 @@
                 <div class="coins-info">
                     <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
                 </div>
-                <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
 
                 <div class="dropdown-content">
                     <a href="/profile/">Mi Perfil</a>

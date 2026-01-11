@@ -47,11 +47,9 @@ public class ServicioService{
     @Autowired
     private VariosService variosService;
 
-    public void CrearServicioPendiente(int idProd, String DNIcomprador)
+    public Servicio CrearServicioPendiente(int idProd, String DNIcomprador)
     {
-        Servicio s = new Servicio(idProd,DNIcomprador,null,false);
-
-        servicioRepository.save(s);
+        return new Servicio(idProd,DNIcomprador,null,false);
     }
 
     public String modificarFecha(int idProd, String DNI,String fechaString)

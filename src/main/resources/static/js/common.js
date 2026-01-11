@@ -261,18 +261,26 @@ export function displayProductsItems(products, container) {
         } else {
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
         }
+
         const sufijoPrecio = esServicio ? '/h' : '';
 
-        const htmlEstado = (!esServicio && item.estado) 
-            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>` 
-            : ''; 
+        // --- LÓGICA DE PRECIO MODIFICADA ---
+        // Solo generamos el HTML si el precio NO es null ni undefined.
+        // Usamos !== null para permitir que el precio sea 0.
+        const htmlPrecio = (item.precio !== null && item.precio !== undefined)
+            ? `<p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>`
+            : '';
+
+        const htmlEstado = (!esServicio && item.estado)
+            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>`
+            : '';
 
         return `
             <div class="product-card" data-category="${item.tipo}" data-seller="${item.nombreVendedor}">
                 <img src="${imagenFinal}" alt="${item.nombre}" class="product-image">
                 <h4 class="product-name">${item.nombre}</h4>
-                <p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>
-                ${htmlEstado}
+
+                ${htmlPrecio} ${htmlEstado}
                 <p class="product-seller">Vendido por: ${item.nombreVendedor}</p>
                 <a href="/products/view/${item.id}" class="btn-detail" style="display:block; text-align:center; margin-top:10px; background:#E57200; color:white; padding:5px; text-decoration:none; border-radius:5px;">
                     Ver detalle
@@ -408,6 +416,13 @@ function renderizarListaPedidos(pedidos, container) {
 }
 
 
+
+
+window.comprarProducto = function(idProducto) {
+    abrirModalCompra(idProducto);
+};
+
+
 window.toggleTruequeField = function() {
     const select = document.getElementById('select-pago');
     const field = document.getElementById('trueque-field');
@@ -416,94 +431,27 @@ window.toggleTruequeField = function() {
             field.style.display = 'block';
         } else {
             field.style.display = 'none';
-            // Limpiamos el valor si se oculta
             const input = document.getElementById('input-trueque-id');
             if (input) input.value = '';
         }
     }
 };
 
-window.comprarProducto = async function(idProducto) {
-    // 1. Recoger valores del DOM
-    const pagoSelect = document.getElementById('select-pago');
-    const recepcionSelect = document.getElementById('select-recepcion');
-    const horasInput = document.getElementById('input-horas');
-    const truequeInput = document.getElementById('input-trueque-id');
-
-    // 2. Preparar variables
-    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas"; // Valor por defecto
-    const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
-    
-    // Parseo de números
-    const horas = horasInput ? parseInt(horasInput.value) : null;
-    
-    // Solo enviamos ID de trueque si el usuario seleccionó "Trueque"
-    let idProdTrueque = null;
-    if (tipoPago === 'Trueque' && truequeInput) {
-        if (!truequeInput.value) {
-            alert("Por favor, introduce el ID del producto que ofreces para el trueque.");
-            return;
-        }
-        idProdTrueque = parseInt(truequeInput.value);
-    }
-
-    if (!confirm("¿Estás seguro de que deseas realizar esta compra?")) {
-        return;
-    }
-
-    // 3. Construir el Payload (debe coincidir con CompraRequest.java)
-    const payload = {
-        idProd: idProducto,          // Integer
-        tipoPago: tipoPago,          // Enum (Monedas, Trueque)
-        recepcion: recepcion,        // Enum (enMano, enTaquilla)
-        horas: horas,                // Long (puede ser null)
-        idProdTrueque: idProdTrueque // Integer (puede ser null)
-    };
-
-    try {
-        const response = await fetch(`/purchase/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-            alert("¡Compra realizada con éxito!");
-            window.location.href = "/home/";
-        } else {
-            const errorText = await response.text();
-            alert("Error al realizar la compra: " + (errorText || "Inténtalo de nuevo."));
-        }
-    } catch (error) {
-        console.error("Error de conexión:", error);
-        alert("Error de conexión con el servidor.");
-    }
-};
-
-
-// 1. Abrir Modal
 window.abrirModalCompra = function(idProducto) {
     const modal = document.getElementById('modalCompra');
     const inputId = document.getElementById('modal-product-id');
     
     if(modal && inputId) {
-        inputId.value = idProducto; // Guardamos el ID para usarlo al enviar
-        
-        // Resetear formulario por si acaso
+        inputId.value = idProducto;
         const truequeInput = document.getElementById('modal-input-trueque-id');
         if(truequeInput) truequeInput.value = '';
         
-        // Ejecutar la lógica de visualización del campo trueque inicial
         toggleTruequeModal();
         
-        // Mostrar modal (flex para que centre)
         modal.style.display = 'flex';
     }
 };
 
-// 2. Cerrar Modal
 window.cerrarModalCompra = function() {
     const modal = document.getElementById('modalCompra');
     if(modal) {
@@ -511,53 +459,58 @@ window.cerrarModalCompra = function() {
     }
 };
 
-// 3. Controlar visibilidad del campo Trueque dentro del modal
 window.toggleTruequeModal = function() {
     const select = document.getElementById('modal-select-pago');
     const field = document.getElementById('modal-trueque-field');
-    
-    if (select && field) {
+    const totalContainer = document.getElementById('modal-total-container');
+
+    if (select) {
         if (select.value === 'Trueque') {
-            field.style.display = 'block';
+            if (field) field.style.display = 'block';
+            if (totalContainer) totalContainer.style.display = 'none';
         } else {
-            field.style.display = 'none';
+            if (field) field.style.display = 'none';
+            if (totalContainer) totalContainer.style.display = 'block';
         }
     }
 };
 
-// 4. Enviar Compra (Fetch)
 window.enviarCompra = async function() {
     const btnConfirmar = document.querySelector('.modal-footer .btn-estilo:last-child');
     const textoOriginal = btnConfirmar.innerText;
     btnConfirmar.innerText = "Procesando...";
     btnConfirmar.disabled = true;
 
-    // 1. Obtener elementos (el de recepción puede no existir si es servicio)
-    const inputPago = document.getElementById('select-pago');
-    const inputRecepcion = document.getElementById('select-recepcion');
+    const inputPago = document.getElementById('modal-select-pago');
+    const inputRecepcion = document.getElementById('modal-select-recepcion');
     const inputHoras = document.getElementById('modal-input-horas');
-    const idProducto = document.getElementById('btn-comprar').getAttribute('data-id');
 
-    // 2. Extraer valores con seguridad
+    const inputIdProd = document.getElementById('modal-product-id');
+
+    const inputTruequeId = document.getElementById('modal-input-trueque-id');
+
+    const idProducto = inputIdProd ? inputIdProd.value : null;
     const tipoPago = inputPago ? inputPago.value : null;
-    
-    // IMPORTANTE: Si no existe el input o está vacío, enviamos null (no "")
+
     let recepcion = null;
     if (inputRecepcion && inputRecepcion.value !== "") {
         recepcion = inputRecepcion.value;
     }
 
-    // Horas: si no existe input (no es servicio), null o 1 según prefieras
     let horas = inputHoras ? parseInt(inputHoras.value) : 1;
     if (isNaN(horas) || horas < 1) horas = 1;
 
-    // 3. Preparar el objeto para enviar
+    let idProdTrueque = null;
+    if (tipoPago === 'Trueque' && inputTruequeId && inputTruequeId.value) {
+        idProdTrueque = parseInt(inputTruequeId.value);
+    }
+
     const payload = {
         idProd: parseInt(idProducto),
         tipoPago: tipoPago,
-        recepcion: recepcion, // Ahora esto seguro que es null o un valor válido
+        recepcion: recepcion,
         horas: horas,
-        idProdTrueque: null 
+        idProdTrueque: idProdTrueque
     };
 
     try {
@@ -572,11 +525,10 @@ window.enviarCompra = async function() {
             window.location.href = "/home/";
         } else {
             let mensajeUsuario = "No se pudo completar la compra.";
-            
-            // Personalización de errores
-            if (response.status === 400) mensajeUsuario = "Error en los datos (400). Revisa el método de pago.";
-            if (response.status === 500) mensajeUsuario = "Error interno del servidor (500).";
-            
+            try {
+                const errorText = await response.text();
+                if(errorText) mensajeUsuario = "Error: " + errorText;
+            } catch(e) {}
             alert(mensajeUsuario);
         }
     } catch (error) {
@@ -588,7 +540,6 @@ window.enviarCompra = async function() {
     }
 };
 
-// Cerrar modal si hacen click fuera del contenido (en el fondo oscuro)
 window.onclick = function(event) {
     const modal = document.getElementById('modalCompra');
     if (event.target == modal) {
@@ -597,13 +548,11 @@ window.onclick = function(event) {
 }
 
 window.eliminarProducto = async function(idProducto) {
-    // 1. Confirmación de seguridad
     const confirmacion = confirm("¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.");
     
     if (!confirmacion) return;
 
     try {
-        // 2. Petición al servidor (Asumiendo que tu backend escucha DELETE en /product/{id})
         const response = await fetch(`/products/delete/${idProducto}`, {
             method: 'DELETE', 
             headers: {
@@ -613,7 +562,7 @@ window.eliminarProducto = async function(idProducto) {
 
         if (response.ok) {
             alert("Anuncio eliminado correctamente.");
-            window.location.href = "/home/"; // Te devuelve al inicio
+            window.location.href = "/home/";
         } else {
             alert("Hubo un error al intentar eliminar el producto.");
         }
@@ -622,3 +571,34 @@ window.eliminarProducto = async function(idProducto) {
         alert("Error de conexión con el servidor.");
     }
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+    const headerImg = document.querySelector('.profile-avatar');
+
+    if (headerImg && headerImg.dataset.id) {
+        
+        const usuarioID = "avatar_" + headerImg.dataset.id;
+        
+        let miHuevo = localStorage.getItem(usuarioID);
+
+        if (!miHuevo) {
+            const huevos = [
+                '/Images/huevoazul.jpeg',
+                '/Images/huevorosa.jpeg',
+                '/Images/huevoamarillo.jpeg',
+                '/Images/huevoverde.jpeg',
+                '/Images/huevorojo.jpeg'
+            ];
+            const random = Math.floor(Math.random() * huevos.length);
+            miHuevo = huevos[random];
+            localStorage.setItem(usuarioID, miHuevo);
+        }
+
+        headerImg.src = miHuevo;
+
+        const mainProfileImg = document.querySelector('.imagen-left img');
+        if (mainProfileImg) {
+            mainProfileImg.src = miHuevo;
+        }
+    }
+});

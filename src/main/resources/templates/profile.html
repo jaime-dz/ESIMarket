@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Profile</title>
+        <title>Perfil</title>
         <link rel="stylesheet" href="/css/general_styles.css">
         <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
     </head>
@@ -48,7 +48,10 @@
                         <div class="coins-info">
                             <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
                         </div>
-                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
                         <div class="dropdown-content">
                             <a href="/profile/">Mi Perfil</a>
                             <a href="#" id="btn-logout">Cerrar sesión</a>
@@ -93,17 +96,38 @@
                         </div>
                     </div>
 
-                    <div class="form-buttons" style="margin-top: 20px;">
-                        <button type="button" class="btn-common btn-orange" onclick="window.location.href='/profile/edit'">
-                            Editar Perfil
-                        </button>
-                        <button type="button" id="change-password" class="btn-common btn-gray" onclick="window.location.href='/profile/edit/password'">
-                            Cambiar Contraseña
+                    <div class="profile-actions-container">
+    
+                        <div class="left-actions">
+                            <button type="button" class="btn-common btn-orange" onclick="window.location.href='/profile/edit'">
+                                Editar Perfil
+                            </button>
+                            <button type="button" id="change-password" class="btn-common btn-gray" onclick="window.location.href='/profile/edit/password'">
+                                Cambiar Contraseña
+                            </button>
+                        </div>
+
+                        <button type="button" class="btn-common btn-red" onclick="abrirModalEliminar()">
+                            Eliminar Perfil
                         </button>
                     </div>
                 </div>
 
-            </div> </main>
+            </div> 
+        <div id="modalEliminarPerfil" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="cerrarModalEliminar()">&times;</span>
+                <h2 style="color: #dc3545; margin-top: 0;">Eliminar Cuenta</h2>
+                <p>¿Estás seguro de que quieres eliminar tu perfil permanentemente?</p>
+                <p style="font-size: 0.9em; color: #666;">Esta acción no se puede deshacer y perderás tu historial.</p>
+                
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn-common btn-gray" onclick="cerrarModalEliminar()">Cancelar</button>
+                    <button class="btn-common btn-red" onclick="confirmarEliminarPerfil()">Sí, eliminar</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
         <footer class="menu-bar menu-inferior">
             <ul>
@@ -117,8 +141,44 @@
                 </li>
             </ul>
         </footer>
-
+        
         <script src="/js/common.js" type="module"></script>
         <script src="/js/profile.js" type="module"></script>
+        <script>
+            function abrirModalEliminar() {
+                document.getElementById("modalEliminarPerfil").style.display = "flex";
+            }
+
+            function cerrarModalEliminar() {
+                document.getElementById("modalEliminarPerfil").style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                const modal = document.getElementById("modalEliminarPerfil");
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            function confirmarEliminarPerfil() {
+                fetch('/profile/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/home/'; 
+                    } else {
+                        alert("Hubo un error al intentar eliminar el perfil.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error de conexión.");
+                });
+            }
+        </script>
     </body>
 </html>

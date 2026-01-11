@@ -1,5 +1,4 @@
 package es.esimarket.backend.repositories;
-
 import es.esimarket.backend.entities.FotoProd;
 import org.springframework.data.jpa.repository.JpaRepository;
 

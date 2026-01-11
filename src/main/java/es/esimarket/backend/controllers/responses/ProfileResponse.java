@@ -28,8 +28,8 @@ public class ProfileResponse{
     public Usuario.Carrera getCarrera() {return carrera;}
     public Long getSaldo() {return saldo;}
 
-    public void setNombre(String nombre) {nombre = nombre;}
-    public void setApellidos(String apellidos) {apellidos = apellidos;}
+    public void setNombre(String nombre) {this.nombre = nombre;}
+    public void setApellidos(String apellidos) {this.apellidos = apellidos;}
     public void setUsuario(String usuario) {this.usuario = usuario;}
     public void setEmail(String email) {this.email = email;}
     public void setCarrera(Usuario.Carrera carrera) {this.carrera = carrera;}

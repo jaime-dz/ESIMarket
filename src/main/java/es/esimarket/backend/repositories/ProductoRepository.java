@@ -1,5 +1,4 @@
 package es.esimarket.backend.repositories;
-import es.esimarket.backend.entities.Compra;
 import es.esimarket.backend.entities.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
