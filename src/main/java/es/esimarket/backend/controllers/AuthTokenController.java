@@ -79,6 +79,7 @@ public class AuthTokenController {
     }
 
     @DeleteMapping("/logout")
+    @ResponseBody
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @CookieValue(name = "accessToken", required = false) String accessToken) throws  CannotCreateUserError, CannotCreateTokenError
     {
 

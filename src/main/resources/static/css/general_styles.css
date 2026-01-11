@@ -1359,3 +1359,29 @@ main {
     position: relative; 
     margin: 0; 
 }
+
+/* Añade esto dentro de <style> en chat-list.html */
+
+.badge-rol {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+/* Estilo para Vendedor (Verde) */
+.rol-vendedor {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+/* Estilo para Comprador (Azul) */
+.rol-comprador {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}

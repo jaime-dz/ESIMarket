@@ -325,7 +325,6 @@
     <script>
         let currentChatId = null;
 
-        // 1. CARGAR LISTA DE CHATS
         async function cargarChats() {
             const container = document.getElementById("chats-list");
             try {
@@ -342,20 +341,33 @@
                     return;
                 }
 
-                container.innerHTML = chats.map(c => `
+                container.innerHTML = chats.map(c => {
+                    const soyDueno = (c.isOwner === true || c.owner === true); 
+    
+                    // 2. Creamos el HTML de la etiqueta según el rol
+                    const etiquetaRol = soyDueno 
+                        ? '<span class="badge-rol rol-vendedor">Eres vendedor</span>' 
+                        : '<span class="badge-rol rol-comprador">Eres comprador</span>';
+
+                    // 3. Insertamos la etiqueta ${etiquetaRol} junto al nombre del producto
+                    return `
                     <div class="chat-item" onclick="seleccionarChat(this, ${c.id}, '${c.nombreProducto}', '${c.nombreUsu} ${c.apellidosUsu}')">
                         <img class="chat-avatar" src="/Images/huevoverde.jpeg">
                         <div class="chat-info">
-                            <div style="display:flex; justify-content:space-between;">
-                                <span class="chat-name">${c.nombreProducto}</span>
-                                <span style="font-size:11px; color:#999;">📅</span>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div style="display:flex; align-items:center; overflow:hidden;">
+                                    <span class="chat-name" style="margin-bottom:0;">${c.nombreProducto}</span>
+                                    ${etiquetaRol}
+                                </div>
+                                <span style="font-size:11px; color:#999; margin-left:5px;">📅</span>
                             </div>
                             <div class="chat-subtitle">
                                 ${c.nombreUsu} ${c.apellidosUsu}
                             </div>
                         </div>
                     </div>
-                `).join('');
+                    `;
+            }).join('');
 
             } catch (e) {
                 console.error(e);
@@ -363,7 +375,6 @@
             }
         }
 
-        // 2. SELECCIONAR CHAT
         window.seleccionarChat = async function(element, chatId, producto, usuario) {
             currentChatId = chatId;
 
@@ -384,7 +395,6 @@
             await cargarMensajes(chatId);
         };
 
-        // 3. CARGAR MENSAJES (POST)
         async function cargarMensajes(chatId) {
             const area = document.getElementById('messages-area');
             area.innerHTML = '<div style="text-align:center; margin-top:20px;">Cargando...</div>';
@@ -434,7 +444,6 @@
             }
         }
 
-        // 4. ENVIAR MENSAJE (Optimizado)
         window.enviarMensaje = async function() {
             const input = document.getElementById('msg-input');
             const text = input.value.trim();
@@ -459,9 +468,9 @@
                     const timeString = now.getHours().toString().padStart(2, '0') + ':' +
                                        now.getMinutes().toString().padStart(2, '0');
 
-                    // Lógica de "Hoy"
-                    const lastDivider = area.querySelector('.date-divider:last-of-type span');
-                    const lastDateText = lastDivider ? lastDivider.innerText : '';
+                    const dividers = area.querySelectorAll('.date-divider span');
+                    const lastDivider = dividers.length > 0 ? dividers[dividers.length - 1] : null;
+                    const lastDateText = lastDivider ? lastDivider.innerText.trim() : '';
 
                     if (lastDateText !== 'Hoy') {
                         area.insertAdjacentHTML('beforeend', `
@@ -498,32 +507,26 @@
 
 
         window.cerrarChat = function() {
-            if (!currentChatId) return; // Si no hay chat, no hacemos nada
+            if (!currentChatId) return;
 
             currentChatId = null;
 
-            // 1. UI: Quitar selección de la lista (Barra izquierda)
             document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
 
-            // 2. UI: Ocultar interfaz de chat y mostrar estado vacío (Zona derecha)
             document.getElementById('chat-interface').classList.add('hidden');
             document.getElementById('empty-state').classList.remove('hidden');
 
-            // 3. UI Móvil: Ocultar la capa superior
             document.getElementById('main-area').classList.remove('active');
         };
 
-        // Escuchar tecla ESCAPE
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 cerrarChat();
             }
         });
 
-        // Mantenemos la referencia para el botón de móvil (por compatibilidad con tu HTML)
         window.cerrarChatMovil = window.cerrarChat;
 
-        // Inicialización
         document.addEventListener("DOMContentLoaded", cargarChats);
 
         document.addEventListener("DOMContentLoaded", cargarChats);
