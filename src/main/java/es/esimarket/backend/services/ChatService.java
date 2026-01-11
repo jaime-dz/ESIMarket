@@ -5,6 +5,7 @@ import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCreateChatError;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +37,19 @@ public class ChatService{
 
     public String CrearChat(String uDNI1, String uDNI2, int IdProducto)
     {
-        Chat c = new Chat();
 
         if(uDNI1.equals(uDNI2)) throw new CannotCreateChatError("No se puede crear un chat con uno mismo");
 
-        String sql = "Select Exists (Select 1 from Chat where uDNIcomprador = ? and uDNIvendedor = ? and IdProducto = ?)";
-        boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class, c.getuDNIcomprador(), c.getUDNIvendedor(), IdProducto); //el boolean.true.equals es por si devuelve un null que no se ralle por que la clase Boolean no es lo mismo que boolean, es la que lo enmascara
+        String sql = "Select Exists (Select 1 from chat where uDNIcomprador = ? and uDNIvendedor = ? and IdProducto = ?)";
+        boolean existe = jdbcTemplate.queryForObject(sql, Boolean.class, uDNI1, uDNI2, IdProducto); //el boolean.true.equals es por si devuelve un null que no se ralle por que la clase Boolean no es lo mismo que boolean, es la que lo enmascara
 
         if(existe) throw new CannotCreateChatError("Ya existe un chat con estos usuarios y producto");
+
+        Chat c = new Chat();
+        c.setuDNIcomprador(uDNI1);
+        c.setUDNIvendedor(uDNI2);
+        c.setIdProducto(IdProducto);
+
         chatRepository.save(c);
         return "Chat creado exitosamente";
 

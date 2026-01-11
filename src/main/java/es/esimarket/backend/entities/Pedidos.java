@@ -20,8 +20,8 @@ public class Pedidos{
     @Column(name="IdPedido")
     private int IdPedido;
 
-    @Column(name="IdCompra")
-    private Integer IdCompra;
+    @Column(name="IdProd")
+    private Integer IdProd;
 
     @Column(name="EnTaquilla")
     private boolean EnTaquilla;
@@ -35,18 +35,18 @@ public class Pedidos{
 
     public Pedidos() {}
 
-    public Pedidos(Integer IdCompra,Estado Estado)
+    public Pedidos(Integer IdProd,Estado Estado,boolean enTaquilla)
     {
-        this.IdCompra = IdCompra;
+        this.IdProd = IdProd;
         this.Estado=Estado;
-        this.EnTaquilla=false;
+        this.EnTaquilla=enTaquilla;
     }
 
     public int getIdPedido() {return IdPedido;}
     public void setIdPedido(int IdPedido) {this.IdPedido=IdPedido;}
 
-    public Integer getIdCompra() {return IdCompra;}
-    public void setIdCompra(Integer IdCompra) {this.IdCompra = IdCompra;}
+    public Integer getIdProd() {return IdProd;}
+    public void setIdProd(Integer IdCompra) {this.IdProd = IdCompra;}
 
     public boolean isEnTaquilla() {return EnTaquilla;}
     public void setEnTaquilla(boolean enTaquilla) {EnTaquilla = enTaquilla;}

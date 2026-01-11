@@ -124,50 +124,15 @@
                     <p style="margin-bottom:0; text-align: left;" th:text="${product.descripcion ?: 'El vendedor no ha añadido una descripción detallada para este producto.'}"></p>
                 </div>
 
-                <div th:if="${!isOwner}" class="purchase-options" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #eee;">
-                    
-                    <div style="margin-bottom:10px;">
-                        <label for="select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
-                        <select id="select-pago" onchange="toggleTruequeField()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                            <option value="Monedas" th:if="${product.pago.name() == 'Monedas' or product.pago.name() == 'Ambos'}">Monedas</option>
-                            <option value="Trueque" th:if="${product.pago.name() == 'Trueque' or product.pago.name() == 'Ambos'}">Trueque</option>
-                        </select>
-                    </div>
-
-                    <div id="trueque-field" style="display:none; margin-bottom:10px;">
-                        <label for="input-trueque-id" style="font-weight:bold; display:block; margin-bottom:5px; color:#E57200;">ID de tu producto para intercambio:</label>
-                        <input type="number" id="input-trueque-id" placeholder="Introduce el ID de tu producto" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                    </div>
-
-                    <div style="margin-bottom:10px;" 
-                        th:if="${product.tipo != null and #strings.toLowerCase(product.tipo) != 'servicio'}">
-                        
-                        <label for="select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Recepción:</label>
-                        
-                        <select id="select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                            <option value="enMano" 
-                                    th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos')}">
-                                En Mano
-                            </option>
-                            
-                            <option value="enTaquilla" 
-                                    th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enTaquilla' or product.recepcionAceptada.name() == 'Ambos')}">
-                                En Taquilla
-                            </option>
-                        </select>
-                    </div>
-
-                    <div th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="margin-bottom:10px;">
-                        <label for="input-horas" style="font-weight:bold; display:block; margin-bottom:5px;">Horas a contratar:</label>
-                        <input type="number" id="input-horas" value="1" min="1" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                    </div>
-                </div>
-
                 <div class="action-buttons">
-                    <button th:if="${!isOwner}" 
+                    <button th:if="${product.isDisponible and !isOwner}"
                             th:onclick="'comprarProducto(' + ${product.id} + ')'" 
                             class="btn-estilo">
-                        Confirmar Compra
+                        Comprar
+                    </button>
+
+                    <button class="btn-estilo" onclick="contactarVendedor()" style="margin-left: 10px; background-color: #2196F3;">
+                        Contactar 💬
                     </button>
 
                     <button onclick="window.history.back()" 
@@ -200,7 +165,7 @@
     <div id="modalCompra" class="modal-overlay">
         <div class="modal-content">
             <span class="close-modal" onclick="cerrarModalCompra()">&times;</span>
-            
+
             <div class="modal-header">
                 <h2>Confirmar Compra</h2>
                 <p>Por favor, configura los detalles de tu pedido.</p>
@@ -210,13 +175,13 @@
                 <input type="hidden" id="modal-product-id">
 
                 <div style="margin-bottom:10px;">
-                    <label for="select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
-                    <select id="select-pago" onchange="toggleTruequeField()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                        <option value="Monedas" 
+                    <label for="modal-select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
+                    <select id="modal-select-pago" onchange="toggleTruequeModal()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                        <option value="Monedas"
                                 th:if="${product.pago != null and (product.pago.name() == 'Monedas' or product.pago.name() == 'Ambos')}">
                             Monedas
                         </option>
-                        <option value="Trueque" 
+                        <option value="Trueque"
                                 th:if="${product.pago != null and (product.pago.name() == 'Trueque' or product.pago.name() == 'Ambos')}">
                             Trueque
                         </option>
@@ -228,16 +193,16 @@
                     <input type="number" id="modal-input-trueque-id" placeholder="Ej: 45" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
                 </div>
 
-                <div style="margin-bottom:10px;" 
-                    th:if="${product.tipo != null and #strings.toLowerCase(product.tipo) != 'servicio'}">
-                    
-                    <label for="select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Recepción:</label>
-                    <select id="select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
-                        <option value="enMano" 
+                <div style="margin-bottom:10px;"
+                     th:if="${product.tipo != null and #strings.toLowerCase(product.tipo) != 'servicio'}">
+
+                    <label for="modal-select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Recepción:</label>
+                    <select id="modal-select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                        <option value="enMano"
                                 th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos')}">
                             En Mano
                         </option>
-                        <option value="enTaquilla" 
+                        <option value="enTaquilla"
                                 th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enTaquilla' or product.recepcionAceptada.name() == 'Ambos')}">
                             En Taquilla
                         </option>
@@ -246,13 +211,12 @@
 
                 <div th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="margin-bottom:15px;">
                     <label for="modal-input-horas" style="font-weight:bold; display:block; margin-bottom:5px;">Horas a contratar:</label>
-                    
-                    <input type="number" id="modal-input-horas" value="1" min="1" 
-                        oninput="actualizarPrecioTotal()"
-                        style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                    <input type="number" id="modal-input-horas" value="1" min="1"
+                           oninput="actualizarPrecioTotal()"
+                           style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
                 </div>
 
-                <div style="margin-top: 15px; font-size: 1.2em; font-weight: bold; text-align: right; color: #00587C;">
+                <div id="modal-total-container" style="margin-top: 15px; font-size: 1.2em; font-weight: bold; text-align: right; color: #00587C;">
                     Total: <span id="precio-total-display" th:text="${product.precio}">0</span> Monedas
                 </div>
             </div>
@@ -289,6 +253,45 @@
             // Actualizamos el texto en pantalla si existe el elemento
             if (displayPrecio) {
                 displayPrecio.innerText = total;
+            }
+        }
+    </script>
+    <script th:inline="javascript">
+        const vendedorDNI = [[${product.uDNIVendedor}]];
+        const productoID = [[${product.id}]];
+
+        async function contactarVendedor() {
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dni: vendedorDNI,
+                        idProd: productoID
+                    })
+                });
+
+                if (response.ok) {
+                    // Caso 200 OK: Chat creado correctamente
+                    window.location.href = '/chat/';
+                } else {
+                    // Si hay error, leemos el JSON
+                    const data = await response.json();
+
+                    // Verificamos el mensaje específico que pediste
+                    if (data.error === "Ya existe un chat con estos usuarios y producto") {
+                        // Si ya existe, redirigimos igualmente a la lista de chats
+                        window.location.href = '/chat/';
+                    } else {
+                        // Cualquier otro error (ej: contactarse a sí mismo) lo mostramos
+                        alert("No se pudo iniciar el chat: " + data.error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error en la petición:', error);
+                alert("Hubo un error de conexión al intentar contactar.");
             }
         }
     </script>

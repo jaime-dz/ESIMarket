@@ -390,9 +390,9 @@
             area.innerHTML = '<div style="text-align:center; margin-top:20px;">Cargando...</div>';
 
             try {
-                // --- CAMBIO AQUI: POST ---
+
                 const response = await fetch(`/messages/${chatId}`, {
-                    method: 'POST', // <-- Solicitado: Fetch como POST
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
