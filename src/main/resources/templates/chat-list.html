@@ -324,60 +324,8 @@
     <script src="/js/common.js" type="module"></script>
     <script>
         let currentChatId = null;
-        let chatInterval = null;
-        let idsMensajesVistos = new Set();
 
-        async function actualizarChat() {
-            if (!currentChatId) return;
-
-            try {
-                const response = await fetch(`/chat/mensajes/${currentChatId}`);
-                if (response.ok) {
-                    const mensajes = await response.json();
-                    const area = document.getElementById('messages-area');
-                    const miDNI = "[[${#authentication.name}]]"; // Thymeleaf inyecta tu DNI aquí
-
-                    mensajes.forEach(msg => {
-                        // Si ya pintamos este mensaje, lo ignoramos
-                        if (idsMensajesVistos.has(msg.id)) return;
-
-                        // Añadimos el ID al set para no repetirlo
-                        idsMensajesVistos.add(msg.id);
-
-                        // Lógica de FECHAS (reutilizando tu lógica corregida)
-                        // Aquí podrías llamar a una función auxiliar para no repetir código,
-                        // pero por simplicidad, verificamos la fecha:
-                        const dividers = area.querySelectorAll('.date-divider span');
-                        const lastDivider = dividers.length > 0 ? dividers[dividers.length - 1] : null;
-                        const lastDateText = lastDivider ? lastDivider.textContent.trim() : '';
-                        
-                        // Nota: msg.fecha debería venir del servidor. Formateala como necesites.
-                        // Si es hoy, comparamos con "Hoy".
-                        
-                        // Determinar si soy YO o el OTRO
-                        // Asumiendo que msg.emisorDni o msg.usuario.dni es el campo
-                        const esMio = (msg.emisor === miDNI); // Ajusta 'msg.emisor' según tu JSON
-                        
-                        const timeString = new Date(msg.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-                        const htmlMsg = `
-                            <div class="message-bubble ${esMio ? 'sent' : 'received'}">
-                                <div class="msg-text">${msg.contenido}</div>
-                                <div class="msg-meta">
-                                    <span>${timeString}</span>
-                                </div>
-                            </div>
-                        `;
-                        
-                        area.insertAdjacentHTML('beforeend', htmlMsg);
-                        area.scrollTop = area.scrollHeight; // Bajar scroll
-                    });
-                }
-            } catch (e) {
-                console.error("Error actualizando chat:", e);
-            }
-        }
-
+        // 1. CARGAR LISTA DE CHATS
         async function cargarChats() {
             const container = document.getElementById("chats-list");
             try {
@@ -394,52 +342,30 @@
                     return;
                 }
 
-                container.innerHTML = chats.map(c => {
-                    const soyDueno = (c.isOwner === true || c.owner === true); 
-    
-                    // 2. Creamos el HTML de la etiqueta según el rol
-                    const etiquetaRol = soyDueno 
-                        ? '<span class="badge-rol rol-vendedor">Eres vendedor</span>' 
-                        : '<span class="badge-rol rol-comprador">Eres comprador</span>';
-
-                    // 3. Insertamos la etiqueta ${etiquetaRol} junto al nombre del producto
-                    return `
+                container.innerHTML = chats.map(c => `
                     <div class="chat-item" onclick="seleccionarChat(this, ${c.id}, '${c.nombreProducto}', '${c.nombreUsu} ${c.apellidosUsu}')">
                         <img class="chat-avatar" src="/Images/huevoverde.jpeg">
                         <div class="chat-info">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div style="display:flex; align-items:center; overflow:hidden;">
-                                    <span class="chat-name" style="margin-bottom:0;">${c.nombreProducto}</span>
-                                    ${etiquetaRol}
-                                </div>
-                                <span style="font-size:11px; color:#999; margin-left:5px;">📅</span>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span class="chat-name">${c.nombreProducto}</span>
+                                <span style="font-size:11px; color:#999;">📅</span>
                             </div>
                             <div class="chat-subtitle">
                                 ${c.nombreUsu} ${c.apellidosUsu}
                             </div>
                         </div>
                     </div>
-                    `;
-            }).join('');
+                `).join('');
 
             } catch (e) {
                 console.error(e);
-                container.innerHTML = '<div style="padding:20px; color:red;">No tienes ningún chat activo</div>';
+                container.innerHTML = '<div style="padding:20px; color:red;">Error al cargar chats</div>';
             }
         }
 
-        window.seleccionarChat = async function(element, id, producto, usuario) {
-            currentChatId = id;
-
-            document.getElementById('messages-area').innerHTML = ''; 
-            idsMensajesVistos.clear(); 
-
-            // 2. Cargamos mensajes inmediatamente (primera vez)
-            actualizarChat();
-
-            // 3. Iniciamos el intervalo (cada 3 segundos)
-            if (chatInterval) clearInterval(chatInterval); // Limpiar anterior si existe
-            chatInterval = setInterval(actualizarChat, 3000);
+        // 2. SELECCIONAR CHAT
+        window.seleccionarChat = async function(element, chatId, producto, usuario) {
+            currentChatId = chatId;
 
             document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
@@ -458,14 +384,15 @@
             await cargarMensajes(chatId);
         };
 
+        // 3. CARGAR MENSAJES (POST)
         async function cargarMensajes(chatId) {
             const area = document.getElementById('messages-area');
             area.innerHTML = '<div style="text-align:center; margin-top:20px;">Cargando...</div>';
 
             try {
-
+                // --- CAMBIO AQUI: POST ---
                 const response = await fetch(`/messages/${chatId}`, {
-                    method: 'POST',
+                    method: 'POST', // <-- Solicitado: Fetch como POST
                     headers: { 'Content-Type': 'application/json' }
                 });
 
@@ -507,6 +434,7 @@
             }
         }
 
+        // 4. ENVIAR MENSAJE (Optimizado)
         window.enviarMensaje = async function() {
             const input = document.getElementById('msg-input');
             const text = input.value.trim();
@@ -531,8 +459,11 @@
                     const timeString = now.getHours().toString().padStart(2, '0') + ':' +
                                        now.getMinutes().toString().padStart(2, '0');
 
+                    // Lógica de "Hoy"
                     const dividers = area.querySelectorAll('.date-divider span');
+                    // Seleccionamos manualmente el último de la lista
                     const lastDivider = dividers.length > 0 ? dividers[dividers.length - 1] : null;
+                    // Obtenemos el texto (usamos trim() por seguridad para quitar espacios extra)
                     const lastDateText = lastDivider ? lastDivider.innerText.trim() : '';
 
                     if (lastDateText !== 'Hoy') {
@@ -570,30 +501,32 @@
 
 
         window.cerrarChat = function() {
-            if (!currentChatId) return;
-            if (chatInterval) {
-                clearInterval(chatInterval);
-                chatInterval = null;
-            }
-            currentChatId = null;
-            idsMensajesVistos.clear();
+            if (!currentChatId) return; // Si no hay chat, no hacemos nada
 
+            currentChatId = null;
+
+            // 1. UI: Quitar selección de la lista (Barra izquierda)
             document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
 
+            // 2. UI: Ocultar interfaz de chat y mostrar estado vacío (Zona derecha)
             document.getElementById('chat-interface').classList.add('hidden');
             document.getElementById('empty-state').classList.remove('hidden');
 
+            // 3. UI Móvil: Ocultar la capa superior
             document.getElementById('main-area').classList.remove('active');
         };
 
+        // Escuchar tecla ESCAPE
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 cerrarChat();
             }
         });
 
+        // Mantenemos la referencia para el botón de móvil (por compatibilidad con tu HTML)
         window.cerrarChatMovil = window.cerrarChat;
 
+        // Inicialización
         document.addEventListener("DOMContentLoaded", cargarChats);
 
         document.addEventListener("DOMContentLoaded", cargarChats);
