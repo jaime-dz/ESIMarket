@@ -331,63 +331,50 @@
             if (!currentChatId) return;
 
             try {
-                console.log("Solicitando mensajes para chat ID:", currentChatId); // LOG DE CONTROL
+                const response = await fetch(`/chat/user`);
+                if (response.ok) {
+                    const mensajes = await response.json();
+                    const area = document.getElementById('messages-area');
+                    const miDNI = "[[${#authentication.name}]]"; // Thymeleaf inyecta tu DNI aquí
 
-                const response = await fetch(`/chat/mensajes/${currentChatId}`);
-                
-                if (!response.ok) {
-                    console.error("Error del servidor:", response.status);
-                    return;
-                }
+                    mensajes.forEach(msg => {
+                        // Si ya pintamos este mensaje, lo ignoramos
+                        if (idsMensajesVistos.has(msg.id)) return;
 
-                const mensajes = await response.json();
-                console.log("Mensajes recibidos:", mensajes); // LOG DE CONTROL
+                        // Añadimos el ID al set para no repetirlo
+                        idsMensajesVistos.add(msg.id);
 
-                const area = document.getElementById('messages-area');
-                // Asegúrate de que Thymeleaf renderiza esto correctamente. 
-                // Si falla, prueba a poner tu DNI 'a mano' para probar.
-                const miDNI = "[[${#authentication.name}]]"; 
+                        // Lógica de FECHAS (reutilizando tu lógica corregida)
+                        // Aquí podrías llamar a una función auxiliar para no repetir código,
+                        // pero por simplicidad, verificamos la fecha:
+                        const dividers = area.querySelectorAll('.date-divider span');
+                        const lastDivider = dividers.length > 0 ? dividers[dividers.length - 1] : null;
+                        const lastDateText = lastDivider ? lastDivider.textContent.trim() : '';
+                        
+                        // Nota: msg.fecha debería venir del servidor. Formateala como necesites.
+                        // Si es hoy, comparamos con "Hoy".
+                        
+                        // Determinar si soy YO o el OTRO
+                        // Asumiendo que msg.emisorDni o msg.usuario.dni es el campo
+                        const esMio = (msg.emisor === miDNI); // Ajusta 'msg.emisor' según tu JSON
+                        
+                        const timeString = new Date(msg.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-                mensajes.forEach(msg => {
-                    if (idsMensajesVistos.has(msg.id)) return;
-                    idsMensajesVistos.add(msg.id);
-
-                    // --- Lógica de Fecha (Tu código corregido) ---
-                    const dividers = area.querySelectorAll('.date-divider span');
-                    const lastDivider = dividers.length > 0 ? dividers[dividers.length - 1] : null;
-                    const lastDateText = lastDivider ? lastDivider.textContent.trim() : '';
-                    
-                    // Aquí puedes procesar msg.fecha para ver si es 'Hoy' o no.
-                    // Por simplicidad, asumimos que el servidor manda la fecha y tú decides si poner separador.
-
-                    // --- Renderizado del Mensaje ---
-                    // Comparamos el emisor que viene del DTO con miDNI
-                    const esMio = (msg.emisor === miDNI); 
-                    
-                    // Parseamos la hora simple desde el string de fecha
-                    let hora = "";
-                    try {
-                        // Intenta sacar la hora si el formato es ISO estándar
-                        hora = new Date(msg.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    } catch(e) {
-                        hora = "wait.."; // Fallback por si el formato de fecha es raro
-                    }
-
-                    const htmlMsg = `
-                        <div class="message-bubble ${esMio ? 'sent' : 'received'}">
-                            <div class="msg-text">${msg.contenido}</div>
-                            <div class="msg-meta">
-                                <span>${hora}</span>
+                        const htmlMsg = `
+                            <div class="message-bubble ${esMio ? 'sent' : 'received'}">
+                                <div class="msg-text">${msg.contenido}</div>
+                                <div class="msg-meta">
+                                    <span>${timeString}</span>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    
-                    area.insertAdjacentHTML('beforeend', htmlMsg);
-                    area.scrollTop = area.scrollHeight;
-                });
-
+                        `;
+                        
+                        area.insertAdjacentHTML('beforeend', htmlMsg);
+                        area.scrollTop = area.scrollHeight; // Bajar scroll
+                    });
+                }
             } catch (e) {
-                console.error("Error crítico en JS:", e);
+                console.error("Error actualizando chat:", e);
             }
         }
 
@@ -441,29 +428,34 @@
             }
         }
 
-        window.seleccionarChat = function(element, id, producto, usuario) {
-            // ... (Tu código de estilos para marcar activo el chat) ...
-            document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            
-            // UI
-            document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('chat-interface').classList.remove('hidden');
-            document.getElementById('chat-header-product').innerText = producto;
-            document.getElementById('chat-header-user').innerText = usuario;
-
+        window.seleccionarChat = async function(element, id, producto, usuario) {
             currentChatId = id;
-            
-            // 1. Limpieza
+
             document.getElementById('messages-area').innerHTML = ''; 
             idsMensajesVistos.clear(); 
 
-            // 2. Carga inicial
-            actualizarChat(); 
+            // 2. Cargamos mensajes inmediatamente (primera vez)
+            actualizarChat();
 
-            // 3. Polling (cada 2 segundos)
-            if (chatInterval) clearInterval(chatInterval);
-            chatInterval = setInterval(actualizarChat, 2000);
+            // 3. Iniciamos el intervalo (cada 3 segundos)
+            if (chatInterval) clearInterval(chatInterval); // Limpiar anterior si existe
+            chatInterval = setInterval(actualizarChat, 3000);
+
+            document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('header-title').innerText = producto;
+            document.getElementById('header-subtitle').innerText = usuario;
+
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('chat-interface').classList.remove('hidden');
+            document.getElementById('chat-interface').style.display = 'flex';
+
+            if(window.innerWidth <= 768) {
+                document.getElementById('main-area').classList.add('active');
+            }
+
+            await cargarMensajes(chatId);
         };
 
         async function cargarMensajes(chatId) {
