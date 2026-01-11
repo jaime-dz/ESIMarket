@@ -93,7 +93,7 @@ public class CompraService {
                 compraRepository.save(c);
 
                 if ( p.getTipo().equals("Objeto")){
-                    Pedidos pe = getPedidos(request, p, c);
+                    Pedidos pe = getPedidos(request, p);
                     pedidosRepository.save(pe);
 
                     uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
@@ -116,8 +116,8 @@ public class CompraService {
                 pT = productoRepository.findById(request.idProdTrueque()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
 
                 if ( pT.getTipo().equals("Objeto")){
-                    Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT, c);
-                    Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p, c);
+                    Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
+                    Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p);
                     pedidosRepository.save(peT);
                     pedidosRepository.save(pe);
                 }else if ( pT.getTipo().equals("Servicio") ){
@@ -145,18 +145,18 @@ public class CompraService {
 
     }
 
-    private Pedidos getPedidos(CompraRequest request, Producto p, Compra c) {
+    private Pedidos getPedidos(CompraRequest request, Producto p) {
         Pedidos pe = null;
 
         if ( request.recepcion() != p.getRecepcionAceptada() )
             throw new CannotCompletePurchaseError("Tipo de recepcion invalida");
         if(request.recepcion()==Producto.RecepcionAceptada.enTaquilla)
         {
-            pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar,true);
+            pe = new Pedidos(p.getID(),Pedidos.Estado.PorEntregar,true);
 
         }else if ( request.recepcion()==Producto.RecepcionAceptada.enMano){
 
-            pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar,false);
+            pe = new Pedidos(p.getID(),Pedidos.Estado.PorEntregar,false);
         }else throw new CannotCompletePurchaseError("Tipo de recepcion no encontrado");
 
         return pe;

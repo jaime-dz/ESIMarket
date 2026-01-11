@@ -44,9 +44,12 @@ public class PedidosService{
     
     public List<PedidosDTO> filtro_pedidos(String dni, FiltroPedRequest request){
 
-        StringBuilder sql = new StringBuilder("SELECT p.IdPedido, p.IdCompra, p.Estado,p.EnTaquilla AS enTaquilla,p.NumTaquilla AS NTaquilla, pr.uDNIVendedor, c.uDNIcomprador FROM pedido p ");
-        sql.append("JOIN compra c ON p.IdCompra = c.IdCompra ");
-        sql.append("JOIN producto pr ON c.IDproducto = pr.ID WHERE ( c.uDNIcomprador = ? OR pr.uDNIVendedor = ? )");
+        StringBuilder sql = new StringBuilder("SELECT p.IdPedido, p.IdProd, p.Estado, p.EnTaquilla AS enTaquilla,p.NumTaquilla AS NTaquilla ");
+        sql.append("FROM pedido p ");
+        sql.append("JOIN compra c ON (c.IDproducto = p.IdProd OR c.IdProdTrueque = p.IdProd) ");
+        sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
+        sql.append("WHERE (c.uDNIcomprador = ? OR pr.uDNIVendedor = ?) ");
+
         List<Object> params = new ArrayList<>();
 
         params.add(dni);
@@ -78,44 +81,52 @@ public class PedidosService{
         List<Pedidos> peds = jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Pedidos.class), params.toArray());
         List<PedidosDTO> PedidosDTOs = new ArrayList<>();
 
-        for( Pedidos p : peds)
-        {
-            Producto prod = productoRepository.findById(p.getIdProd()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
-            Compra c = compraRepository.findByIDProducto(p.getIdProd());
-            Usuario uC = usuarioRepository.findByid(c.getuDNIComprador());
-            Usuario uV = usuarioRepository.findByid(prod.getuDNI_Vendedor());
-            Integer NTaq = null;
-            String nombreComprador = "Anónimo";
-            String nombreVendedor = "Anónimo";
-            String nombreProd = "Desconocido";
-            boolean esComprador = false;
+        for (Pedidos p : peds) {
 
-            if (p.getNTaquilla() != null) {
-                NTaq=p.getNTaquilla();
+            System.out.println("-----------------------------------\n" + p.getIdProd());
+
+            Producto prodActual = productoRepository.findById(p.getIdProd())
+                    .orElseThrow(() -> new CannotCreateProductError("Producto no encontrado"));
+
+            Compra c = compraRepository.findByIDProductoOrIDProdTrueque(p.getIdProd(), p.getIdProd());
+
+            if (c == null) continue;
+
+            Usuario usuarioMainComprador = usuarioRepository.findByid(c.getuDNIComprador());
+
+            Producto prodPrincipal = productoRepository.findById(c.getIDProducto()).orElse(null);
+            Usuario usuarioMainVendedor = (prodPrincipal != null) ? usuarioRepository.findByid(prodPrincipal.getuDNI_Vendedor()) : null;
+
+            if (usuarioMainComprador == null || usuarioMainVendedor == null) continue;
+
+            String nombreCompradorFinal;
+            String nombreVendedorFinal;
+            String nombreProductoFinal = prodActual.getNombre();
+            Boolean esCompradorFinal;
+            Integer NTaq = (p.getNTaquilla() != null) ? p.getNTaquilla() : null;
+
+            if (prodActual.getID() == c.getIDProducto()) {
+                nombreCompradorFinal = usuarioMainComprador.getNombre();
+                nombreVendedorFinal = usuarioMainVendedor.getNombre();
+                esCompradorFinal = usuarioMainComprador.getId().equals(dni);
+
+            } else {
+
+                nombreCompradorFinal = usuarioMainVendedor.getNombre();
+                nombreVendedorFinal = usuarioMainComprador.getNombre();
+                esCompradorFinal = usuarioMainVendedor.getId().equals(dni);
             }
 
-            if ( c.getIDProdTrueque() != null ){
-                Producto prodT = productoRepository.findById(c.getIDProdTrueque()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
-
-                if ( prod.getID() == c.getIDProducto() ){
-
-                    nombreComprador = uC.getNombre();
-                    nombreVendedor = uV.getNombre();
-                    esComprador = c.getuDNIComprador().equals(dni);
-                    nombreProd = prod.getNombre();
-
-                }else if ( prod.getID() == c.getIDProdTrueque() ){
-
-                    nombreComprador = uV.getNombre();
-                    nombreVendedor = uC.getNombre();
-                    esComprador = !c.getuDNIComprador().equals(dni);
-                    nombreProd = prodT.getNombre();
-
-                }
-            }
-
-
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),nombreComprador,nombreVendedor,esComprador,nombreProd,NTaq,p.isEnTaquilla(),p.getEstado()));
+            PedidosDTOs.add(new PedidosDTO(
+                    p.getIdPedido(),
+                    nombreCompradorFinal,
+                    nombreVendedorFinal,
+                    esCompradorFinal,
+                    nombreProductoFinal,
+                    NTaq,
+                    p.isEnTaquilla(),
+                    p.getEstado()
+            ));
         }
 
         return PedidosDTOs;
@@ -161,7 +172,7 @@ public class PedidosService{
     public String entregarPedido(int IdPedido,int NTaquilla, String dni)
     {
         Pedidos ped = pedidosRepository.findById(IdPedido).orElseThrow(() -> new CannotCompleteActionError("Usuario no encontrado"));
-        Compra c = compraRepository.findByIDProducto(ped.getIdProd());
+        Compra c = compraRepository.findByIDProductoOrIDProdTrueque(ped.getIdProd(),ped.getIdProd());
         Producto p = productoRepository.findById(c.getIDProducto()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrada"));
         if ( !p.getuDNI_Vendedor().equals(dni) ) throw new CannotCompleteActionError("Debes ser propietario del producto para entregarlo");
         ped.setEstado(Pedidos.Estado.Entregado);
@@ -180,7 +191,7 @@ public class PedidosService{
     public String recogerPedido(int IdPedido, String dni )
     {
         Pedidos p = pedidosRepository.findById(IdPedido).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Compra c = compraRepository.findByIDProducto(p.getIdProd());
+        Compra c = compraRepository.findByIDProductoOrIDProdTrueque(p.getIdProd(),p.getIdProd());
         Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
 
         if ( !c.getuDNIComprador().equals(dni) ) throw new CannotCompleteActionError("Debes ser el comprador del producto para poder recogerlo");
