@@ -101,7 +101,7 @@ public class MensajeController
                     m.getId(),
                     m.getTexto(),
                     m.getuDNIremitente(),
-                    m.getDia(),
+                    variosService.calcularFechaAmigable(m.getFecha()),
                     m.getHoraMin(),
                     null // clientId no es necesario aquí
             );

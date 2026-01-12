@@ -5,6 +5,7 @@ import es.esimarket.backend.dtos.ChatDTO;
 import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.exceptions.CannotCreateChatError;
 import es.esimarket.backend.services.JwtService;
+import es.esimarket.backend.services.VariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,9 @@ public class ChatController
 {
     @Autowired
     private ChatRepository chatRepository;
+
+    @Autowired
+    private VariosService variosService;
 
     @Autowired
     private MensajeRepository mensajeRepository;
@@ -87,7 +91,7 @@ public class ChatController
                         m.getId(),
                         m.getTexto(),
                         m.getuDNIremitente(),     // Quién lo envió
-                        calcularFechaAmigable(m.getFecha()),      // Fecha
+                        variosService.calcularFechaAmigable(m.getFecha()),      // Fecha
                         m.getHoraMin(),  // Hora
                         null             // clientId (da igual para el historial)
                 ))
@@ -107,19 +111,5 @@ public class ChatController
         return ResponseEntity.ok(chatService.getChatsUsu(dni));
     }
 
-    private String calcularFechaAmigable(LocalDateTime fechaMensaje) {
-        LocalDate fecha = fechaMensaje.toLocalDate();
-        LocalDate hoy = LocalDate.now();
-
-        if (fecha.equals(hoy)) {
-            return "Hoy";
-        } else if (fecha.equals(hoy.minusDays(1))) {
-            return "Ayer";
-        } else {
-            // Devuelve formato dd/MM/yyyy
-            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return fecha.format(formatter);
-        }
-    }
     
 }
