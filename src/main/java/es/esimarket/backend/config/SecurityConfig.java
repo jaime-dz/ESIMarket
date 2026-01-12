@@ -36,46 +36,28 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests( req ->
-                        req.requestMatchers("/auth/**",
+                        req.requestMatchers("/auth/validate").authenticated()
+                                .requestMatchers("/",
+                                                     "/auth/**",
                                                      "/home/**",
-                                                     "/home/",
+                                                     "/products/filter",
+                                                     "/products/",
+                                                     "/error",
                                                      "/css/**",
                                                      "/js/**",
-                                                     "/Images/**")
+                                                     "/Images/**",
+                                                     "/*.pdf",
+                                                     "/*.ico",
+                                                     "/ws/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout -> logout.logoutUrl("/auth/logout")
-                        .addLogoutHandler((request, response, authentication) -> {
-                            final var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-                            logout(authHeader);
-                        })
-                        .logoutSuccessHandler(((request, response, authentication) ->
-                                SecurityContextHolder.clearContext())));
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-
-    private void logout(final String token) {
-        if ( token == null | !token.startsWith("Bearer ") ) {
-            throw new IllegalArgumentException("Token Invalido");
-        }
-
-        final String jwtToken = token.substring(7);
-        final Token foundToken = tokenRepository.findByToken(jwtToken);
-
-        if ( foundToken == null ) {
-            throw new IllegalArgumentException("Token invalido");
-        }
-
-        foundToken.setExpirado(true);
-        foundToken.setRevocado(true);
-        tokenRepository.save(foundToken);
     }
 
 

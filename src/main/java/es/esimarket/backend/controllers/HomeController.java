@@ -1,5 +1,17 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.exceptions.CannotCreateTokenError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
+import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.services.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,10 +20,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/home")
 public class HomeController {
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @GetMapping("/")
-    public String index() { return "index"; }
+    public String index()
+    {
+        return "index";
+    }
 
     @GetMapping("/about")
-    public String about() { return "about"; }
+    public String about(Model model)
+    {
+        return "about"; 
+    }
+
+    @GetMapping("/PrivacyAndPolicy")
+    public String privacyAndPolicy() { return "forward:/ESIMarket_Politica_Privacidad.pdf"; }
+
+    @GetMapping("/TermsAndConditions")
+    public String termsAndConditions() { return "forward:/ESIMarket_Terminos_y_Condiciones.pdf"; }
 
 }

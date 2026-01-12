@@ -1,33 +1,71 @@
 package es.esimarket.backend.entities;
-import es.esimarket.backend.entities.id.MensajeId;
 import jakarta.persistence.*;
+
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name="mensaje")
 public class Mensaje{
 
-    @EmbeddedId
-    private MensajeId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="IdMensaje")
+    private BigInteger id;
+
+    @Column(name= "IDChat", nullable = false)
+    private int IDChat;
+
+    @Column(name= "uDNIremitente", nullable = false)
+    private String uDNIremitente;
+
+    @Column(name = "FechaHora", nullable = false)
+    private LocalDateTime fechaHora;
 
     @Column(name= "Texto")
-    private String Texto;
+    private String texto;
 
     public Mensaje(){}
 
-    public Mensaje(int id_chat, String uDNI_rem, String fecha, String Texto){
-        this.id = new MensajeId(id_chat,uDNI_rem,fecha);
-        this.Texto = Texto;
+    public Mensaje(int id_chat, String uDNI_rem, LocalDateTime fecha, String texto){
+        this.IDChat = id_chat;
+        this.uDNIremitente = uDNI_rem;
+        this.fechaHora = fecha;
+        this.texto = texto;
     }
 
-    public int getIDChat(){return id.getIDChat();}
-    public void setIDChat(int IDChat) {id.setIDChat(IDChat); }
+    public BigInteger getId() {return id;}
 
-    public String getuDNIremitente(){return id.getuDNIremitente();}
-    public void setuDNIremitente(String uDNIremitente) {id.setuDNIremitente(uDNIremitente); }
+    public int getIDChat(){return IDChat;}
+    public void setIDChat(int IDChat) { this.IDChat = IDChat; }
 
-    public String getTexto(){return Texto;}
-    public void setTexto(String Texto) {this.Texto=Texto;}
+    public String getuDNIremitente(){return uDNIremitente;}
+    public void setuDNIremitente(String uDNIremitente) { this.uDNIremitente = uDNIremitente; }
 
-    public String getFechaHora(){return id.getFechaHora();}
-    public void setFechaHora(String FechaHora) {id.setFechaHora(FechaHora);}
+    public String getTexto(){return texto;}
+    public void setTexto(String texto) {this.texto=texto;}
+
+    public LocalDateTime getFecha(){ return fechaHora;}
+
+    public String getFechaHora(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return fechaHora.format(formato);
+    }
+
+    public String getFechaDia(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return fechaHora.format(formato);
+    }
+    
+    public String getDia(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd");
+        return fechaHora.format(formato);
+    }
+
+    public String getHoraMin(){
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("HH:mm");
+        return fechaHora.format(formato);
+    }
+    public void setFechaHora(LocalDateTime FechaHora) { this.fechaHora = FechaHora; }
 }

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Chats - ESI Market</title>
+
+    <link rel="stylesheet" href="/css/general_styles.css">
+    <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <style>
+        /* --- ESTILOS DE ESTRUCTURA (Layout Principal) --- */
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            overflow: hidden;
+        }
+
+        .chat-interface-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f2f5;
+        }
+
+        /* ========================================================= */
+        /* === ESTILOS NUEVOS Y MEJORADOS DE LA LISTA DE CHATS === */
+        /* ========================================================= */
+
+        .chat-sidebar {
+            width: 32%; /* Un poco más ancho para mejor lectura */
+            min-width: 320px;
+            max-width: 450px;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.02); /* Sombra sutil a la derecha */
+            z-index: 2;
+        }
+
+        .chat-sidebar-header {
+            padding: 20px;
+            background: #fff; /* Fondo blanco limpio */
+            color: #333;
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .chat-sidebar-header span {
+            color: #E57200; /* Naranja corporativo en el texto */
+        }
+
+        .chat-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 10px; /* Espacio alrededor de los items */
+        }
+
+        /* Scrollbar personalizada para la lista */
+        .chat-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .chat-list::-webkit-scrollbar-thumb {
+            background: #E57200;
+            border-radius: 10px;
+        }
+        .chat-list::-webkit-scrollbar-thumb:hover {
+            background: #cc6600;
+        }
+
+        /* Tarjeta de Chat Individual */
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 8px; /* Separación entre chats */
+            background-color: #fff;
+            border-radius: 12px; /* Bordes redondeados */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent; /* Para evitar saltos al hacer hover */
+        }
+
+        /* Hover Effect: Elevación sutil */
+        .chat-item:hover {
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Estado Activo (Chat seleccionado) */
+        .chat-item.active {
+            background: linear-gradient(90deg, rgba(229,114,0,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-left: 4px solid #E57200;
+            border-radius: 4px 12px 12px 4px; /* Ajuste del radio por el borde izquierdo */
+        }
+
+        .chat-item img {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #eee;
+            border: 2px solid #fff; /* Anillo blanco */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra en la foto */
+        }
+
+        .chat-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            overflow: hidden; /* Para que el texto no desborde */
+        }
+
+        .chat-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .chat-preview {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* Texto cuando no hay chats */
+        .empty-chats {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* ========================================================= */
+        /* === FIN ESTILOS LISTA DE CHATS ========================== */
+        /* ========================================================= */
+
+
+        /* --- Área Principal del Chat (Derecha) --- */
+        .chat-main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff; /* Fondo chat */
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 10px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            height: 70px; /* Un poco más alto */
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 1;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+
+            /* Fondo Liso y Limpio (Sin Cuadrícula) */
+            background-color: #f5f7fb;
+            background-image: none;
+
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message-left, .message-right {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            position: relative;
+            word-wrap: break-word;
+            font-size: 0.95em;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message-left {
+            align-self: flex-start;
+            background-color: #ffffff;
+            border-top-left-radius: 0;
+        }
+
+        .message-right {
+            align-self: flex-end;
+            background-color: #dcf8c6; /* Verde WhatsApp suave */
+            border-top-right-radius: 0;
+        }
+
+        .message-time {
+            font-size: 0.7em;
+            color: #999;
+            display: block;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .date-separator {
+            text-align: center;
+            font-size: 0.85em;
+            color: #888;
+            margin: 15px 0;
+            position: relative;
+            clear: both; /* Asegura que no se solape con globos flotantes */
+        }
+
+        /* Opcional: Líneas a los lados tipo WhatsApp */
+        .date-separator::before, .date-separator::after {
+            content: "";
+            display: inline-block;
+            width: 20%;
+            height: 1px;
+            background: #e0e0e0;
+            vertical-align: middle;
+            margin: 0 10px;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .chat-input-area input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #E57200;
+        }
+
+        .chat-input-area button {
+            background-color: #E57200;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(229, 114, 0, 0.3);
+        }
+
+        .chat-input-area button:hover {
+            background-color: #cc6600;
+        }
+
+        .no-chat-selected {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #888;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-sidebar {
+                width: 100%;
+                max-width: none;
+                border-right: none;
+            }
+            .chat-main {
+                display: none;
+                width: 100%;
+            }
+            .chat-main.active {
+                display: flex;
+                z-index: 10;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+            }
+            .chat-sidebar.hidden {
+                display: none;
+            }
+            .back-button {
+                display: block !important;
+                margin-right: 15px;
+                cursor: pointer;
+                font-size: 1.5em;
+                color: #E57200;
+            }
+        }
+
+        .back-button { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="sideMenu" class="sidebar user-view">
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+    <a href="/purchase/">Historial de compras</a>
+    <a href="/orders/">Lista de pedidos</a>
+    <a href="/service/">Lista de servicios</a>
+    <a href="/donations/">Donaciones</a>
+    <a href="/chat/">Chats</a>
+</div>
+<header class="menu-bar menu-superior">
+    <div class="header-left">
+        <div class="hamburger-icon user-view" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+        <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+        <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+    </div>
+
+    <nav class="header-center">
+        <ul>
+            <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+        </ul>
+    </nav>
+
+    <div class="header-right">
+
+        <div class="guest-view">
+            <a href="/auth/login">Iniciar sesión</a>
+            <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+        </div>
+
+        <div class="user-view" style="display: none;">
+
+            <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+
+            <div class="profile-container">
+                <div class="coins-info">
+                    <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                </div>
+                <img class="profile-avatar"
+                     th:data-id="${profile?.correo}"
+                     src="/Images/huevoverde.jpeg"
+                     alt="Perfil">
+
+                <div class="dropdown-content">
+                    <a href="/profile/">Mi Perfil</a>
+                    <a href="#" id="btn-logout">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</header>
+
+<main>
+    <div class="chat-interface-container">
+
+        <div class="chat-sidebar" id="chat-sidebar">
+            <div class="chat-sidebar-header">
+                <h3>Mis <span>Mensajes</span></h3>
+            </div>
+            <div class="chat-list" id="chat-list-container">
+                <div class="empty-chats">
+                    <img src="/Images/logo64.png" style="opacity:0.2; width:40px; margin-bottom:10px;"><br>
+                    Cargando conversaciones...
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-main" id="chat-main">
+
+            <div class="chat-header" id="chat-header" style="display:none;">
+                <div class="back-button" onclick="cerrarChatMovil()">←</div>
+                <img id="current-chat-img" src="" alt="" style="width:45px; height:45px; border-radius:50%; margin-right:15px; object-fit: cover; border: 1px solid #ddd;">
+                <div>
+                    <div id="current-chat-user" style="font-weight:bold; font-size:1.1em;">Usuario</div>
+                    <div id="current-chat-product" style="font-size:0.85em; color:#666;">Producto</div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-container">
+                <div class="no-chat-selected">
+                    <img src="/Images/logo64.png" style="opacity:0.5; margin-bottom:20px; filter: grayscale(100%);">
+                    <p style="font-size:1.2em; color:#aaa;">Selecciona un chat para comenzar</p>
+                </div>
+            </div>
+
+            <div class="chat-input-area" id="input-area" style="display:none;">
+                <input type="text" id="mensajeInput" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') enviarMensaje()">
+                <button onclick="enviarMensaje()">Enviar</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="menu-bar menu-inferior">
+    <ul>
+        <li><a th:href="@{/home/}">Inicio</a></li>
+        <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+        <li class="guest-view">
+            <a th:href="@{/auth/login}">Iniciar sesión</a>
+        </li>
+        <li class="guest-view">
+            <a th:href="@{/auth/signup}">Registrarse</a>
+        </li>
+
+        <li class="sn">
+            <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+            <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+        </li>
+    </ul>
+</footer>
+
+<script src="/js/common.js" type="module"></script>
+
+<script>
+    var stompClient = null;
+    var currentChatId = null;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        cargarListaChats();
+    });
+
+    function cargarListaChats() {
+        fetch('/chat/user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Error cargando chats");
+            return response.json();
+        })
+        .then(data => {
+            pintarListaChats(data);
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('chat-list-container').innerHTML =
+                '<div class="empty-chats">No tienes chats activos.<br>¡Busca un producto y contacta al vendedor!</div>';
+        });
+    }
+
+    function pintarListaChats(chats) {
+        const container = document.getElementById('chat-list-container');
+        container.innerHTML = '';
+
+        if (chats.length === 0) {
+            container.innerHTML = '<div class="empty-chats">No hay chats iniciados.</div>';
+            return;
+        }
+
+        chats.forEach(chat => {
+            const item = document.createElement('div');
+            item.className = 'chat-item';
+            item.id = 'chat-item-' + chat.id; // ID para manipular clases active
+            item.onclick = () => abrirChat(chat, item);
+
+            const imgUrl = chat.fotoProducto ? "data:image/jpeg;base64," + chat.fotoProducto : "/Images/logo64.png";
+
+            item.innerHTML = `
+                <img src="${imgUrl}" alt="Prod">
+                <div class="chat-info">
+                    <div class="chat-name">${chat.nombreProducto}</div>
+                    <div class="chat-preview">${chat.nombreUsu}</div>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function abrirChat(chat, element) {
+        currentChatId = chat.id;
+
+        // Gestionar clase active visualmente
+        document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+        if(element) element.classList.add('active');
+
+        if (window.innerWidth <= 768) {
+            document.getElementById('chat-sidebar').classList.add('hidden');
+            document.getElementById('chat-main').classList.add('active');
+        }
+
+        document.getElementById('chat-header').style.display = 'flex';
+        document.getElementById('input-area').style.display = 'flex';
+        document.getElementById('current-chat-user').innerText = chat.nombreUsu;
+        document.getElementById('current-chat-product').innerText = chat.nombreProducto;
+
+        const imgUrl = chat.fotoProducto ? "data:image/jpeg;base64," + chat.fotoProducto : "/Images/logo64.png";
+        document.getElementById('current-chat-img').src = imgUrl;
+
+        const msgContainer = document.getElementById('chat-container');
+        msgContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Cargando historial...</div>';
+
+        conectarSocket(chat.id);
+    }
+
+    function conectarSocket(chatId) {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, function(frame) {
+            // Suscripción al canal
+            stompClient.subscribe('/topic/messages/' + chatId, function(messageOutput) {
+                // Simplemente pasamos el mensaje a la función maestra y ella decide qué hacer
+                mostrarMensajes(JSON.parse(messageOutput.body));
+            });
+
+            // Pedir historial
+            stompClient.send("/app/chat.history", {}, JSON.stringify({'chatId': chatId}));
+        });
+    }
+
+    function enviarMensaje() {
+        const input = document.getElementById('mensajeInput');
+        const texto = input.value.trim();
+
+        if (texto && stompClient && currentChatId) {
+            agregarMensajeAlDOM(texto, true, true);
+
+            const msgObj = {
+                'chatId': currentChatId,
+                'message': texto,
+                'sender': currentUserDni,
+                'hour': new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(msgObj));
+            input.value = '';
+            scrollToBottom();
+        }
+    }
+
+    // Variable global para recordar la última fecha pintada (útil para el chat en vivo)
+    var ultimoDiaGlobal = "";
+
+    function mostrarMensajes(payload) {
+        const container = document.getElementById('chat-container');
+
+        // --- CASO 1: HISTORIAL ---
+        if (Array.isArray(payload)) {
+            container.innerHTML = '';
+            ultimoDiaGlobal = ""; // Reseteamos al cargar historial nuevo
+
+            if(payload.length === 0) {
+                 container.innerHTML = '<div style="text-align:center; margin-top:20px; color:#aaa;">No hay mensajes previos.</div>';
+            }
+
+            payload.forEach(msg => {
+                // LÓGICA DE SEPARADOR DE FECHA
+                // msg.day viene del backend como "Hoy", "Ayer", "12/05/2024"
+                if (msg.day !== ultimoDiaGlobal) {
+                    agregarSeparadorFecha(msg.day);
+                    ultimoDiaGlobal = msg.day; // Actualizamos la última fecha vista
+                }
+
+                var esMio = (msg.senderDNI === currentUserDni);
+                agregarMensajeAlDOM(msg, esMio, false);
+            });
+            scrollToBottom();
+        }
+
+        // --- CASO 2: TIEMPO REAL ---
+        else {
+            var msg = payload;
+
+            // Si es el primer mensaje del día en tiempo real (ej: cambio de día a medianoche o chat vacío)
+            // msg.day debería venir como "Hoy" desde el backend
+            if (msg.day && msg.day !== ultimoDiaGlobal) {
+                 agregarSeparadorFecha(msg.day);
+                 ultimoDiaGlobal = msg.day;
+            }
+
+            if (msg.senderDNI === currentUserDni) return;
+
+            agregarMensajeAlDOM(msg, false, false);
+            scrollToBottom();
+        }
+    }
+
+    function agregarSeparadorFecha(textoFecha) {
+        const div = document.createElement('div');
+        div.className = 'date-separator'; // Clase CSS que crearemos luego
+        div.innerText = textoFecha;
+
+        const container = document.getElementById('chat-container');
+        container.appendChild(div);
+    }
+
+    function agregarMensajeAlDOM(msgObjOrText, esMioForzado, esTemporal) {
+        let texto = "";
+        let hora = "";
+        let esMio = esMioForzado;
+
+        if (typeof msgObjOrText === 'string') {
+            texto = msgObjOrText;
+            hora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        } else {
+            texto = msgObjOrText.message;
+            hora = msgObjOrText.hour;
+        }
+
+        const div = document.createElement('div');
+        div.className = esMio ? 'message-right' : 'message-left';
+        div.innerHTML = `
+            ${texto}
+            <span class="message-time">${hora}</span>
+        `;
+
+        const container = document.getElementById('chat-container');
+        if(container.innerText.includes("Cargando") || container.innerText.includes("No hay mensajes")) {
+            container.innerHTML = '';
+        }
+        container.appendChild(div);
+    }
+
+    function scrollToBottom() {
+        const container = document.getElementById('chat-container');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    window.cerrarChatMovil = function() {
+        document.getElementById('chat-sidebar').classList.remove('hidden');
+        document.getElementById('chat-main').classList.remove('active');
+    };
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const currentUserDni = /*[[${#authentication.name}]]*/ 'anonimo';
+    /*]]>*/
+</script>
+</body>
+</html>

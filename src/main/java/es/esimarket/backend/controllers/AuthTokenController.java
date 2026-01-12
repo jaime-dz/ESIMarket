@@ -1,15 +1,24 @@
 package es.esimarket.backend.controllers;
-import es.esimarket.backend.controllers.autenticacion.LoginRequest;
-import es.esimarket.backend.controllers.autenticacion.RegisterRequest;
+import es.esimarket.backend.controllers.requests.LoginRequest;
+import es.esimarket.backend.controllers.requests.RegisterRequest;
 import es.esimarket.backend.controllers.autenticacion.TokenResponse;
-import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.dtos.UsuarioDTO;
+import es.esimarket.backend.exceptions.CannotCreateTokenError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
@@ -21,13 +30,14 @@ public class AuthTokenController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Value("${application.security.jwt.expiration}")
+    private long jwtExpiration;
+
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
+
     @Autowired
     private AuthService authService;
-
-    @GetMapping("/usuarios")
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
-        return ResponseEntity.ok(usuarioRepository.findAll());
-    }
 
     @GetMapping("/signup")
     public String signupG() { return "signup"; }
@@ -36,24 +46,87 @@ public class AuthTokenController {
     public String loginG() { return "login"; }
 
     @PostMapping("/signup")
-    public ResponseEntity<TokenResponse> signup(@RequestBody final RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public ResponseEntity<Void> signup(@RequestBody final RegisterRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError
     {
         final TokenResponse token = authService.registerUser(request);
-        return ResponseEntity.ok(token);
+
+        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration ,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", "true",jwtExpiration,false);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
+                .build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody final LoginRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public ResponseEntity<Void> login(@RequestBody final LoginRequest request) throws NoSuchAlgorithmException, InvalidKeySpecException, CannotCreateUserError
     {
         final TokenResponse token = authService.loginUser(request);
-        return ResponseEntity.ok(token);
+
+        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", "true",jwtExpiration,false);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
+                .build();
+
+    }
+
+    @DeleteMapping("/logout")
+    @ResponseBody
+    public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @CookieValue(name = "accessToken", required = false) String accessToken) throws  CannotCreateUserError, CannotCreateTokenError
+    {
+
+        authService.logout_user(refreshToken);
+
+        ResponseCookie jwtCookie = crearCookie("accessToken", "", 0,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", "", 0,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", null,0,false);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
+                .build();
+
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<Void> validarUsuario(){
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader)
+    public ResponseEntity<Void> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) throws CannotCreateTokenError
     {
-        final TokenResponse token = authService.refreshToken(authHeader);
-        return ResponseEntity.ok(token);
+        final TokenResponse token = authService.refreshToken(refreshToken);
+
+        ResponseCookie jwtCookie = crearCookie("accessToken", token.accessToken(), jwtExpiration,true);
+        ResponseCookie refreshCookie = crearCookie("refreshToken", token.refreshToken(), refreshExpiration,true);
+        ResponseCookie isLoggedIn = crearCookie("isLoggedIn", "true",jwtExpiration,false);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .header(HttpHeaders.SET_COOKIE,isLoggedIn.toString())
+                .build();
+
     }
 
+    private ResponseCookie crearCookie(String nombre, String valor, long duracion, boolean httponly) {
+        return ResponseCookie.from(nombre, valor)
+                .httpOnly(httponly) // Seguridad: JS no puede leerla
+                .secure(false)  // false para localhost, true para producción (HTTPS)
+                .path("/")
+                .maxAge(duracion / 1000) // Segundos
+                .sameSite("Strict")
+                .build();
+
+    }
 }

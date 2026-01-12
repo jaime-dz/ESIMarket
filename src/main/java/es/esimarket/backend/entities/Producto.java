@@ -1,14 +1,32 @@
 package es.esimarket.backend.entities;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.hibernate.sql.ast.tree.from.CorrelatedPluralTableGroup;
 
 @Entity
 @Table(name = "producto")
 public class Producto{
 
+    public enum estado{
+        Precintado,
+        Nuevo,
+        Casi_Nuevo,
+        Correcto,
+        Desgastado
+    }
+
+    public enum PagoAceptado{
+        Monedas,
+        Trueque,
+        Ambos
+    }
+
+    public enum RecepcionAceptada{
+        enMano,
+        enTaquilla
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID",nullable = false)
     private int ID;
 
@@ -16,7 +34,7 @@ public class Producto{
     private String uDNI_Vendedor;
 
     @Column(name="Precio")
-    private int Precio;
+    private Integer Precio;
 
     @Column(name="Descripcion")
     private String Descripcion;
@@ -27,14 +45,33 @@ public class Producto{
     @Column(name="Tipo")
     private String tipo;
 
+    @Column(name="Estado")
+    @Enumerated(EnumType.STRING)
+    private estado estado;
+
+    @Column(name="pagoAceptado")
+    @Enumerated(EnumType.STRING)
+    private PagoAceptado pagoAceptado;
+
+    @Column(name="recepcionAceptada")
+    @Enumerated(EnumType.STRING)
+    private RecepcionAceptada recepcionAceptada;
+
+    @Column(name="disponible")
+    private boolean disponible;
+
     public Producto(){}
 
-    public Producto( String uDNIVendedor, int Precio, String Descripcion, String Nombre, String tipo){
-        this.uDNI_Vendedor = uDNIVendedor;
-        this.Precio = Precio;
-        this.Descripcion = Descripcion;
-        this.Nombre = Nombre;
+    public Producto( String uDNI_Vendedor, Integer precio, String descripcion, String nombre, String tipo, estado estado, PagoAceptado pagoAceptado,RecepcionAceptada recepcionAceptada) {
+        this.uDNI_Vendedor = uDNI_Vendedor;
+        this.Precio = precio;
+        this.Descripcion = descripcion;
+        this.Nombre = nombre;
         this.tipo = tipo;
+        this.estado = estado;
+        this.pagoAceptado = pagoAceptado;
+        this.recepcionAceptada=recepcionAceptada;
+        this.disponible = true;
     }
 
     public int getID(){return ID;}
@@ -43,8 +80,8 @@ public class Producto{
     public String getuDNI_Vendedor(){return uDNI_Vendedor;}
     public void setuDNI_Vendedor(String uDNI_Vendedor){this.uDNI_Vendedor=uDNI_Vendedor;}
 
-    public int getPrecio(){return Precio;}
-    public void setPrecio(int Precio){this.Precio=Precio;}
+    public Integer getPrecio(){return Precio;}
+    public void setPrecio(Integer Precio){this.Precio=Precio;}
 
     public String getDescripcion(){return Descripcion;}
     public void setDescripcion(String Descripcion){this.Descripcion=Descripcion;}
@@ -54,5 +91,17 @@ public class Producto{
 
     public String getTipo(){return tipo;}
     public void setTipo(String tipo){this.tipo=tipo;}
+
+    public estado getEstado() {return estado;}
+    public void setEstado(estado estado) {this.estado = estado;}
+
+    public PagoAceptado getPagoAceptado() {return pagoAceptado;}
+    public void setPagoAceptado(PagoAceptado pagoAceptado) {this.pagoAceptado = pagoAceptado;}
+
+    public RecepcionAceptada getRecepcionAceptada() {return recepcionAceptada;}
+    public void setRecepcionAceptada(RecepcionAceptada recepcionAceptada) {this.recepcionAceptada=recepcionAceptada;}
+
+    public boolean isDisponible() {return disponible;}
+    public void setDisponible(boolean disponible) {this.disponible = disponible;}
 
 }

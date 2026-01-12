@@ -1,33 +1,78 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.controllers.requests.CompraRequest;
+import es.esimarket.backend.dtos.CompraDTO;
+import es.esimarket.backend.entities.Usuario;
+import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
+import es.esimarket.backend.exceptions.CannotCreateUserError;
+import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.services.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import es.esimarket.backend.services.CompraService;
 
+import java.util.HashMap;
 import java.util.List;
 
 import es.esimarket.backend.repositories.CompraRepository;
 import es.esimarket.backend.entities.Compra;
 
 @Controller
+@RequestMapping("/purchase")
 public class CompraController
 {
     @Autowired
-    public CompraRepository compraRepository;
+    private CompraRepository compraRepository;
 
     @Autowired
-    public CompraService compraService;
+    private JwtService jwtService;
 
-    @GetMapping("/compras")
-    public ResponseEntity<List<Compra>> getComprasUsuario(@RequestParam String u){
-        return ResponseEntity.ok(compraRepository.findByid_uDNIComprador(u));
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CompraService compraService;
+
+    @GetMapping("/")
+    public String getCompras()
+    {
+        return "purchase-history";
     }
 
-    @PostMapping("/compras")
-    public ResponseEntity<String> postCompra(@RequestParam String u, @RequestParam int idp)
+    @PostMapping("/user")
+    @ResponseBody
+    public ResponseEntity<List<CompraDTO>> getComprasUsuario()
     {
-        return compraService.HacerCompra(u, idp);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+        return ResponseEntity.ok(compraService.mostrar_compras_usu(dni));
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<HashMap<String,String>> postCompra( @RequestBody final CompraRequest Crequest)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String dni = auth.getName();
+
+        HashMap<String,String> response = new HashMap<>();
+        String respuestaService;
+        try {
+            respuestaService = compraService.HacerCompra(dni, Crequest);
+        }catch (RuntimeException e){
+            response.put("error", e.getMessage() );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        response.put("message",respuestaService);
+
+        return ResponseEntity.ok(response);
+
     }
 }

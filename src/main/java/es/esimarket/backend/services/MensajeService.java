@@ -1,20 +1,15 @@
 package es.esimarket.backend.services;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
-import es.esimarket.backend.entities.Usuario;
-import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.controllers.responses.MessageResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.repositories.MensajeRepository;
-import es.esimarket.backend.services.VariosService;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,14 +18,34 @@ public class MensajeService
     @Autowired
     private MensajeRepository mensajeRepository;
 
-    public ResponseEntity<String> CrearMensaje(int chat, String uDNI, String texto)
+    @Autowired
+    private VariosService variosService;
+
+    public Mensaje CrearMensaje(int chat, String uDNI, String texto, LocalDateTime Fecha)
     {
-        VariosService v = new VariosService();
-        Mensaje m = new Mensaje(chat,uDNI,v.ObtenerFecha(),texto);
+        Mensaje m = new Mensaje(chat,uDNI,Fecha,texto);
 
         mensajeRepository.save(m);
 
-        return ResponseEntity.ok("Mensaje añadido correctamente");
+        return m;
+    }
+
+    public List<MessageResponse>mostrar_mensajes(List<Mensaje> m , String dni){
+
+        List<MessageResponse> messagesRes = new ArrayList<>();
+        LocalDateTime fechaAct = variosService.ObtenerFecha();
+        LocalDateTime fechaAyer = fechaAct.minusDays(1);
+        String dia = null;
+
+        for ( Mensaje mess : m ){
+
+            if ( fechaAct.toLocalDate().equals(mess.getFecha().toLocalDate())) dia = "Hoy";
+            else if ( fechaAct.toLocalDate().equals(fechaAyer.toLocalDate())) dia = "Ayer";
+            else dia = mess.getFechaDia();
+            messagesRes.add(new MessageResponse(mess.getId(),mess.getTexto(),mess.getuDNIremitente(),dia,mess.getHoraMin(),null));
+        }
+
+        return messagesRes;
     }
 
     /*public ResponseEntity<List<Mensaje>> MostrarChat(int chat)
@@ -41,6 +56,7 @@ public class MensajeService
         
     }*/
 
+    /*
     public Boolean ContienePalabrasProhibidas(String txt)
     {
         List<String> PalabrasProhibidas = List.of("idiota", "imbecil", "imbécil", "estupido", "estupido", "tonto", "tarado", "bobo", "burro",
@@ -83,7 +99,7 @@ public class MensajeService
         return contiene;
     }
 
-
+    */
 
 
 }

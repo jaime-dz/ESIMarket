@@ -1,15 +1,12 @@
 package es.esimarket.backend.entities;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="donaciones")
 public class Donaciones {
 
     @Id
-    @Column(name="IDUsuario",nullable = false)
+    @Column(name="uDNI",nullable = false)
     private String IDUsuario;
 
     @Column(name="num")
