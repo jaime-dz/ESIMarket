@@ -457,6 +457,7 @@
 <script>
     var stompClient = null;
     var currentChatId = null;
+    var ultimoDiaGlobal = "";
 
     document.addEventListener("DOMContentLoaded", function() {
         cargarListaChats();
@@ -561,12 +562,24 @@
         const texto = input.value.trim();
 
         if (texto && stompClient && currentChatId) {
+
+            // --- NUEVO: GESTIÓN DE FECHA LOCAL ---
+            // Si es el primer mensaje que enviamos hoy, pintamos "Hoy" manualmente
+            // para que aparezca ANTES de nuestra burbuja.
+            if (ultimoDiaGlobal !== "Hoy") {
+                agregarSeparadorFecha("Hoy");
+                ultimoDiaGlobal = "Hoy";
+            }
+            // -------------------------------------
+
             agregarMensajeAlDOM(texto, true, true);
 
             const msgObj = {
                 'chatId': currentChatId,
                 'message': texto,
                 'sender': currentUserDni,
+                // Opcional: enviar 'day': 'Hoy' no es estrictamente necesario
+                // porque el backend lo recalcula, pero no hace daño.
                 'hour': new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
@@ -576,8 +589,7 @@
         }
     }
 
-    // Variable global para recordar la última fecha pintada (útil para el chat en vivo)
-    var ultimoDiaGlobal = "";
+
 
     function mostrarMensajes(payload) {
         const container = document.getElementById('chat-container');
