@@ -1387,9 +1387,17 @@ main {
 }
 
 .product-ref {
-    font-size: 0.9rem;      /* Un poco más pequeño que el texto normal */
-    color: #777;            /* Color gris para que sea sutil */
-    margin-top: 5px;        /* Separación del título */
-    margin-bottom: 10px;    /* Separación del precio/contenido */
-    font-family: monospace; /* Opcional: fuente tipo código para el ID */
+    display: block;          /* Asegura que ocupe su propia línea */
+    font-size: 0.9rem;       /* Tamaño discreto */
+    color: #666;             /* Color gris */
+    margin-top: 2px;         /* Pegadito al título */
+    margin-bottom: 0;
+    font-family: monospace;
+}
+
+/* Opcional: Si el título y el botón se desalinean, esto ayuda */
+.header-title-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
