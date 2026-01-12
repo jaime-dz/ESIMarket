@@ -560,27 +560,26 @@
     function enviarMensaje() {
         const input = document.getElementById('mensajeInput');
         const texto = input.value.trim();
-        const tempId = "temp-" + Date.now();
 
         if (texto && stompClient && currentChatId) {
+
+            // --- NUEVO: GESTIÓN DE FECHA LOCAL ---
+            // Si es el primer mensaje que enviamos hoy, pintamos "Hoy" manualmente
+            // para que aparezca ANTES de nuestra burbuja.
             if (ultimoDiaGlobal !== "Hoy") {
                 agregarSeparadorFecha("Hoy");
                 ultimoDiaGlobal = "Hoy";
             }
+            // -------------------------------------
 
-
-            const msgOptimista = {
-                message: texto,
-                hour: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-            };
-
-            agregarMensajeAlDOM(msgOptimista, true, tempId);
+            agregarMensajeAlDOM(texto, true, true);
 
             const msgObj = {
                 'chatId': currentChatId,
                 'message': texto,
                 'sender': currentUserDni,
-                'clientId': tempId,
+                // Opcional: enviar 'day': 'Hoy' no es estrictamente necesario
+                // porque el backend lo recalcula, pero no hace daño.
                 'hour': new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
@@ -595,52 +594,44 @@
     function mostrarMensajes(payload) {
         const container = document.getElementById('chat-container');
 
-        // CASO ARRAY (Historial): No cambia nada...
+        // --- CASO 1: HISTORIAL ---
         if (Array.isArray(payload)) {
-            // ... (tu código de historial igual, pero añade false al final del new MessageResponse en Java para el campo isError)
-            return;
-        }
+            container.innerHTML = '';
+            ultimoDiaGlobal = ""; // Reseteamos al cargar historial nuevo
 
-        // CASO OBJETO (Tiempo Real)
-        var msg = payload;
+            if(payload.length === 0) {
+                 container.innerHTML = '<div style="text-align:center; margin-top:20px; color:#aaa;">No hay mensajes previos.</div>';
+            }
 
-        // --- 1. GESTIÓN DE ERRORES (TOXICIDAD) ---
-        if (msg.isError) {
-            // Solo me importa si YO fui quien envió el mensaje tóxico
-            if (msg.senderDNI === currentUserDni) {
-
-                // 1. Buscamos el mensaje que pintamos "optimistamente"
-                const burbujaToxica = document.getElementById(msg.clientId);
-
-                // 2. Lo eliminamos del DOM (efecto visual de rechazo)
-                if (burbujaToxica) {
-                    burbujaToxica.style.opacity = '0.5'; // Opcional: efecto visual antes de borrar
-                    setTimeout(() => burbujaToxica.remove(), 500); // Lo borramos tras medio segundo
+            payload.forEach(msg => {
+                // LÓGICA DE SEPARADOR DE FECHA
+                // msg.day viene del backend como "Hoy", "Ayer", "12/05/2024"
+                if (msg.day !== ultimoDiaGlobal) {
+                    agregarSeparadorFecha(msg.day);
+                    ultimoDiaGlobal = msg.day; // Actualizamos la última fecha vista
                 }
 
-                // 3. Avisamos al usuario
-                alert("⚠️ " + msg.message);
-            }
-            // Si no soy yo, simplemente ignoro el mensaje de error.
-            return;
+                var esMio = (msg.senderDNI === currentUserDni);
+                agregarMensajeAlDOM(msg, esMio, false);
+            });
+            scrollToBottom();
         }
 
-        // --- 2. GESTIÓN NORMAL (Confirmación de mensaje correcto) ---
-        // Buscamos si existe el temporal
-        const burbujaTemporal = document.getElementById(msg.clientId);
+        // --- CASO 2: TIEMPO REAL ---
+        else {
+            var msg = payload;
 
-        if (burbujaTemporal) {
-            // Confirmado: Cambiamos ID temp por Real
-            burbujaTemporal.id = "msg-" + msg.id;
-
-            // Opcional: Poner un doble check ✔✔
-            // burbujaTemporal.querySelector('.message-time').innerText += " ✔";
-        } else {
-            // Es un mensaje nuevo de la otra persona
-            if (msg.senderDNI !== currentUserDni) {
-                 agregarMensajeAlDOM(msg, false, false);
-                 scrollToBottom();
+            // Si es el primer mensaje del día en tiempo real (ej: cambio de día a medianoche o chat vacío)
+            // msg.day debería venir como "Hoy" desde el backend
+            if (msg.day && msg.day !== ultimoDiaGlobal) {
+                 agregarSeparadorFecha(msg.day);
+                 ultimoDiaGlobal = msg.day;
             }
+
+            if (msg.senderDNI === currentUserDni) return;
+
+            agregarMensajeAlDOM(msg, false, false);
+            scrollToBottom();
         }
     }
 
@@ -653,7 +644,7 @@
         container.appendChild(div);
     }
 
-    function agregarMensajeAlDOM(msgObjOrText, esMioForzado, idElemento) {
+    function agregarMensajeAlDOM(msgObjOrText, esMioForzado, esTemporal) {
         let texto = "";
         let hora = "";
         let esMio = esMioForzado;
@@ -667,12 +658,6 @@
         }
 
         const div = document.createElement('div');
-
-        // Asignamos el ID (ya sea "temp-123" o "msg-55") al HTML
-        if (idElemento && typeof idElemento === 'string') {
-            div.id = idElemento;
-        }
-
         div.className = esMio ? 'message-right' : 'message-left';
         div.innerHTML = `
             ${texto}
