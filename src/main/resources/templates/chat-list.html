@@ -620,7 +620,7 @@
                     ultimoDiaGlobal = msg.day; // Actualizamos la última fecha vista
                 }
 
-                var esMio = (msg.senderDNI === currentUserDni);
+                var esMio = (msg.senderID === currentUserDni);
                 agregarMensajeAlDOM(msg, esMio, false);
             });
             scrollToBottom();
@@ -628,7 +628,7 @@
         }else {
 
             var msg = payload;
-            const esMio = msg.senderDNI === currentUserDni;
+            const esMio = msg.senderID === currentUserDni;
 
             // Si es el primer mensaje del día en tiempo real (ej: cambio de día a medianoche o chat vacío)
             // msg.day debería venir como "Hoy" desde el backend
