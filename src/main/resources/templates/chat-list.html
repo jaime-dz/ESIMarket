@@ -175,6 +175,33 @@
             flex-direction: column;
             background-color: #ffffff; /* Fondo chat */
             position: relative;
+
+            position: relative;
+            z-index: 1;
+        }
+
+         .chat-main::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            /* Ruta de tu imagen */
+            background-image: url('/Images/logo64.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 150px; /* Ajusta el tamaño que quieras para el logo */
+
+            /* Control de transparencia (0.1 es muy sutil, 0.3 se nota más) */
+            opacity: 0.3;
+
+            /* Asegura que el logo esté detrás de los mensajes */
+            z-index: -1;
+
+            /* Evita que el logo interfiera con el click o scroll */
+            pointer-events: none;
         }
 
         .chat-header {
@@ -420,7 +447,7 @@
 
             <div class="chat-messages" id="chat-container">
                 <div class="no-chat-selected">
-                    <img src="/Images/logo64.png" style="opacity:0.5; margin-bottom:20px; filter: grayscale(100%);">
+                    <img src="/Images/logo64.png" style="opacity:0.5; margin-bottom:20px;">
                     <p style="font-size:1.2em; color:#aaa;">Selecciona un chat para comenzar</p>
                 </div>
             </div>
@@ -463,6 +490,12 @@
         cargarListaChats();
     });
 
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            cerrarChat();
+        }
+    });
+
     function cargarListaChats() {
         fetch('/chat/user', {
             method: 'POST',
@@ -497,7 +530,7 @@
             item.id = 'chat-item-' + chat.id; // ID para manipular clases active
             item.onclick = () => abrirChat(chat, item);
 
-            const imgUrl = chat.fotoProducto ? "data:image/jpeg;base64," + chat.fotoProducto : "/Images/logo64.png";
+            const imgUrl = chat.foto ? "data:image/jpeg;base64," + chat.foto : "/Images/logo64.png";
 
             item.innerHTML = `
                 <img src="${imgUrl}" alt="Prod">
@@ -527,13 +560,47 @@
         document.getElementById('current-chat-user').innerText = chat.nombreUsu;
         document.getElementById('current-chat-product').innerText = chat.nombreProducto;
 
-        const imgUrl = chat.fotoProducto ? "data:image/jpeg;base64," + chat.fotoProducto : "/Images/logo64.png";
+        const imgUrl = chat.foto ? "data:image/jpeg;base64," + chat.foto : "/Images/logo64.png";
         document.getElementById('current-chat-img').src = imgUrl;
 
         const msgContainer = document.getElementById('chat-container');
         msgContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Cargando historial...</div>';
 
         conectarSocket(chat.id);
+    }
+
+    function cerrarChat() {
+        // 1. DESCONECTAR SOCKET (Importante para liberar memoria)
+        if (stompClient !== null && stompClient.connected) {
+            stompClient.disconnect(() => {
+                console.log("Conexión de chat cerrada.");
+            });
+        }
+
+        // 2. RESET DE VARIABLES
+        currentChatId = null;
+
+        // 3. CAMBIO VISUAL (Ocultar lo que abrirChat mostró)
+        document.getElementById('chat-header').style.display = 'none';
+        document.getElementById('input-area').style.display = 'none';
+
+
+        const msgContainer = document.getElementById('chat-container');
+        msgContainer.innerHTML = `
+            <div class="no-chat-selected">
+                    <img src="/Images/logo64.png" style="opacity:0.5; margin-bottom:20px;">
+                    <p style="font-size:1.2em; color:#aaa;">Selecciona un chat para comenzar</p>
+            </div>
+        `;
+
+
+        if (window.innerWidth <= 768) {
+            document.getElementById('chat-sidebar').classList.remove('hidden');
+            document.getElementById('chat-main').classList.remove('active');
+        }
+
+
+        document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
     }
 
     function conectarSocket(chatId) {
