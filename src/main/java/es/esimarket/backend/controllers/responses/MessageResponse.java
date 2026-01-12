@@ -7,6 +7,7 @@ public record MessageResponse(
         String senderDNI,
         String day,
         String hour,
-        String clientId
+        String clientId,
+        boolean isToxic
 )
 {}

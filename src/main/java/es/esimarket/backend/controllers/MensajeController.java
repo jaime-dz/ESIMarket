@@ -75,27 +75,37 @@ public class MensajeController
             Integer chatId = Integer.parseInt(String.valueOf(payload.get("chatId")));
             String texto = payload.get("message");
             String dni = payload.get("sender");
+            String clientId = payload.get("clientId");
 
             String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
 
-            /*
             String respuestaIA = null;
             try {
-                respuestaIA = ollamaService.isToxic(prompt + Mrequest.Texto());
+                respuestaIA = ollamaService.isToxic(prompt + texto);
             } catch (CannotDetermineIfToxicError e) {
-                response.put("error", e.getMessage() );
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                respuestaIA = "false";
             }
 
             boolean isToxic = Boolean.parseBoolean(respuestaIA);
-
-            if ( isToxic ){
-                response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-            */
             LocalDateTime FechaAct = variosService.ObtenerFecha();
-            Mensaje m  = mensajeService.CrearMensaje(chatId,dni, texto, FechaAct);
+
+            if (isToxic) {
+                // Preparamos respuesta de error (ID null da igual aquí porque se va a borrar)
+                MessageResponse respuestaError = new MessageResponse(
+                        null,
+                        "Mensaje eliminado por toxicidad.",
+                        dni,
+                        variosService.calcularFechaAmigable(FechaAct),
+                        payload.get("hour"),
+                        clientId,
+                        true
+                );
+
+                messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuestaError);
+                return;
+            }
+
+            Mensaje m  = mensajeService.CrearMensaje(chatId, dni, texto, FechaAct);
 
             MessageResponse respuesta = new MessageResponse(
                     m.getId(),
@@ -103,7 +113,8 @@ public class MensajeController
                     m.getuDNIremitente(),
                     variosService.calcularFechaAmigable(m.getFecha()),
                     m.getHoraMin(),
-                    null // clientId no es necesario aquí
+                    clientId,
+                    false
             );
 
             messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuesta);
