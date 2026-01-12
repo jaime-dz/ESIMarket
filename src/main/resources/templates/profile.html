@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Profile</title>
+        <title>Perfil</title>
         <link rel="stylesheet" href="/css/general_styles.css">
         <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
     </head>
@@ -169,7 +169,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = '/auth/logout'; 
+                        window.location.href = '/home/'; 
                     } else {
                         alert("Hubo un error al intentar eliminar el perfil.");
                     }

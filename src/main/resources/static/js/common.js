@@ -261,18 +261,26 @@ export function displayProductsItems(products, container) {
         } else {
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
         }
+
         const sufijoPrecio = esServicio ? '/h' : '';
 
-        const htmlEstado = (!esServicio && item.estado) 
-            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>` 
-            : ''; 
+        // --- LÓGICA DE PRECIO MODIFICADA ---
+        // Solo generamos el HTML si el precio NO es null ni undefined.
+        // Usamos !== null para permitir que el precio sea 0.
+        const htmlPrecio = (item.precio !== null && item.precio !== undefined)
+            ? `<p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>`
+            : '';
+
+        const htmlEstado = (!esServicio && item.estado)
+            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>`
+            : '';
 
         return `
             <div class="product-card" data-category="${item.tipo}" data-seller="${item.nombreVendedor}">
                 <img src="${imagenFinal}" alt="${item.nombre}" class="product-image">
                 <h4 class="product-name">${item.nombre}</h4>
-                <p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>
-                ${htmlEstado}
+
+                ${htmlPrecio} ${htmlEstado}
                 <p class="product-seller">Vendido por: ${item.nombreVendedor}</p>
                 <a href="/products/view/${item.id}" class="btn-detail" style="display:block; text-align:center; margin-top:10px; background:#E57200; color:white; padding:5px; text-decoration:none; border-radius:5px;">
                     Ver detalle
@@ -408,6 +416,13 @@ function renderizarListaPedidos(pedidos, container) {
 }
 
 
+
+
+window.comprarProducto = function(idProducto) {
+    abrirModalCompra(idProducto);
+};
+
+
 window.toggleTruequeField = function() {
     const select = document.getElementById('select-pago');
     const field = document.getElementById('trueque-field');
@@ -421,61 +436,6 @@ window.toggleTruequeField = function() {
         }
     }
 };
-
-window.comprarProducto = async function(idProducto) {
-    const pagoSelect = document.getElementById('select-pago');
-    const recepcionSelect = document.getElementById('select-recepcion');
-    const horasInput = document.getElementById('input-horas');
-    const truequeInput = document.getElementById('input-trueque-id');
-
-    const tipoPago = pagoSelect ? pagoSelect.value : "Monedas";
-    const recepcion = recepcionSelect ? recepcionSelect.value : "enMano";
-    
-    const horas = horasInput ? parseInt(horasInput.value) : null;
-    
-    let idProdTrueque = null;
-    if (tipoPago === 'Trueque' && truequeInput) {
-        if (!truequeInput.value) {
-            alert("Por favor, introduce el ID del producto que ofreces para el trueque.");
-            return;
-        }
-        idProdTrueque = parseInt(truequeInput.value);
-    }
-
-    if (!confirm("¿Estás seguro de que deseas realizar esta compra?")) {
-        return;
-    }
-
-    const payload = {
-        idProd: idProducto,
-        tipoPago: tipoPago,
-        recepcion: recepcion,
-        horas: horas,
-        idProdTrueque: idProdTrueque
-    };
-
-    try {
-        const response = await fetch(`/purchase/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-            alert("¡Compra realizada con éxito!");
-            window.location.href = "/home/";
-        } else {
-            const errorText = await response.text();
-            alert("Error al realizar la compra: " + (errorText || "Inténtalo de nuevo."));
-        }
-    } catch (error) {
-        console.error("Error de conexión:", error);
-        alert("Error de conexión con el servidor.");
-    }
-};
-
 
 window.abrirModalCompra = function(idProducto) {
     const modal = document.getElementById('modalCompra');
@@ -502,12 +462,15 @@ window.cerrarModalCompra = function() {
 window.toggleTruequeModal = function() {
     const select = document.getElementById('modal-select-pago');
     const field = document.getElementById('modal-trueque-field');
-    
-    if (select && field) {
+    const totalContainer = document.getElementById('modal-total-container');
+
+    if (select) {
         if (select.value === 'Trueque') {
-            field.style.display = 'block';
+            if (field) field.style.display = 'block';
+            if (totalContainer) totalContainer.style.display = 'none';
         } else {
-            field.style.display = 'none';
+            if (field) field.style.display = 'none';
+            if (totalContainer) totalContainer.style.display = 'block';
         }
     }
 };
@@ -518,13 +481,17 @@ window.enviarCompra = async function() {
     btnConfirmar.innerText = "Procesando...";
     btnConfirmar.disabled = true;
 
-    const inputPago = document.getElementById('select-pago');
-    const inputRecepcion = document.getElementById('select-recepcion');
+    const inputPago = document.getElementById('modal-select-pago');
+    const inputRecepcion = document.getElementById('modal-select-recepcion');
     const inputHoras = document.getElementById('modal-input-horas');
-    const idProducto = document.getElementById('btn-comprar').getAttribute('data-id');
 
+    const inputIdProd = document.getElementById('modal-product-id');
+
+    const inputTruequeId = document.getElementById('modal-input-trueque-id');
+
+    const idProducto = inputIdProd ? inputIdProd.value : null;
     const tipoPago = inputPago ? inputPago.value : null;
-    
+
     let recepcion = null;
     if (inputRecepcion && inputRecepcion.value !== "") {
         recepcion = inputRecepcion.value;
@@ -533,12 +500,17 @@ window.enviarCompra = async function() {
     let horas = inputHoras ? parseInt(inputHoras.value) : 1;
     if (isNaN(horas) || horas < 1) horas = 1;
 
+    let idProdTrueque = null;
+    if (tipoPago === 'Trueque' && inputTruequeId && inputTruequeId.value) {
+        idProdTrueque = parseInt(inputTruequeId.value);
+    }
+
     const payload = {
         idProd: parseInt(idProducto),
         tipoPago: tipoPago,
         recepcion: recepcion,
         horas: horas,
-        idProdTrueque: null 
+        idProdTrueque: idProdTrueque
     };
 
     try {
@@ -553,10 +525,10 @@ window.enviarCompra = async function() {
             window.location.href = "/home/";
         } else {
             let mensajeUsuario = "No se pudo completar la compra.";
-            
-            if (response.status === 400) mensajeUsuario = "Error en los datos (400). Revisa el método de pago.";
-            if (response.status === 500) mensajeUsuario = "Error interno del servidor (500).";
-            
+            try {
+                const errorText = await response.text();
+                if(errorText) mensajeUsuario = "Error: " + errorText;
+            } catch(e) {}
             alert(mensajeUsuario);
         }
     } catch (error) {

@@ -15,38 +15,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const formData = new FormData(editForm);
             const datosParaEnviar = {};
-            let hayCambios = false;
 
             formData.forEach((value, key) => {
-                if (value && value.trim() !== "") {
+                if (!value || value.trim() === "") {
+                    datosParaEnviar[key] = null;
+                } else {
                     datosParaEnviar[key] = value.trim();
-                    hayCambios = true;
                 }
             });
 
-            if (!hayCambios) {
-                alert("No has introducido ningún cambio.");
-                return;
-            }
+            console.log("Enviando:", datosParaEnviar);
 
             try {
                 const respuesta = await fetch('/profile/edit', {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datosParaEnviar)
                 });
-
+                
                 if (respuesta.ok) {
                     window.location.href = "/profile/";
                 } else {
-                    alert("Error al actualizar el perfil. Inténtalo de nuevo.");
+                    alert("Error al actualizar");
                 }
-
             } catch (error) {
-                console.error("Error de conexión:", error);
-                alert("Error de conexión con el servidor.");
+                console.error(error);
             }
         });
     }

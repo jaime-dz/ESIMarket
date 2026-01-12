@@ -65,21 +65,21 @@
             </div>
             <main>
                 <h1>Editar Perfil</h1>
-                <div id="profile-edit" class="form-container">
+                <div id="profile-edit" action="/profile/edit" class="form-container">
                     <form id="edit-form" method="PUT">
                         <div class="nombre">
                             <label for="nombre">Nombre</label><br>
-                            <input id="nombre" type="text" name="nombre" th:placeholder="${profile.nombre}">
+                            <input id="nombre" type="text" name="nombre" th:value="${profile.nombre}">
                         </div>
                         <br>
                         <div class="apellidos">
                             <label for="apellidos">Apellidos</label><br>
-                            <input id="apellidos" type="text" name="apellidos" th:placeholder="${profile.apellidos}">
+                            <input id="apellidos" type="text" name="apellidos" th:value="${profile.apellidos}">
                         </div>
                         <br>
                         <div class="correo">
                             <label for="correo">Correo electrónico</label><br>
-                            <input autofocus id="correo" type="email" name="email" th:placeholder="${profile.correo}">
+                            <input autofocus id="correo" type="email" name="email" th:value="${profile.correo}">
                         </div>
                         <br>
                         <div class="carrera">

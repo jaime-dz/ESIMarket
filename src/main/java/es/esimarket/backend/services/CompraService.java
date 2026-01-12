@@ -5,14 +5,11 @@ import es.esimarket.backend.dtos.ProductoDTO;
 import es.esimarket.backend.entities.*;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
 import es.esimarket.backend.exceptions.CannotCreateProductError;
-import es.esimarket.backend.repositories.ProductoRepository;
-import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import es.esimarket.backend.repositories.CompraRepository;
-import es.esimarket.backend.repositories.PedidosRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -34,6 +31,9 @@ public class CompraService {
     private ServicioService servicioService;
 
     @Autowired
+    private ServicioRepository servicioRepository;
+
+    @Autowired
     private CompraRepository compraRepository;
 
     @Autowired
@@ -49,8 +49,8 @@ public class CompraService {
             Producto pC = productoRepository.findByID(c.getIDProducto());
 
             String nombreTrueque = null;
-            if (c.getIdProdTrueque() != null) {
-                Producto pT = productoRepository.findByID(c.getIdProdTrueque());
+            if (c.getIDProdTrueque() != null) {
+                Producto pT = productoRepository.findByID(c.getIDProdTrueque());
                 if (pT != null) {
                     nombreTrueque = pT.getNombre();
                 }
@@ -83,41 +83,72 @@ public class CompraService {
                 throw new CannotCompletePurchaseError("No puedes comprar tu propio producto ;)");
             }
 
-            if ( request.tipoPago() == Producto.PagoAceptado.Monedas){
+            if ( request.tipoPago() == Producto.PagoAceptado.Monedas) {
 
-                if ( !UsuPuedeHacerCompra(uComprador,p) ) {
+                if (!UsuPuedeHacerCompra(uComprador, p)) {
                     throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
                 }
 
-                c = new Compra(uDNI,request.idProd(),FechaAct,request.recepcion(),request.tipoPago());
+                c = new Compra(uDNI, request.idProd(), FechaAct, request.recepcion(), request.tipoPago());
+                compraRepository.save(c);
 
+                if (p.getTipo().equals("Objeto")) {
+                    Pedidos pe = getPedidos(request, p);
+                    pedidosRepository.save(pe);
+
+                    uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() - p.getPrecio());
+                    uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() + p.getPrecio());
+                } else if (p.getTipo().equals("Servicio")) {
+
+                    Servicio s = servicioService.CrearServicioPendiente(p.getID(), uComprador.getId());
+                    servicioRepository.save(s);
+
+                    uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() - (p.getPrecio() * request.horas()));
+                    uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() + (p.getPrecio() * request.horas()));
+
+                } else throw new CannotCompletePurchaseError("Tipo de producto invalido");
 
             }else if ( request.tipoPago() == Producto.PagoAceptado.Trueque ){
 
                 c = new Compra(uDNI,request.idProd(),FechaAct,request.recepcion(),request.tipoPago(), request.idProdTrueque());
+                compraRepository.save(c);
 
                 pT = productoRepository.findById(request.idProdTrueque()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
 
+                if ( pT.getTipo().equals("Objeto")){
+                    if (p.getTipo().equals("Objeto")) {
+                        Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
+                        Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p);
+                        pedidosRepository.save(peT);
+                        pedidosRepository.save(pe);
+                    }else{
+                        Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
+                        Servicio s = servicioService.CrearServicioPendiente(p.getID(),pT.getuDNI_Vendedor());
+                        pedidosRepository.save(peT);
+                        servicioRepository.save(s);
+                    }
 
-            }else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
+                }else if ( pT.getTipo().equals("Servicio") ){
+                    if (p.getTipo().equals("Servicio")) {
+                        Servicio s = servicioService.CrearServicioPendiente(p.getID(),pT.getuDNI_Vendedor());
+                        Servicio sT = servicioService.CrearServicioPendiente(pT.getID(),p.getuDNI_Vendedor());
+                        servicioRepository.save(s);
+                        servicioRepository.save(sT);
+                    }else{
+                        Servicio sT = servicioService.CrearServicioPendiente(pT.getID(),p.getuDNI_Vendedor());
+                        Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p);
+                        pedidosRepository.save(pe);
+                        servicioRepository.save(sT);
+                    }
+                }else throw new CannotCompletePurchaseError("Tipo prodcuto invalido");
 
-            if ( p.getTipo().equals("Objeto")){
-                Pedidos pe = getPedidos(request, p, c);
-                pedidosRepository.save(pe);
-
-                uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
-                uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
-            }else if ( p.getTipo().equals("Servicio")){
-
-                compraRepository.save(c);
-                servicioService.CrearServicioPendiente(p.getID(),uComprador.getId());
-
-                uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  (p.getPrecio()*request.horas()));
-                uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  (p.getPrecio()*request.horas()));
-            }else throw new CannotCompletePurchaseError("Tipo de producto invalido");
+            } else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
 
             p.setDisponible(false);
-            if ( pT != null ) pT.setDisponible(false);
+            if ( pT != null ) {
+                pT.setDisponible(false);
+                productoRepository.save(pT);
+            }
             productoRepository.save(p);
 
             usuarioRepository.save(uComprador);
@@ -130,22 +161,21 @@ public class CompraService {
 
     }
 
-    private Pedidos getPedidos(CompraRequest request, Producto p, Compra c) {
+    private Pedidos getPedidos(CompraRequest request, Producto p) {
         Pedidos pe = null;
+
+        System.out.println("----------------------------------------------------\n"+ request.idProd() + " " + request.tipoPago() + " " + request.recepcion() + " === " +  p.getRecepcionAceptada() +"\n------------------------------------------------------");
 
         if ( request.recepcion() != p.getRecepcionAceptada() )
             throw new CannotCompletePurchaseError("Tipo de recepcion invalida");
         if(request.recepcion()==Producto.RecepcionAceptada.enTaquilla)
         {
-            compraRepository.save(c);
-            pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
+            pe = new Pedidos(p.getID(),Pedidos.Estado.PorEntregar,true);
 
         }else if ( request.recepcion()==Producto.RecepcionAceptada.enMano){
 
-            compraRepository.save(c);
-            pe = new Pedidos(c.getIDCompra(),Pedidos.Estado.PorEntregar);
+            pe = new Pedidos(p.getID(),Pedidos.Estado.PorEntregar,false);
         }else throw new CannotCompletePurchaseError("Tipo de recepcion no encontrado");
-
 
         return pe;
     }

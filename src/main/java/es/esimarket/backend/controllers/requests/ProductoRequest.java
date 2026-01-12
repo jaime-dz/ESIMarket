@@ -3,7 +3,7 @@ package es.esimarket.backend.controllers.requests;
 import es.esimarket.backend.entities.Producto;
 
 public record ProductoRequest(
-    int precio,
+    Integer precio,
     String descripcion,
     String nombre,
     String tipo,

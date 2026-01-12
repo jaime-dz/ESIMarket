@@ -13,5 +13,4 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer>{
 
     @Query(value = "SELECT p.* FROM pedido p JOIN compra c ON p.IdCompra = c.IdCompra /*WHERE p.Estado = 'Entregado'*/ AND c.uDNIComprador = :uDNI ORDER BY p.Estado DESC ", nativeQuery = true)
     List<Pedidos> findPedidosByComprador(@Param("uDNI") String uDNI);
-
 }

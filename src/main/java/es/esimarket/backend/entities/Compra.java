@@ -32,7 +32,7 @@ public class Compra {
     private Producto.RecepcionAceptada recepcion;
 
     @Column(name = "IdProdTrueque", nullable = true)
-    private Integer idProdTrueque;
+    private Integer IDProdTrueque;
 
     public Compra() {}
 
@@ -42,7 +42,7 @@ public class Compra {
         this.Fecha = Fecha;
         this.recepcion = recepcion;
         this.TipoPago = TipoPago;
-        this.idProdTrueque = idProdTrueque;
+        this.IDProdTrueque = idProdTrueque;
     }
 
     public Compra(String uDNIComprador, int IDProducto, LocalDateTime Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
@@ -74,6 +74,7 @@ public class Compra {
     public Producto.PagoAceptado getTipoPago() {return TipoPago;}
     public void setTipoPago(Producto.PagoAceptado tipoPago) {TipoPago = tipoPago;}
 
-    public Integer getIdProdTrueque() {return idProdTrueque;}
-    public void setIdProdTrueque(Integer idProdTrueque) {this.idProdTrueque = idProdTrueque;}
+    public Integer getIDProdTrueque() {return IDProdTrueque;}
+    public void setIDProdTrueque(Integer IDProdTrueque) {this.IDProdTrueque = IDProdTrueque;}
+
 }

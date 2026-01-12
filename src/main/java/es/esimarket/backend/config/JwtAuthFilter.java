@@ -5,6 +5,7 @@ import es.esimarket.backend.repositories.TokenRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import es.esimarket.backend.services.JwtService;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
@@ -45,59 +46,107 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final String RUTA_LOGIN = "/auth/login";
 
     @Override
-    protected void doFilterInternal(@NonNull jakarta.servlet.http.HttpServletRequest request,
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull jakarta.servlet.http.HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getServletPath();
 
+        // Obtener cookies de manera segura (maneja nulos)
         String accessToken = getCookieValue(request, "accessToken");
         String refreshToken = getCookieValue(request, "refreshToken");
 
-
+        // ---------------------------------------------------------
+        // CASO 1: Usuario sin credenciales (Cookies vacías)
+        // ---------------------------------------------------------
         if (accessToken == null && refreshToken == null) {
-
             if (esRutaPublica(path)) {
                 filterChain.doFilter(request, response);
                 return;
+            } else {
+                redirigirAlLogin(response); // Redirige si intenta entrar a perfil
             }
-            redirigirAlLogin(response);
             return;
         }
 
+        // ---------------------------------------------------------
+        // CASO 2: Usuario con credenciales (Validamos Token)
+        // ---------------------------------------------------------
         try {
-            if ( accessToken != null ){
+            if (accessToken != null) {
+                if (jwtService.isTokenExpired(accessToken)) {
+                    throw new ExpiredJwtException(null, null, "Token expirado");
+                }
+                // Si el token es válido, autenticamos en el contexto
                 String userDNI = jwtService.extraerDNI(accessToken);
-
-                if ( userDNI != null && SecurityContextHolder.getContext().getAuthentication() == null ) {
+                if (userDNI != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     autenticarUsuario(userDNI, request);
                 }
-            }else {
-                throw new ExpiredJwtException(null, null, "Token nulo, forzar refresh");
+            } else {
+                // Si no hay accessToken pero sí refreshToken, forzamos error para intentar refresco
+                throw new ExpiredJwtException(null, null, "AccessToken falta, probar Refresh");
             }
 
-        }catch (ExpiredJwtException e){
-            if ( refreshToken != null ) {
-                boolean refreshExitoso = attemptSilentRefresh(refreshToken, request, response);
-
-                if (!refreshExitoso) {
-                    // Falló el refresh (expirado o revocado) -> Redirigir
-                    redirigirAlLogin(response);
-                    return;
-                }
-            }else{
-                redirigirAlLogin(response);
-                return;
+        } catch (ExpiredJwtException e) {
+            // El AccessToken caducó, intentamos usar el RefreshToken
+            if (refreshToken != null && attemptSilentRefresh(refreshToken, request, response)) {
+                // Si el refresh funcionó, continuamos
+                filterChain.doFilter(request, response);
+            } else {
+                // Si el refresh también falló -> Tratamos como token inválido
+                gestionarTokenInvalido(request, response, filterChain);
             }
 
-        }catch ( Exception e ){
-            SecurityContextHolder.clearContext();
-            redirigirAlLogin(response);
-            return;
+        } catch (Exception e) {
+            // Cualquier otro error (firma mal, token corrupto, etc.)
+            gestionarTokenInvalido(request, response, filterChain);
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
+
+
+    private void gestionarTokenInvalido(HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException, ServletException {
+        // 1. Limpiamos la seguridad por si acaso
+        SecurityContextHolder.clearContext();
+
+        // 2. IMPORTANTE: Borramos las cookies malas del navegador
+        limpiarCookies(response);
+
+        // 3. Decisión de Redirección
+        String path = request.getServletPath();
+        if (esRutaPublica(path)) {
+            // Si ya está intentando ir al Login o Home, LE DEJAMOS PASAR como anónimo.
+            // NO redirigimos, porque eso causaría el bucle.
+            filterChain.doFilter(request, response);
+        } else {
+            // Solo redirigimos si quería entrar a una zona privada (ej. /profile)
+            redirigirAlLogin(response);
+        }
+    }
+
+    private void limpiarCookies(jakarta.servlet.http.HttpServletResponse response) {
+        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "")
+                .path("/")
+                .maxAge(0) // Caduca inmediatamente
+                .build();
+        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        ResponseCookie deleteLoggedIn = ResponseCookie.from("isLoggedIn", "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(false) // Esta no suele ser HttpOnly
+                .secure(false)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteLoggedIn.toString());
+    }
+
 
     private void redirigirAlLogin(jakarta.servlet.http.HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext(); // Limpiamos por seguridad
@@ -184,7 +233,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 || path.startsWith("/css")
                 || path.startsWith("/js")
                 || path.startsWith("/Images")
-                || path.endsWith(".pdf");
+                || path.endsWith(".css")
+                || path.endsWith(".js")
+                || path.endsWith(".png")
+                || path.endsWith(".jpg")
+                || path.endsWith(".ico")
+                ||  path.endsWith(".pdf");
+
+
     }
+
 
 }

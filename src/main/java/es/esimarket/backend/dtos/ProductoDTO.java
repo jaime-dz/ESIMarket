@@ -10,9 +10,10 @@ import java.util.Arrays;
 public class ProductoDTO implements Serializable {
 
     private int id;
-    private int precio;
+    private Integer precio;
     private String descripcion;
     private String nombre;
+    private String uDNIVendedor;
     private String nombreVendedor;
     private String tipo;
     private Producto.estado estado;
@@ -25,7 +26,7 @@ public class ProductoDTO implements Serializable {
 
     public ProductoDTO(Producto p , Usuario u, FotoProd fp ) {
         this.id = p.getID();
-        this.precio = p.getPrecio();
+        this.precio = (p.getPrecio() == null) ? null : p.getPrecio() ;
         this.descripcion = p.getDescripcion();
         this.nombre = p.getNombre();
         this.tipo = p.getTipo();
@@ -34,6 +35,7 @@ public class ProductoDTO implements Serializable {
         this.recepcionAceptada=p.getRecepcionAceptada();
         this.foto = (fp != null) ? fp.getFoto() : null;
         this.nombreVendedor = (u != null) ? u.getNombre() : "Vendedor desconocido";
+        this.uDNIVendedor = (u != null) ? u.getId() : null;
         this.isDisponible = p.isDisponible();
     }
 
@@ -58,9 +60,10 @@ public class ProductoDTO implements Serializable {
     }
 
     public int getId() {return id;}
-    public int getPrecio() {return precio;}
+    public Integer getPrecio() {return precio;}
     public String getDescripcion() {return descripcion;}
     public String getNombre() {return nombre;}
+    public String getuDNIVendedor() {return uDNIVendedor;}
     public String getNombreVendedor() {return nombreVendedor;}
     public String getTipo() {return tipo;}
     public Producto.estado getEstado() {return estado;}
@@ -70,9 +73,10 @@ public class ProductoDTO implements Serializable {
     public boolean isDisponible() {return isDisponible;}
 
     public void setId(int id) {this.id = id;}
-    public void setPrecio(int precio) {this.precio = precio;}
+    public void setPrecio(Integer precio) {this.precio = precio;}
     public void setDescripcion(String descripcion) {this.descripcion = descripcion;}
     public void setNombre(String nombre) {this.nombre = nombre;}
+    public void setuDNIVendedor(String uDNIVendedor) {this.uDNIVendedor = uDNIVendedor;}
     public void setNombreVendedor(String nombreVendedor) {this.nombreVendedor = nombreVendedor;}
     public void setTipo(String tipo) {this.tipo = tipo;}
     public void setEstado(Producto.estado estado) {this.estado = estado;}
@@ -88,6 +92,7 @@ public class ProductoDTO implements Serializable {
                 ", precio=" + precio +
                 ", descripcion='" + descripcion + '\'' +
                 ", nombre='" + nombre + '\'' +
+                ", uDNIVendedor='" + uDNIVendedor + '\'' +
                 ", nombreVendedor='" + nombreVendedor + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", estado=" + estado +
