@@ -60,6 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // CASO 1: Usuario sin credenciales (Cookies vacías)
         // ---------------------------------------------------------
         if (accessToken == null && refreshToken == null) {
+            limpiarCookies(response);
             if (esRutaPublica(path)) {
                 filterChain.doFilter(request, response);
                 return;
