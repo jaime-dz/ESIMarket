@@ -87,9 +87,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 throw new ExpiredJwtException(null, null, "AccessToken falta, probar Refresh");
             }
 
-            // Si llegamos aquí, todo está bien
-            filterChain.doFilter(request, response);
-
         } catch (ExpiredJwtException e) {
             // El AccessToken caducó, intentamos usar el RefreshToken
             if (refreshToken != null && attemptSilentRefresh(refreshToken, request, response)) {
@@ -104,6 +101,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // Cualquier otro error (firma mal, token corrupto, etc.)
             gestionarTokenInvalido(request, response, filterChain);
         }
+
+        filterChain.doFilter(request, response);
     }
 
 
@@ -136,8 +135,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 .maxAge(0)
                 .build();
 
+        ResponseCookie deleteLoggedIn = ResponseCookie.from("isLoggedIn", "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(false) // Esta no suele ser HttpOnly
+                .secure(false)
+                .build();
+
         response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, deleteRefresh.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteLoggedIn.toString());
     }
 
 

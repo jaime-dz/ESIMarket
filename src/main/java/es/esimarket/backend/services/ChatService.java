@@ -60,7 +60,9 @@ public class ChatService{
         List<ChatDTO> chatDTOs = new ArrayList<>();
         List<Chat> chatEntities = chatRepository.findByUDNIcompradorOrUDNIvendedor(dni,dni);
 
-        if (chatEntities.isEmpty()) throw new CannotCreateChatError("No tienes ningun chat iniciado");
+        if (chatEntities.isEmpty()){
+            return chatDTOs;
+        }
 
         for(Chat c : chatEntities)
         {

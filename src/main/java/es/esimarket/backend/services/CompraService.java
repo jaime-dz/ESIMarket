@@ -83,30 +83,30 @@ public class CompraService {
                 throw new CannotCompletePurchaseError("No puedes comprar tu propio producto ;)");
             }
 
-            if ( request.tipoPago() == Producto.PagoAceptado.Monedas){
+            if ( request.tipoPago() == Producto.PagoAceptado.Monedas) {
 
-                if ( !UsuPuedeHacerCompra(uComprador,p) ) {
+                if (!UsuPuedeHacerCompra(uComprador, p)) {
                     throw new CannotCompletePurchaseError("No tienes saldo para comprar este producto");
                 }
 
-                c = new Compra(uDNI,request.idProd(),FechaAct,request.recepcion(),request.tipoPago());
+                c = new Compra(uDNI, request.idProd(), FechaAct, request.recepcion(), request.tipoPago());
                 compraRepository.save(c);
 
-                if ( p.getTipo().equals("Objeto")){
+                if (p.getTipo().equals("Objeto")) {
                     Pedidos pe = getPedidos(request, p);
                     pedidosRepository.save(pe);
 
-                    uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  p.getPrecio());
-                    uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  p.getPrecio());
-                }else if ( p.getTipo().equals("Servicio")){
+                    uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() - p.getPrecio());
+                    uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() + p.getPrecio());
+                } else if (p.getTipo().equals("Servicio")) {
 
-                    Servicio s = servicioService.CrearServicioPendiente(p.getID(),uComprador.getId());
+                    Servicio s = servicioService.CrearServicioPendiente(p.getID(), uComprador.getId());
                     servicioRepository.save(s);
 
-                    uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() -  (p.getPrecio()*request.horas()));
-                    uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() +  (p.getPrecio()*request.horas()));
+                    uComprador.setSaldoMoneda(uComprador.getSaldoMoneda() - (p.getPrecio() * request.horas()));
+                    uVendedor.setSaldoMoneda(uVendedor.getSaldoMoneda() + (p.getPrecio() * request.horas()));
 
-                }else throw new CannotCompletePurchaseError("Tipo de producto invalido");
+                } else throw new CannotCompletePurchaseError("Tipo de producto invalido");
 
             }else if ( request.tipoPago() == Producto.PagoAceptado.Trueque ){
 
@@ -116,17 +116,33 @@ public class CompraService {
                 pT = productoRepository.findById(request.idProdTrueque()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
 
                 if ( pT.getTipo().equals("Objeto")){
-                    Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
-                    Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p);
-                    pedidosRepository.save(peT);
-                    pedidosRepository.save(pe);
+                    if (p.getTipo().equals("Objeto")) {
+                        Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
+                        Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p);
+                        pedidosRepository.save(peT);
+                        pedidosRepository.save(pe);
+                    }else{
+                        Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
+                        Servicio s = servicioService.CrearServicioPendiente(p.getID(),pT.getuDNI_Vendedor());
+                        pedidosRepository.save(peT);
+                        servicioRepository.save(s);
+                    }
+
                 }else if ( pT.getTipo().equals("Servicio") ){
-                    Servicio s = servicioService.CrearServicioPendiente(pT.getID(),p.getuDNI_Vendedor());
-                    servicioRepository.save(s);
+                    if (p.getTipo().equals("Servicio")) {
+                        Servicio s = servicioService.CrearServicioPendiente(p.getID(),pT.getuDNI_Vendedor());
+                        Servicio sT = servicioService.CrearServicioPendiente(pT.getID(),p.getuDNI_Vendedor());
+                        servicioRepository.save(s);
+                        servicioRepository.save(sT);
+                    }else{
+                        Servicio sT = servicioService.CrearServicioPendiente(pT.getID(),p.getuDNI_Vendedor());
+                        Pedidos pe = getPedidos(new CompraRequest(p.getID(),p.getPagoAceptado(),p.getRecepcionAceptada(),null,null), p);
+                        pedidosRepository.save(pe);
+                        servicioRepository.save(sT);
+                    }
                 }else throw new CannotCompletePurchaseError("Tipo prodcuto invalido");
 
-
-            }else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
+            } else throw new CannotCompletePurchaseError("Tipo de pago no encontrado");
 
             p.setDisponible(false);
             if ( pT != null ) {
@@ -147,6 +163,8 @@ public class CompraService {
 
     private Pedidos getPedidos(CompraRequest request, Producto p) {
         Pedidos pe = null;
+
+        System.out.println("----------------------------------------------------\n"+ request.idProd() + " " + request.tipoPago() + " " + request.recepcion() + " === " +  p.getRecepcionAceptada() +"\n------------------------------------------------------");
 
         if ( request.recepcion() != p.getRecepcionAceptada() )
             throw new CannotCompletePurchaseError("Tipo de recepcion invalida");

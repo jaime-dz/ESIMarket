@@ -42,7 +42,7 @@ public class MensajeService
             if ( fechaAct.toLocalDate().equals(mess.getFecha().toLocalDate())) dia = "Hoy";
             else if ( fechaAct.toLocalDate().equals(fechaAyer.toLocalDate())) dia = "Ayer";
             else dia = mess.getFechaDia();
-            messagesRes.add(new MessageResponse(mess.getTexto(),mess.getuDNIremitente().equals(dni),dia,mess.getHoraMin()));
+            messagesRes.add(new MessageResponse(mess.getId(),mess.getTexto(),mess.getuDNIremitente(),dia,mess.getHoraMin(),null));
         }
 
         return messagesRes;
