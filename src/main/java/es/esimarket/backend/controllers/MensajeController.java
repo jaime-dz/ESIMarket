@@ -23,6 +23,7 @@ import es.esimarket.backend.repositories.MensajeRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import es.esimarket.backend.services.MensajeService;
 
@@ -70,48 +71,82 @@ public class MensajeController
     @MessageMapping("/chat.sendMessage")
     public void recibirMensaje(@Payload Map<String, String> payload){
 
-        try{
+        Integer chatId = Integer.parseInt(String.valueOf(payload.get("chatId")));
+        String texto = payload.get("message");
+        String dni = payload.get("senderID");
+        String clientId = payload.get("clientId");
 
-            Integer chatId = Integer.parseInt(String.valueOf(payload.get("chatId")));
-            String texto = payload.get("message");
-            String dni = payload.get("sender");
+        LocalDateTime FechaAct = variosService.ObtenerFecha();
 
-            String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
+        if ( mensajeService.ContienePalabrasProhibidas(texto) ){
 
-            /*
-            String respuestaIA = null;
-            try {
-                respuestaIA = ollamaService.isToxic(prompt + Mrequest.Texto());
-            } catch (CannotDetermineIfToxicError e) {
-                response.put("error", e.getMessage() );
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-
-            boolean isToxic = Boolean.parseBoolean(respuestaIA);
-
-            if ( isToxic ){
-                response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-            */
-            LocalDateTime FechaAct = variosService.ObtenerFecha();
-            Mensaje m  = mensajeService.CrearMensaje(chatId,dni, texto, FechaAct);
-
-            MessageResponse respuesta = new MessageResponse(
-                    m.getId(),
-                    m.getTexto(),
-                    m.getuDNIremitente(),
-                    variosService.calcularFechaAmigable(m.getFecha()),
-                    m.getHoraMin(),
-                    null // clientId no es necesario aquí
+            MessageResponse respuestaError = new MessageResponse(
+                    null,
+                    "Tu mensaje ha sido bloqueado por contenido inapropiado.",
+                    dni,
+                    variosService.calcularFechaAmigable(FechaAct),
+                    payload.get("hour"),
+                    clientId,
+                    true
             );
 
-            messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuesta);
 
-        }catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error enviando mensaje socket: " + e.getMessage());
+            messagingTemplate.convertAndSendToUser(dni, "/queue/errors", respuestaError);
+            return;
+
         }
+
+        CompletableFuture.runAsync(() -> {
+
+            try{
+
+                String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ### ";
+                String respuestaIA = null;
+                try {
+                    respuestaIA = ollamaService.isToxic(prompt + texto + " ###");
+                } catch (CannotDetermineIfToxicError e) {
+                    respuestaIA = "false";
+                }
+
+                boolean isToxic = respuestaIA.toLowerCase().contains("true");
+
+                if (isToxic) {
+
+                    MessageResponse respuestaError = new MessageResponse(
+                            null,
+                            "Tu mensaje ha sido bloqueado por contenido inapropiado.",
+                            dni,
+                            variosService.calcularFechaAmigable(FechaAct),
+                            payload.get("hour"),
+                            clientId,
+                            true
+                    );
+
+
+                    messagingTemplate.convertAndSendToUser(dni, "/queue/errors", respuestaError);
+                    return;
+                }
+
+                Mensaje m  = mensajeService.CrearMensaje(chatId,dni, texto, FechaAct);
+
+                MessageResponse respuesta = new MessageResponse(
+                        m.getId(),
+                        m.getTexto(),
+                        m.getuDNIremitente(),
+                        variosService.calcularFechaAmigable(m.getFecha()),
+                        m.getHoraMin(),
+                        clientId,
+                        false
+                );
+
+                messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuesta);
+
+            }catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error enviando mensaje socket: " + e.getMessage());
+            }
+
+        });
 
     }
 

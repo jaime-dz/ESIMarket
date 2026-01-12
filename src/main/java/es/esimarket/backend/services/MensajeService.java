@@ -42,7 +42,7 @@ public class MensajeService
             if ( fechaAct.toLocalDate().equals(mess.getFecha().toLocalDate())) dia = "Hoy";
             else if ( fechaAct.toLocalDate().equals(fechaAyer.toLocalDate())) dia = "Ayer";
             else dia = mess.getFechaDia();
-            messagesRes.add(new MessageResponse(mess.getId(),mess.getTexto(),mess.getuDNIremitente(),dia,mess.getHoraMin(),null));
+            messagesRes.add(new MessageResponse(mess.getId(),mess.getTexto(),mess.getuDNIremitente(),dia,mess.getHoraMin(),null,false));
         }
 
         return messagesRes;
@@ -56,7 +56,7 @@ public class MensajeService
         
     }*/
 
-    /*
+
     public Boolean ContienePalabrasProhibidas(String txt)
     {
         List<String> PalabrasProhibidas = List.of("idiota", "imbecil", "imbécil", "estupido", "estupido", "tonto", "tarado", "bobo", "burro",
@@ -99,7 +99,6 @@ public class MensajeService
         return contiene;
     }
 
-    */
 
 
 }

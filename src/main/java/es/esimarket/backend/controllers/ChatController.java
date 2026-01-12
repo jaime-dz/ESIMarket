@@ -93,7 +93,8 @@ public class ChatController
                         m.getuDNIremitente(),     // Quién lo envió
                         variosService.calcularFechaAmigable(m.getFecha()),      // Fecha
                         m.getHoraMin(),  // Hora
-                        null             // clientId (da igual para el historial)
+                        null,
+                        false
                 ))
                 .collect(Collectors.toList());
 

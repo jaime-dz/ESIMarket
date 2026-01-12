@@ -4,9 +4,10 @@ import java.math.BigInteger;
 public record MessageResponse(
         BigInteger id,
         String message,
-        String senderDNI,
+        String senderID,
         String day,
         String hour,
-        String clientId
+        String clientId,
+        Boolean isToxic
 )
 {}

@@ -552,6 +552,15 @@
                 mostrarMensajes(JSON.parse(messageOutput.body));
             });
 
+            stompClient.subscribe('/user/queue/errors', function (msg) {
+                const errorMsg = JSON.parse(msg.body);
+
+                console.error("Error de toxicidad:", errorMsg.message);
+                const tempDiv = document.getElementById(errorMsg.clientId);
+                if (tempDiv) tempDiv.remove();
+                alert(errorMsg.message);
+            });
+
             // Pedir historial
             stompClient.send("/app/chat.history", {}, JSON.stringify({'chatId': chatId}));
         });
@@ -560,6 +569,7 @@
     function enviarMensaje() {
         const input = document.getElementById('mensajeInput');
         const texto = input.value.trim();
+        const tempId = "temp-" + Date.now();
 
         if (texto && stompClient && currentChatId) {
 
@@ -570,16 +580,14 @@
                 agregarSeparadorFecha("Hoy");
                 ultimoDiaGlobal = "Hoy";
             }
-            // -------------------------------------
 
-            agregarMensajeAlDOM(texto, true, true);
+            agregarMensajeAlDOM(texto, true, tempId);
 
             const msgObj = {
                 'chatId': currentChatId,
                 'message': texto,
-                'sender': currentUserDni,
-                // Opcional: enviar 'day': 'Hoy' no es estrictamente necesario
-                // porque el backend lo recalcula, pero no hace daño.
+                'senderID': currentUserDni,
+                'clientId' : tempId,
                 'hour': new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
             };
 
@@ -593,6 +601,7 @@
 
     function mostrarMensajes(payload) {
         const container = document.getElementById('chat-container');
+
 
         // --- CASO 1: HISTORIAL ---
         if (Array.isArray(payload)) {
@@ -615,11 +624,11 @@
                 agregarMensajeAlDOM(msg, esMio, false);
             });
             scrollToBottom();
-        }
 
-        // --- CASO 2: TIEMPO REAL ---
-        else {
+        }else {
+
             var msg = payload;
+            const esMio = msg.senderDNI === currentUserDni;
 
             // Si es el primer mensaje del día en tiempo real (ej: cambio de día a medianoche o chat vacío)
             // msg.day debería venir como "Hoy" desde el backend
@@ -628,9 +637,17 @@
                  ultimoDiaGlobal = msg.day;
             }
 
-            if (msg.senderDNI === currentUserDni) return;
+            if (msg.clientId) {
+                const elementoExistente = document.getElementById(msg.clientId);
+                if (elementoExistente) {
+                    console.log("Mensaje confirmado. ID actualizado.");
+                    elementoExistente.id = "msg-" + msg.id;
+                    return;
+                }
+            }
 
-            agregarMensajeAlDOM(msg, false, false);
+
+            agregarMensajeAlDOM(msg, false, "msg-" + msg.id);
             scrollToBottom();
         }
     }
@@ -658,6 +675,11 @@
         }
 
         const div = document.createElement('div');
+
+        if (esTemporal && typeof esTemporal === 'string') {
+            div.id = esTemporal;
+        }
+
         div.className = esMio ? 'message-right' : 'message-left';
         div.innerHTML = `
             ${texto}
