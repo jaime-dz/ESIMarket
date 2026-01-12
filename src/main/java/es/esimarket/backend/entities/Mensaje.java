@@ -35,6 +35,8 @@ public class Mensaje{
         this.texto = texto;
     }
 
+    public BigInteger getId() {return id;}
+
     public int getIDChat(){return IDChat;}
     public void setIDChat(int IDChat) { this.IDChat = IDChat; }
 

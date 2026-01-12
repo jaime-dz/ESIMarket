@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -39,6 +42,9 @@ public class MensajeController
     private MensajeService mensajeService;
 
     @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
     private OllamaService ollamaService;
 
     @Autowired
@@ -61,38 +67,52 @@ public class MensajeController
 
     }
 
-    @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes( @RequestBody final MessageRequest Mrequest){
+    @MessageMapping("/chat.sendMessage")
+    public void recibirMensaje(@Payload Map<String, String> payload){
 
-        HashMap<String, String> response = new HashMap<>();
+        try{
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String dni = auth.getName();
+            Integer chatId = Integer.parseInt(String.valueOf(payload.get("chatId")));
+            String texto = payload.get("message");
+            String dni = payload.get("sender");
 
-        String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
+            String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
 
-        /*
-        String respuestaIA = null;
-        try {
-            respuestaIA = ollamaService.isToxic(prompt + Mrequest.Texto());
-        } catch (CannotDetermineIfToxicError e) {
-            response.put("error", e.getMessage() );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            /*
+            String respuestaIA = null;
+            try {
+                respuestaIA = ollamaService.isToxic(prompt + Mrequest.Texto());
+            } catch (CannotDetermineIfToxicError e) {
+                response.put("error", e.getMessage() );
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            boolean isToxic = Boolean.parseBoolean(respuestaIA);
+
+            if ( isToxic ){
+                response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            */
+            LocalDateTime FechaAct = variosService.ObtenerFecha();
+            Mensaje m  = mensajeService.CrearMensaje(chatId,dni, texto, FechaAct);
+
+            MessageResponse respuesta = new MessageResponse(
+                    m.getId(),
+                    m.getTexto(),
+                    m.getuDNIremitente(),
+                    m.getDia(),
+                    m.getHoraMin(),
+                    null // clientId no es necesario aquí
+            );
+
+            messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuesta);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error enviando mensaje socket: " + e.getMessage());
         }
 
-        boolean isToxic = Boolean.parseBoolean(respuestaIA);
-
-        if ( isToxic ){
-            response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        */
-        LocalDateTime FechaAct = variosService.ObtenerFecha();
-        Mensaje m  = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
-
-        response.put("content",(new MessageResponse(Mrequest.Texto(),true,m.getDia(),m.getHoraMin())).toString());
-
-        return ResponseEntity.ok(response);
     }
 
 
