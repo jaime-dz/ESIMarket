@@ -69,6 +69,7 @@
         <div class="product-detail-wrapper" style="position: relative;">
             <div class="card-header">
                 <h1 class="detail-title" th:text="${product.nombre}">Nombre del Producto</h1>
+                <p class="product-ref">Ref: <span th:text="${product.id}">000</span></p>
                 <button th:if="${product.isDisponible and isOwner}" 
                         class="btn-eliminar"
                         th:onclick="'eliminarProducto(' + ${product.id} + ')'">

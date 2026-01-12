@@ -1385,3 +1385,11 @@ main {
     color: #1e40af;
     border: 1px solid #bfdbfe;
 }
+
+.product-ref {
+    font-size: 0.9rem;      /* Un poco más pequeño que el texto normal */
+    color: #777;            /* Color gris para que sea sutil */
+    margin-top: 5px;        /* Separación del título */
+    margin-bottom: 10px;    /* Separación del precio/contenido */
+    font-family: monospace; /* Opcional: fuente tipo código para el ID */
+}
