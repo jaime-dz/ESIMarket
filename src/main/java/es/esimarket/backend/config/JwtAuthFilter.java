@@ -55,7 +55,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Obtener cookies de manera segura (maneja nulos)
         String accessToken = getCookieValue(request, "accessToken");
         String refreshToken = getCookieValue(request, "refreshToken");
-        String isLoggedIn = getCookieValue(request, "isLoggedIn");
 
         // ---------------------------------------------------------
         // CASO 1: Usuario sin credenciales (Cookies vacías)
