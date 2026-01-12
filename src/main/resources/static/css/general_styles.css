@@ -727,8 +727,8 @@ main {
 .fecha-badge {
     background-color: #eee;
     color: #666;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 4px 40px;
+    border-radius: 7px;
     font-size: 0.8rem;
     font-weight: 500;
 }
