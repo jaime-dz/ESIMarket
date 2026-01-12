@@ -1,8 +1,10 @@
 package es.esimarket.backend.services;
 import es.esimarket.backend.dtos.ChatDTO;
+import es.esimarket.backend.entities.FotoProd;
 import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCreateChatError;
+import es.esimarket.backend.repositories.FotoProdRepository;
 import es.esimarket.backend.repositories.ProductoRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import jakarta.persistence.Id;
@@ -28,6 +30,9 @@ public class ChatService{
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private FotoProdRepository fotoProdRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -68,8 +73,9 @@ public class ChatService{
         {
             Usuario uOtro = usuarioRepository.findByid((dni.equals(c.getuDNIcomprador())) ? c.getUDNIvendedor() : c.getuDNIcomprador());
             Producto p = productoRepository.findByID(c.getIdProducto());
+            FotoProd fp = fotoProdRepository.findById(p.getID()).orElse(null);
 
-            chatDTOs.add(new ChatDTO(c.getId(),p.getNombre(),uOtro.getNombre(),uOtro.getApellidos(),uOtro.getCarrera(),p.getuDNI_Vendedor().equals(dni)));
+            chatDTOs.add(new ChatDTO(c.getId(),(fp != null) ? fp.getFoto() : null,p.getNombre(),uOtro.getNombre(),uOtro.getApellidos(),uOtro.getCarrera(),p.getuDNI_Vendedor().equals(dni)));
         }
 
         return chatDTOs;

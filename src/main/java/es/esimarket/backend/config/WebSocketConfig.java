@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // Los mensajes que envíes a "/topic/..." irán a los clientes suscritos
-        registry.enableSimpleBroker("/topic");
+        registry.enableSimpleBroker("/topic","/queue");
         // Prefijo para mensajes que van DEL cliente AL servidor (aunque tú usas POST, está bien tenerlo)
         registry.setApplicationDestinationPrefixes("/app");
     }

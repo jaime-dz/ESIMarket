@@ -1385,3 +1385,19 @@ main {
     color: #1e40af;
     border: 1px solid #bfdbfe;
 }
+
+.product-ref {
+    display: block;          /* Asegura que ocupe su propia línea */
+    font-size: 0.9rem;       /* Tamaño discreto */
+    color: #666;             /* Color gris */
+    margin-top: 2px;         /* Pegadito al título */
+    margin-bottom: 0;
+    font-family: monospace;
+}
+
+/* Opcional: Si el título y el botón se desalinean, esto ayuda */
+.header-title-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
