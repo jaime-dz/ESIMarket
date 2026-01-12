@@ -643,7 +643,7 @@
             // --- NUEVO: GESTIÓN DE FECHA LOCAL ---
             // Si es el primer mensaje que enviamos hoy, pintamos "Hoy" manualmente
             // para que aparezca ANTES de nuestra burbuja.
-            if (!ultimoDiaGlobal || ultimoDiaGlobal !== "Hoy" ) {
+            if (ultimoDiaGlobal !== "Hoy") {
                 agregarSeparadorFecha("Hoy");
                 ultimoDiaGlobal = "Hoy";
             }
