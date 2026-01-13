@@ -11,6 +11,7 @@ import es.esimarket.backend.repositories.MensajeRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class MensajeService
@@ -94,9 +95,13 @@ public class MensajeService
         "cagaprisas", "gilipicha", "dedosucio", "orinador", "periquero", "tragón", "malfollado",
         "ojete", "popó", "puerca", "cerda", "percherón", "inmundo");
 
-        boolean contiene = PalabrasProhibidas.stream().anyMatch(p -> txt.toLowerCase().contains(p));
+        String textoEnMinúsculas = txt.toLowerCase();
 
-        return contiene;
+        return PalabrasProhibidas.stream().anyMatch(palabra -> {
+            String regex = "\\b" + Pattern.quote(palabra.toLowerCase()) + "\\b";
+            return Pattern.compile(regex).matcher(textoEnMinúsculas).find();
+        });
+
     }
 
 
