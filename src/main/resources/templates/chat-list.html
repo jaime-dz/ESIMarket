@@ -739,7 +739,7 @@
         let hora = "";
         let esMio = esMioForzado;
 
-        if ( separadorFecha ){
+        if ( separadorFecha && separadorFecha !== ultimoDiaGlobal ){
             agregarSeparadorFecha(separadorFecha);
         }
         if (typeof msgObjOrText === 'string') {
