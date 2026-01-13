@@ -673,7 +673,7 @@
 
     function mostrarMensajes(payload) {
         const container = document.getElementById('chat-container');
-
+        const separadorFecha;
 
         // --- CASO 1: HISTORIAL ---
         if (Array.isArray(payload)) {
@@ -688,7 +688,7 @@
                 // LÓGICA DE SEPARADOR DE FECHA
                 // msg.day viene del backend como "Hoy", "Ayer", "12/05/2024"
                 if (msg.day !== ultimoDiaGlobal) {
-                    agregarSeparadorFecha(msg.day);
+                    separadorFecha = msg.day;
                     ultimoDiaGlobal = msg.day; // Actualizamos la última fecha vista
                 }
 
@@ -702,10 +702,11 @@
             var msg = payload;
             const esMio = msg.senderID === currentUserDni;
 
+
             // Si es el primer mensaje del día en tiempo real (ej: cambio de día a medianoche o chat vacío)
             // msg.day debería venir como "Hoy" desde el backend
             if (msg.day && msg.day !== ultimoDiaGlobal) {
-                 agregarSeparadorFecha(msg.day);
+                 separadorFecha = msg.day;
                  ultimoDiaGlobal = msg.day;
             }
 
@@ -719,7 +720,7 @@
             }
 
 
-            agregarMensajeAlDOM(msg, false, "msg-" + msg.id);
+            agregarMensajeAlDOM(msg, false, "msg-" + msg.id,separadorFecha);
             scrollToBottom();
         }
     }
@@ -733,11 +734,14 @@
         container.appendChild(div);
     }
 
-    function agregarMensajeAlDOM(msgObjOrText, esMioForzado, esTemporal) {
+    function agregarMensajeAlDOM(msgObjOrText, esMioForzado, esTemporal, separadorFecha) {
         let texto = "";
         let hora = "";
         let esMio = esMioForzado;
 
+        if ( separadorFecha ){
+            agregarSeparadorFecha(separadorFecha);
+        }
         if (typeof msgObjOrText === 'string') {
             texto = msgObjOrText;
             hora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
