@@ -103,35 +103,10 @@ public class MensajeController
             try{
 
                 String prompt = """
-                You are a chill Chat Moderator. Analyze the following Spanish text.
-                \s
-                GOAL: Only flag TRUE if the message is a clear, aggressive insult directed at someone.
-                \s
-                STRICT BYPASS RULES (Return 'false' for these):
-                1. Literal animals: "perro", "perra", "gato", "rata" are SAFE when talking about pets or nature.
-                2. Names: "Chapi", "Pipo", "Cuca" (when used as names) are SAFE.
-                3. Informal greetings: "Holaaaa", "Que passsa" are SAFE.
-                4. Food and objects: "Leche", "Nalgas" (if context is medical/neutral), "Concha" (if name or food) are SAFE.
-                5. Neutral Family: "Mi madre", "Mi hijo" are SAFE.
-                \s
-                DECISION LOGIC:
-                - "Eres un perro" -> true (Direct insult)
-                - "Mi perro se llama chapi" -> false (Literal pet)
-                - "Hijo de..." -> true (Aggressive)
-                - "Mi hijo juega futbol" -> false (Neutral)
-                \s
-                Respond ONLY with 'true' (toxic) or 'false' (safe). No explanation.
-                Text: ###\s""" + texto + " ###";
+                    Spanish Moderator. Return 'true' ONLY for clear insults.
+                    Return 'false' for: pets (perro, chapi), family (hijo), and repeated letters (holaaa).
+                    Text: ###\s""" + texto + " ###\nResult:";
 
-               /* String prompt = """
-                        Detect toxicity, insults or hate speech. Be aware that the words you will receive are in spanish. \
-                        CRITICAL RULES:
-                        1. ALLOW animal names (e.g., perro, gato(a), rata) if used literally or non-aggressively.
-                        2. ALLOW kinship/family terms (e.g., hijo, madre, hermano) when used for relationship context.
-                        3. ALLOW food names even if they are sometimes used as slang.
-                        4. ALLOW repeated letters or elongated words (e.g., 'holaaaaa' is SAFE).
-                        5. Only flag 'true' if the intent is clearly to HARASS or INSULT.
-                        Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ###\s""";*/
                 String respuestaIA = null;
                 try {
                     respuestaIA = ollamaService.isToxic(prompt + texto + " ###");
@@ -139,7 +114,7 @@ public class MensajeController
                     respuestaIA = "false";
                 }
 
-                boolean isToxic = respuestaIA.toLowerCase().contains("true");
+                boolean isToxic = respuestaIA.toLowerCase().trim().contains("true");
 
                 if (isToxic) {
 
