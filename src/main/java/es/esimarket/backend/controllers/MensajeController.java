@@ -105,10 +105,10 @@ public class MensajeController
                 String prompt = """
                         Detect toxicity, insults or hate speech. Be aware that the words you will receive are in spanish. \
                         CRITICAL RULES:
-                        1. ALLOW animal names (e.g., perro, gato, rata) if used literally or non-aggressively.
+                        1. ALLOW animal names (e.g., perro, gato(a), rata) if used literally or non-aggressively.
                         2. ALLOW kinship/family terms (e.g., hijo, madre, hermano) when used for relationship context.
                         3. ALLOW food names even if they are sometimes used as slang.
-                        4. IGNORE repeated letters or elongated words (e.g., 'holaaaa' is SAFE).
+                        4. ALLOW repeated letters or elongated words (e.g., 'holaaaaa' is SAFE).
                         5. Only flag 'true' if the intent is clearly to HARASS or INSULT.
                         Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ###\s""";
                 String respuestaIA = null;
@@ -122,7 +122,7 @@ public class MensajeController
 
                 if (isToxic) {
 
-                    System.out.println("----------------------------------- Bloqueado por IA (Ollama): " + texto + "----------------------------------- ");
+                    System.out.println("----------------------------------- Bloqueado por IA (Ollama): " + texto + "\nRespuestaIA: " + respuestaIA + "----------------------------------- ");
 
                     MessageResponse respuestaError = new MessageResponse(
                             null,
