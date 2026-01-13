@@ -115,6 +115,8 @@ public class CompraService {
 
                 pT = productoRepository.findById(request.idProdTrueque()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
 
+                if ( !pT.getuDNI_Vendedor().equals(uDNI) ) throw new CannotCompletePurchaseError("El producto a intercambiar no es tuyo.");
+
                 if ( pT.getTipo().equals("Objeto")){
                     if (p.getTipo().equals("Objeto")) {
                         Pedidos peT = getPedidos(new CompraRequest(pT.getID(),pT.getPagoAceptado(),pT.getRecepcionAceptada(),null,null), pT);
