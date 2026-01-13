@@ -80,7 +80,7 @@ public class MensajeController
 
         if ( mensajeService.ContienePalabrasProhibidas(texto) ){
 
-            System.out.println("Bloqueado por FILTRO LOCAL: " + texto);
+            System.out.println("----------------------------------- Bloqueado por FILTRO LOCAL: " + texto + " ----------------------------------- ");
 
             MessageResponse respuestaError = new MessageResponse(
                     null,
@@ -114,7 +114,7 @@ public class MensajeController
 
                 if (isToxic) {
 
-                    System.out.println("Bloqueado por IA (Ollama): " + texto);
+                    System.out.println("----------------------------------- Bloqueado por IA (Ollama): " + texto + "----------------------------------- ");
 
                     MessageResponse respuestaError = new MessageResponse(
                             null,
