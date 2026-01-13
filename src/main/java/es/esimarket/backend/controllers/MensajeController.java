@@ -103,6 +103,27 @@ public class MensajeController
             try{
 
                 String prompt = """
+                You are a chill Chat Moderator. Analyze the following Spanish text.
+                \s
+                GOAL: Only flag TRUE if the message is a clear, aggressive insult directed at someone.
+                \s
+                STRICT BYPASS RULES (Return 'false' for these):
+                1. Literal animals: "perro", "perra", "gato", "rata" are SAFE when talking about pets or nature.
+                2. Names: "Chapi", "Pipo", "Cuca" (when used as names) are SAFE.
+                3. Informal greetings: "Holaaaa", "Que passsa" are SAFE.
+                4. Food and objects: "Leche", "Nalgas" (if context is medical/neutral), "Concha" (if name or food) are SAFE.
+                5. Neutral Family: "Mi madre", "Mi hijo" are SAFE.
+                \s
+                DECISION LOGIC:
+                - "Eres un perro" -> true (Direct insult)
+                - "Mi perro se llama chapi" -> false (Literal pet)
+                - "Hijo de..." -> true (Aggressive)
+                - "Mi hijo juega futbol" -> false (Neutral)
+                \s
+                Respond ONLY with 'true' (toxic) or 'false' (safe). No explanation.
+                Text: ###\s""" + texto + " ###";
+
+               /* String prompt = """
                         Detect toxicity, insults or hate speech. Be aware that the words you will receive are in spanish. \
                         CRITICAL RULES:
                         1. ALLOW animal names (e.g., perro, gato(a), rata) if used literally or non-aggressively.
@@ -110,7 +131,7 @@ public class MensajeController
                         3. ALLOW food names even if they are sometimes used as slang.
                         4. ALLOW repeated letters or elongated words (e.g., 'holaaaaa' is SAFE).
                         5. Only flag 'true' if the intent is clearly to HARASS or INSULT.
-                        Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ###\s""";
+                        Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ###\s""";*/
                 String respuestaIA = null;
                 try {
                     respuestaIA = ollamaService.isToxic(prompt + texto + " ###");
@@ -122,7 +143,7 @@ public class MensajeController
 
                 if (isToxic) {
 
-                    System.out.println("----------------------------------- Bloqueado por IA (Ollama): " + texto + "\nRespuestaIA: " + respuestaIA + "----------------------------------- ");
+                    System.out.println("----------------------------------- Bloqueado por IA (Ollama):------------------------------------------------\nTexto: "+ texto + "\nRespuestaIA: " + respuestaIA + "\n----------------------------------- ");
 
                     MessageResponse respuestaError = new MessageResponse(
                             null,
