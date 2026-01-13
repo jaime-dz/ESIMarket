@@ -637,11 +637,12 @@
         const input = document.getElementById('mensajeInput');
         const texto = input.value.trim();
         const tempId = "temp-" + Date.now();
+        let separadorFecha = null;
 
         if (texto.length > 129) {
             alert("Mensaje demasiado largo.");
             return;
-    }
+        }
 
         if (texto && stompClient && currentChatId) {
 
@@ -649,11 +650,11 @@
             // Si es el primer mensaje que enviamos hoy, pintamos "Hoy" manualmente
             // para que aparezca ANTES de nuestra burbuja.
             if (ultimoDiaGlobal !== "Hoy") {
-                agregarSeparadorFecha("Hoy");
+                separadorFecha ="Hoy";
                 ultimoDiaGlobal = "Hoy";
             }
 
-            agregarMensajeAlDOM(texto, true, tempId);
+            agregarMensajeAlDOM(texto, true, tempId,separadorFecha);
 
             const msgObj = {
                 'chatId': currentChatId,
