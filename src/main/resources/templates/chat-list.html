@@ -673,7 +673,7 @@
 
     function mostrarMensajes(payload) {
         const container = document.getElementById('chat-container');
-        const separadorFecha = "";
+        let separadorFecha = "";
 
         // --- CASO 1: HISTORIAL ---
         if (Array.isArray(payload)) {
