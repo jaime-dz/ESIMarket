@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign in</title>
+        <title>Registrarse</title>
         <link rel="stylesheet" href="/css/general_styles.css">
         <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
     </head>
@@ -37,7 +37,10 @@
                         <div class="coins-info">
                             <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
                         </div>
-                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
                         
                         <div class="dropdown-content">
                             <a href="/profile/">Mi Perfil</a>
@@ -49,7 +52,7 @@
             </div>
         </header>
         <main>
-            <div class="square">
+            <div class="form-container">
                 <h2>Registrarse</h2>
                 <form id="signup" method="post">
                     <div id="signup-message"></div>
@@ -92,7 +95,7 @@
                     <br>
                     <div class="carrera">
                         <label for="carrera">Carrera*</label><br>
-                        <select name="carrera" id="carrera">
+                        <select name="carrera" id="carrera" required>
                             <option value="" selected disabled>--- Selecciona tu carrera ---</option>
                             <option value="GIA">Ingeniería Aeroespacial (GIA)</option>
                             <option value="GIDIDP">Ingeniería en Diseño Industrial y Desarrollo del Producto (GIDIDP)</option>
@@ -147,13 +150,11 @@
                 const input = document.getElementById(inputId);
                 
                 if (input.type === "password") {
-                    // Cambiar a texto visible
                     input.type = "text";
-                    iconElement.textContent = "👁️"; // Icono de ojo tachado o similar
+                    iconElement.textContent = "👁️";
                 } else {
-                    // Volver a ocultar
                     input.type = "password";
-                    iconElement.textContent = "🙈"; // Icono de ojo normal
+                    iconElement.textContent = "🙈";
                 }
             }
         </script>

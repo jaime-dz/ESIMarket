@@ -1,29 +1,33 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.MessageRequest;
-import es.esimarket.backend.dtos.MensajeDTO;
+import es.esimarket.backend.controllers.responses.MessageResponse;
+import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.exceptions.CannotDetermineIfToxicError;
 import es.esimarket.backend.services.JwtService;
 import es.esimarket.backend.services.OllamaService;
 import es.esimarket.backend.services.VariosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import es.esimarket.backend.repositories.ChatRepository;
 import es.esimarket.backend.repositories.MensajeRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import es.esimarket.backend.services.MensajeService;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/messages")
@@ -39,6 +43,9 @@ public class MensajeController
     private MensajeService mensajeService;
 
     @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
     private OllamaService ollamaService;
 
     @Autowired
@@ -50,44 +57,101 @@ public class MensajeController
     @Autowired
     private JdbcTemplate jbdcTemplate;
 
-    @GetMapping("/{chat}")
-    public ResponseEntity<List<MensajeDTO>> getMensajes(@PathVariable("chat") int chat){
-        return ResponseEntity.ok(mensajeService.mostrar_mensajes(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora"))));
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<HashMap<String, String>> postMensajes( @RequestBody final MessageRequest Mrequest){
-
-        HashMap<String, String> response = new HashMap<>();
+    @PostMapping("/{chat}")
+    @ResponseBody
+    public List<MessageResponse> getMensajes(Model model, @PathVariable("chat") int chat){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
 
-        String prompt = "Detect toxicity, insults or hate speech. Respond ONLY 'true' if found, 'false' otherwise. No explanation. Text: ";
+       return mensajeService.mostrar_mensajes(mensajeRepository.findByIDChat(chat,Sort.by(Sort.Direction.ASC, "fechaHora")),dni);
+
+    }
+
+    @MessageMapping("/chat.sendMessage")
+    public void recibirMensaje(@Payload Map<String, String> payload){
+
+        Integer chatId = Integer.parseInt(String.valueOf(payload.get("chatId")));
+        String texto = payload.get("message");
+        String dni = payload.get("senderID");
+        String clientId = payload.get("clientId");
+
+        LocalDateTime FechaAct = variosService.ObtenerFecha();
+
+        if ( mensajeService.ContienePalabrasProhibidas(texto) ){
+
+            MessageResponse respuestaError = new MessageResponse(
+                    null,
+                    "Tu mensaje ha sido bloqueado por contenido inapropiado.",
+                    dni,
+                    variosService.calcularFechaAmigable(FechaAct),
+                    payload.get("hour"),
+                    clientId,
+                    true
+            );
 
 
-        String respuestaIA = null;
-        try {
-            respuestaIA = ollamaService.isToxic(prompt + Mrequest.Texto());
-        } catch (CannotDetermineIfToxicError e) {
-            response.put("error", e.getMessage() );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            messagingTemplate.convertAndSendToUser(dni, "/queue/errors", respuestaError);
+            return;
+
         }
 
-        boolean isToxic = Boolean.parseBoolean(respuestaIA);
+        CompletableFuture.runAsync(() -> {
 
-        if ( isToxic ){
-            response.put("error", "Tu mensaje contiene toxicidad, hijo de puta" );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+            try{
 
-        String FechaAct = variosService.ObtenerFecha();
-        String status = mensajeService.CrearMensaje(Mrequest.idChat(), dni, Mrequest.Texto(),FechaAct);
+                String prompt = """
+                    Spanish Moderator. Return 'true' ONLY for clear insults.
+                    Return 'false' for: pets (perro, chapi), family (hijo), and repeated letters (holaaa).
+                    Text: ###\s""" + texto + " ###\nResult:";
 
-        response.put("message", status);
-        response.put("content",new MensajeDTO(FechaAct,Mrequest.Texto(),dni).toString());
+                String respuestaIA = null;
+                try {
+                    respuestaIA = ollamaService.isToxic(prompt + texto + " ###");
+                } catch (CannotDetermineIfToxicError e) {
+                    respuestaIA = "false";
+                }
 
-        return ResponseEntity.ok(response);
+                boolean isToxic = respuestaIA.toLowerCase().trim().contains("true");
+
+                if (isToxic) {
+
+                    MessageResponse respuestaError = new MessageResponse(
+                            null,
+                            "Tu mensaje ha sido bloqueado por contenido inapropiado.",
+                            dni,
+                            variosService.calcularFechaAmigable(FechaAct),
+                            payload.get("hour"),
+                            clientId,
+                            true
+                    );
+
+
+                    messagingTemplate.convertAndSendToUser(dni, "/queue/errors", respuestaError);
+                    return;
+                }
+
+                Mensaje m  = mensajeService.CrearMensaje(chatId,dni, texto, FechaAct);
+
+                MessageResponse respuesta = new MessageResponse(
+                        m.getId(),
+                        m.getTexto(),
+                        m.getuDNIremitente(),
+                        variosService.calcularFechaAmigable(m.getFecha()),
+                        m.getHoraMin(),
+                        clientId,
+                        false
+                );
+
+                messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuesta);
+
+            }catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error enviando mensaje socket: " + e.getMessage());
+            }
+
+        });
+
     }
 
 

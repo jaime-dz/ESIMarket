@@ -27,34 +27,14 @@ public class HomeController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping("/")
-    public String index(Model model)
+    public String index()
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-
-            String dni = auth.getName();
-            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
-            model.addAttribute("profile",u);
-
-        }
-
         return "index";
     }
 
     @GetMapping("/about")
     public String about(Model model)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)){
-
-            String dni = auth.getName();
-            Usuario u = usuarioRepository.findById(dni).orElseThrow(() -> new CannotCreateUserError("Usuario no encontrado"));
-
-            model.addAttribute("profile",u);
-        }
-
         return "about"; 
     }
 

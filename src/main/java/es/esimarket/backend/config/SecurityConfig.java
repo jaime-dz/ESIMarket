@@ -46,7 +46,9 @@ public class SecurityConfig {
                                                      "/css/**",
                                                      "/js/**",
                                                      "/Images/**",
-                                                     "/*.pdf")
+                                                     "/*.pdf",
+                                                     "/*.ico",
+                                                     "/ws/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

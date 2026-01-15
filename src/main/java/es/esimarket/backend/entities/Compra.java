@@ -1,5 +1,7 @@
 package es.esimarket.backend.entities;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import jakarta.persistence.*;
 
@@ -16,10 +18,10 @@ public class Compra {
     private String uDNIComprador;
 
     @Column(name = "IDProducto", nullable = false)
-    private int IDProducto;
+    private Integer IDProducto;
 
     @Column(name = "Fecha", nullable = false)
-    private String Fecha;
+    private LocalDateTime Fecha;
 
     @Column(name = "TipoPago")
     @Enumerated(EnumType.STRING)
@@ -30,20 +32,20 @@ public class Compra {
     private Producto.RecepcionAceptada recepcion;
 
     @Column(name = "IdProdTrueque", nullable = true)
-    private Integer idProdTrueque;
+    private Integer IDProdTrueque;
 
     public Compra() {}
 
-    public Compra(String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago, int idProdTrueque) {
+    public Compra(String uDNIComprador, int IDProducto, LocalDateTime Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago, int idProdTrueque) {
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
         this.recepcion = recepcion;
         this.TipoPago = TipoPago;
-        this.idProdTrueque = idProdTrueque;
+        this.IDProdTrueque = idProdTrueque;
     }
 
-    public Compra(String uDNIComprador, int IDProducto, String Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
+    public Compra(String uDNIComprador, int IDProducto, LocalDateTime Fecha, Producto.RecepcionAceptada recepcion, Producto.PagoAceptado TipoPago) {
         this.uDNIComprador = uDNIComprador;
         this.IDProducto = IDProducto;
         this.Fecha = Fecha;
@@ -54,11 +56,14 @@ public class Compra {
     public String getuDNIComprador() {return uDNIComprador;}
     public void setuDNIComprador(String uDNIComprador) { this.uDNIComprador = uDNIComprador; }
 
-    public int getIDProducto(){return IDProducto;}
-    public void setIDProducto(int IDProducto) {this.IDProducto = IDProducto; }
+    public Integer getIDProducto(){return IDProducto;}
+    public void setIDProducto(Integer IDProducto) {this.IDProducto = IDProducto; }
 
-    public String getFecha() {return Fecha;}
-    public void setFecha(String Fecha) {this.Fecha = Fecha; }
+    public String getFecha() {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return Fecha.format(formato);
+    }
+    public void setFecha(LocalDateTime Fecha) {this.Fecha = Fecha; }
 
     public Producto.RecepcionAceptada getRecepcion() {return recepcion;}
     public void setRecepcion(Producto.RecepcionAceptada recepcion) {this.recepcion=recepcion;}
@@ -69,6 +74,7 @@ public class Compra {
     public Producto.PagoAceptado getTipoPago() {return TipoPago;}
     public void setTipoPago(Producto.PagoAceptado tipoPago) {TipoPago = tipoPago;}
 
-    public Integer getIdProdTrueque() {return idProdTrueque;}
-    public void setIdProdTrueque(Integer idProdTrueque) {this.idProdTrueque = idProdTrueque;}
+    public Integer getIDProdTrueque() {return IDProdTrueque;}
+    public void setIDProdTrueque(Integer IDProdTrueque) {this.IDProdTrueque = IDProdTrueque;}
+
 }

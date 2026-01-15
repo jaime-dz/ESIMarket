@@ -1,5 +1,6 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.CompraRequest;
+import es.esimarket.backend.dtos.CompraDTO;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
 import es.esimarket.backend.exceptions.CannotCreateUserError;
@@ -39,12 +40,19 @@ public class CompraController
     @Autowired
     private CompraService compraService;
 
-    @GetMapping("/user")
-    public ResponseEntity<List<Compra>> getComprasUsuario()
+    @GetMapping("/")
+    public String getCompras()
+    {
+        return "purchase-history";
+    }
+
+    @PostMapping("/user")
+    @ResponseBody
+    public ResponseEntity<List<CompraDTO>> getComprasUsuario()
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String dni = auth.getName();
-        return ResponseEntity.ok(compraRepository.findByuDNIComprador(dni));
+        return ResponseEntity.ok(compraService.mostrar_compras_usu(dni));
     }
 
     @PostMapping("/")

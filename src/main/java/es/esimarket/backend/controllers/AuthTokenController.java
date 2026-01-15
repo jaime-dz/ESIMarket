@@ -39,11 +39,6 @@ public class AuthTokenController {
     @Autowired
     private AuthService authService;
 
-    @GetMapping("/usuarios")
-    public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        return ResponseEntity.ok(authService.mostrar_usuarios());
-    }
-
     @GetMapping("/signup")
     public String signupG() { return "signup"; }
 
@@ -84,6 +79,7 @@ public class AuthTokenController {
     }
 
     @DeleteMapping("/logout")
+    @ResponseBody
     public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken", required = false) String refreshToken, @CookieValue(name = "accessToken", required = false) String accessToken) throws  CannotCreateUserError, CannotCreateTokenError
     {
 
@@ -126,7 +122,7 @@ public class AuthTokenController {
     private ResponseCookie crearCookie(String nombre, String valor, long duracion, boolean httponly) {
         return ResponseCookie.from(nombre, valor)
                 .httpOnly(httponly) // Seguridad: JS no puede leerla
-                .secure(false)  // false para localhost, true para producción (HTTPS)
+                .secure(true)  // false para localhost, true para producción (HTTPS)
                 .path("/")
                 .maxAge(duracion / 1000) // Segundos
                 .sameSite("Strict")

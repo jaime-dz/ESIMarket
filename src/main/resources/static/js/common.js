@@ -1,17 +1,13 @@
-/* ==============================================
-   common.js - Lógica Global y de Utilidad
-   ============================================== */
+/* common.js - Lógica Global y de Utilidad */
 
 document.addEventListener("DOMContentLoaded", async function() {
 
-    // 1. GESTIÓN DE SESIÓN Y NAVEGACIÓN
     verificarSesionLocal();
     await validarSesionConServidor();
     if (typeof actualizarBarraNavegacion === 'function') {
         actualizarBarraNavegacion();
     }
     
-    // 2. LOGOUT (Si existe el botón)
     const botonLogout = document.getElementById('btn-logout');
     if (botonLogout) {
         botonLogout.addEventListener('click', (e) => {
@@ -20,23 +16,18 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
     }
 
-    // 3. BUSCADOR (Lógica completa)
     const inputBusqueda = document.getElementById("search-input");
     const botonBorrar = document.getElementById("clearBtn");
 
-    // Función que filtra las tarjetas visualmente
     function filtrarProductos(texto) {
         const busqueda = texto.toLowerCase();
-        // Seleccionamos todas las tarjetas que ya están pintadas en pantalla
         const tarjetas = document.querySelectorAll('.product-card');
 
         tarjetas.forEach(card => {
-            // Buscamos el nombre dentro de la tarjeta
             const nombreProducto = card.querySelector('.product-name').textContent.toLowerCase();
             
-            // Si coincide, mostramos (block/flex), si no, ocultamos (none)
             if (nombreProducto.includes(busqueda)) {
-                card.style.display = 'flex'; // O 'block' según tu diseño original
+                card.style.display = 'flex';
             } else {
                 card.style.display = 'none';
             }
@@ -44,37 +35,30 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     if(inputBusqueda && botonBorrar) {
-        // Evento al escribir
         inputBusqueda.addEventListener("input", function() {
             const texto = inputBusqueda.value;
             
-            // 1. Mostrar u ocultar la X
             if (texto.length > 0) {
                 botonBorrar.style.display = "block";
             } else {
                 botonBorrar.style.display = "none";
             }
 
-            // 2. Filtrar los productos
             filtrarProductos(texto);
         });
         
-        // Evento al borrar con la X
         botonBorrar.addEventListener("click", function() {
             inputBusqueda.value = "";
             botonBorrar.style.display = "none";
             
-            // Importante: Volver a mostrar todos los productos
             filtrarProductos(""); 
             
             inputBusqueda.focus();
         });
     }
 
-    // 4. GESTIÓN MENU FOOTER
     ocultarEnlacePaginaActual();
 
-    // 5. CARGA DE PRODUCTOS (Solo si existe el contenedor .product-grid-container)
     const productContainer = document.querySelector('.product-grid-container');
     
     if (productContainer) {
@@ -94,12 +78,30 @@ document.addEventListener("DOMContentLoaded", async function() {
             productContainer.innerHTML = "<p>Error de conexión con el servidor.</p>";
         }
     }
+    const filtroSelect = document.getElementById('filtro-ped');
+    const btnAplicarFiltro = document.querySelector('.submit-button button');
+    
+    if (filtroSelect && btnAplicarFiltro) {
+        let containerPedidos = document.getElementById('lista-pedidos-container');
+        if (!containerPedidos) {
+            containerPedidos = document.createElement('div');
+            containerPedidos.id = 'lista-pedidos-container';
+            containerPedidos.style.marginTop = '20px';
+            document.querySelector('.submit-button').after(containerPedidos);
+        }
+
+        gestionarCargaPedidos('todos');
+
+        btnAplicarFiltro.addEventListener('click', (e) => {
+            e.preventDefault();
+            const valorFiltro = filtroSelect.value;
+            gestionarCargaPedidos(valorFiltro);
+        });
+    }
 });
 
 
-/* ==============================================
-   FUNCIONES EXPORTABLES (Para usar en otros JS)
-   ============================================== */
+/* FUNCIONES EXPORTABLES */
 
 export async function enviarFormularioComoJSON(evento) {
     evento.preventDefault();
@@ -126,7 +128,6 @@ export async function enviarFormularioComoJSON(evento) {
             credentials: 'include' 
         });
         
-        // 1. ÉXITO
         if (respuesta.ok) {
             console.log('Solicitud exitosa. Status:', respuesta.status);
             
@@ -137,7 +138,6 @@ export async function enviarFormularioComoJSON(evento) {
             return;
         }
 
-        // 2. ERROR
         let mensajeError = "Error";
         try {
             const errorData = await respuesta.json();
@@ -190,13 +190,9 @@ export async function cerrarSesion() {
 }
 
 
-/* ==============================================
-   FUNCIONES INTERNAS (Helpers)
-   ============================================== */
+/* FUNCIONES INTERNAS */
 
 function actualizarBarraNavegacion() {
-    // CAMBIO: Leemos la cookie 'isLoggedIn' en lugar del localStorage
-    // Asumimos que si la cookie existe y tiene valor 'true', el usuario está logueado
     const cookieVal = getCookie('isLoggedIn');
     const estaLogueado = cookieVal === 'true'; 
 
@@ -213,7 +209,6 @@ function actualizarBarraNavegacion() {
 }
 
 function verificarSesionLocal() {
-    // CAMBIO: Usamos getCookie
     const cookieVal = getCookie('isLoggedIn');
     const estaLogueado = cookieVal === 'true';
 
@@ -251,7 +246,6 @@ function ocultarEnlacePaginaActual() {
     });
 }
 
-// Función encargada de pintar el HTML de los productos
 export function displayProductsItems(products, container) {
     if (!products || products.length === 0) {
         container.innerHTML = "<p>No hay productos disponibles.</p>";
@@ -259,33 +253,34 @@ export function displayProductsItems(products, container) {
     }
 
     const displayProducts = products.map(function(item) {
-        // A. DETECTAR TIPO
         const esServicio = item.tipo && item.tipo.toLowerCase() === 'servicio';
 
-        // B. LÓGICA DE FOTO
         let imagenFinal;
         if (item.foto) {
-            // Si el backend nos devuelve datos (el byte[]), es un string Base64 limpio.
-            // Le agregamos la cabecera para que el navegador lo entienda como imagen.
             imagenFinal = 'data:image/jpeg;base64,' + item.foto;
         } else {
-            // Si item.foto es null, usamos la ruta local por defecto
             imagenFinal = esServicio ? '/Images/engranaje.jpg' : '/Images/book.jpg';
         }
-        // C. SUFIJO DE PRECIO
+
         const sufijoPrecio = esServicio ? '/h' : '';
 
-        // D. LÓGICA DE ESTADO
-        const htmlEstado = (!esServicio && item.estado) 
-            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>` 
-            : ''; 
+        // --- LÓGICA DE PRECIO MODIFICADA ---
+        // Solo generamos el HTML si el precio NO es null ni undefined.
+        // Usamos !== null para permitir que el precio sea 0.
+        const htmlPrecio = (item.precio !== null && item.precio !== undefined)
+            ? `<p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>`
+            : '';
+
+        const htmlEstado = (!esServicio && item.estado)
+            ? `<p class="product-state">${item.estado.replace(/_/g, ' ')}</p>`
+            : '';
 
         return `
             <div class="product-card" data-category="${item.tipo}" data-seller="${item.nombreVendedor}">
                 <img src="${imagenFinal}" alt="${item.nombre}" class="product-image">
                 <h4 class="product-name">${item.nombre}</h4>
-                <p class="product-price">${item.precio} ⚙️${sufijoPrecio}</p>
-                ${htmlEstado}
+
+                ${htmlPrecio} ${htmlEstado}
                 <p class="product-seller">Vendido por: ${item.nombreVendedor}</p>
                 <a href="/products/view/${item.id}" class="btn-detail" style="display:block; text-align:center; margin-top:10px; background:#E57200; color:white; padding:5px; text-decoration:none; border-radius:5px;">
                     Ver detalle
@@ -297,9 +292,7 @@ export function displayProductsItems(products, container) {
     container.innerHTML = displayProducts.join("");
 }
 
-// Agrega esto en la sección de FUNCIONES INTERNAS
 async function validarSesionConServidor() {
-    // CAMBIO: Si no hay cookie, no hacemos la llamada extra al servidor
     if (getCookie('isLoggedIn') !== 'true') return;
 
     try {
@@ -311,8 +304,6 @@ async function validarSesionConServidor() {
 
         if (response.status === 401 || response.status === 403) {
             console.warn("La sesión ha expirado en el servidor.");
-            // Ya no borramos nada manualmente porque el navegador 
-            // gestionará la expiración de la cookie si el servidor lo indica
             actualizarBarraNavegacion(); 
             window.location.href = "/home/";
         }
@@ -336,3 +327,278 @@ window.toggleMenu = function() {
         menu.style.width = "250px";
     }
 }
+
+/*
+async function gestionarCargaPedidos(filtro) {
+    const container = document.getElementById('lista-pedidos-container');
+    container.innerHTML = '<p style="text-align:center;">Cargando pedidos...</p>';
+
+    try {
+        const response = await fetch('/orders/filter', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ filter: filtro })
+        });
+
+        if (response.ok) {
+            const pedidos = await response.json();
+            renderizarListaPedidos(pedidos, container);
+        } else {
+            console.error("Error status:", response.status);
+            container.innerHTML = '<p style="color:red; text-align:center;">Error al cargar los pedidos.</p>';
+        }
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        container.innerHTML = '<p style="color:red; text-align:center;">Error de conexión con el servidor.</p>';
+    }
+}
+
+*/
+function renderizarListaPedidos(pedidos, container) {
+    if (!pedidos || pedidos.length === 0) {
+        container.innerHTML = '<p style="text-align:center;">No se encontraron pedidos con este filtro.</p>';
+        return;
+    }
+
+    const htmlPedidos = pedidos.map(p => {
+        const imagen = p.fotoBase64 ? p.fotoBase64 : '/Images/book.jpg';
+        
+        let imagenFinal;
+        if (p.foto) {
+            imagenFinal = 'data:image/jpeg;base64,' + p.foto;
+        } else {
+            imagenFinal = '/Images/book.jpg';
+        }
+        let botonesAccion = '';
+
+        if (!p.esComprador && p.estado === 'PorEntregar') {
+            botonesAccion = `
+                <button onclick="accionEntregarPedido(${p.idPedido}, ${p.enTaquilla})" 
+                        style="background:#E57200; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-top:10px;">
+                    Marcar como Entregado
+                </button>`;
+        }
+        
+        if (p.esComprador && p.estado === 'Entregado') {
+            botonesAccion = `
+                <button onclick="accionRecogerPedido(${p.idPedido})" 
+                        style="background:#28a745; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; margin-top:10px;">
+                    Confirmar Recogida
+                </button>`;
+        }
+
+        const infoTaquilla = p.enTaquilla && p.nTaquilla > 0 
+            ? `<p style="color:#E57200; font-weight:bold;">📍 En Taquilla Nº ${p.nTaquilla}</p>` 
+            : '';
+
+        return `
+            <div class="product-card" style="display:flex; flex-direction:row; width:95%; max-width:800px; margin:10px auto; align-items:center; gap:15px; text-align:left;">
+                <img src="${imagen}" alt="${p.nombreProd}" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+                <div style="flex:1;">
+                    <h3 style="margin:0 0 5px 0;">${p.nombreProd}</h3>
+                    <p style="margin:0; font-size:0.9em; color:#666;">
+                        <strong>Estado:</strong> ${p.estado} <br>
+                        <strong>Vendedor:</strong> ${p.nombreVendedor} | 
+                        <strong>Comprador:</strong> ${p.nombreComprador}
+                    </p>
+                    ${infoTaquilla}
+                </div>
+                <div style="text-align:right;">
+                    ${botonesAccion}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = htmlPedidos;
+}
+
+
+
+
+window.comprarProducto = function(idProducto) {
+    abrirModalCompra(idProducto);
+};
+
+
+window.toggleTruequeField = function() {
+    const select = document.getElementById('select-pago');
+    const field = document.getElementById('trueque-field');
+    if (select && field) {
+        if (select.value === 'Trueque') {
+            field.style.display = 'block';
+        } else {
+            field.style.display = 'none';
+            const input = document.getElementById('input-trueque-id');
+            if (input) input.value = '';
+        }
+    }
+};
+
+window.abrirModalCompra = function(idProducto) {
+    const modal = document.getElementById('modalCompra');
+    const inputId = document.getElementById('modal-product-id');
+    
+    if(modal && inputId) {
+        inputId.value = idProducto;
+        const truequeInput = document.getElementById('modal-input-trueque-id');
+        if(truequeInput) truequeInput.value = '';
+        
+        toggleTruequeModal();
+        
+        modal.style.display = 'flex';
+    }
+};
+
+window.cerrarModalCompra = function() {
+    const modal = document.getElementById('modalCompra');
+    if(modal) {
+        modal.style.display = 'none';
+    }
+};
+
+window.toggleTruequeModal = function() {
+    const select = document.getElementById('modal-select-pago');
+    const field = document.getElementById('modal-trueque-field');
+    const totalContainer = document.getElementById('modal-total-container');
+
+    if (select) {
+        if (select.value === 'Trueque') {
+            if (field) field.style.display = 'block';
+            if (totalContainer) totalContainer.style.display = 'none';
+        } else {
+            if (field) field.style.display = 'none';
+            if (totalContainer) totalContainer.style.display = 'block';
+        }
+    }
+};
+
+window.enviarCompra = async function() {
+    const btnConfirmar = document.querySelector('.modal-footer .btn-estilo:last-child');
+    const textoOriginal = btnConfirmar.innerText;
+    btnConfirmar.innerText = "Procesando...";
+    btnConfirmar.disabled = true;
+
+    const inputPago = document.getElementById('modal-select-pago');
+    const inputRecepcion = document.getElementById('modal-select-recepcion');
+    const inputHoras = document.getElementById('modal-input-horas');
+
+    const inputIdProd = document.getElementById('modal-product-id');
+
+    const inputTruequeId = document.getElementById('modal-input-trueque-id');
+
+    const idProducto = inputIdProd ? inputIdProd.value : null;
+    const tipoPago = inputPago ? inputPago.value : null;
+
+    let recepcion = null;
+    if (inputRecepcion && inputRecepcion.value !== "") {
+        recepcion = inputRecepcion.value;
+    }
+
+    let horas = inputHoras ? parseInt(inputHoras.value) : 1;
+    if (isNaN(horas) || horas < 1) horas = 1;
+
+    let idProdTrueque = null;
+    if (tipoPago === 'Trueque' && inputTruequeId && inputTruequeId.value) {
+        idProdTrueque = parseInt(inputTruequeId.value);
+    }
+
+    const payload = {
+        idProd: parseInt(idProducto),
+        tipoPago: tipoPago,
+        recepcion: recepcion,
+        horas: horas,
+        idProdTrueque: idProdTrueque
+    };
+
+    try {
+        const response = await fetch(`/purchase/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("¡Compra realizada con éxito!");
+            window.location.href = "/home/";
+        } else {
+            let mensajeUsuario = "No se pudo completar la compra.";
+            try {
+                const errorText = await response.text();
+                if(errorText) mensajeUsuario = "Error: " + errorText;
+            } catch(e) {}
+            alert(mensajeUsuario);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión.");
+    } finally {
+        btnConfirmar.innerText = textoOriginal;
+        btnConfirmar.disabled = false;
+    }
+};
+
+window.onclick = function(event) {
+    const modal = document.getElementById('modalCompra');
+    if (event.target == modal) {
+        cerrarModalCompra();
+    }
+}
+
+window.eliminarProducto = async function(idProducto) {
+    const confirmacion = confirm("¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.");
+    
+    if (!confirmacion) return;
+
+    try {
+        const response = await fetch(`/products/delete/${idProducto}`, {
+            method: 'DELETE', 
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            alert("Anuncio eliminado correctamente.");
+            window.location.href = "/home/";
+        } else {
+            alert("Hubo un error al intentar eliminar el producto.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error de conexión con el servidor.");
+    }
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    const headerImg = document.querySelector('.profile-avatar');
+
+    if (headerImg && headerImg.dataset.id) {
+        
+        const usuarioID = "avatar_" + headerImg.dataset.id;
+        
+        let miHuevo = localStorage.getItem(usuarioID);
+
+        if (!miHuevo) {
+            const huevos = [
+                '/Images/huevoazul.jpeg',
+                '/Images/huevorosa.jpeg',
+                '/Images/huevoamarillo.jpeg',
+                '/Images/huevoverde.jpeg',
+                '/Images/huevorojo.jpeg'
+            ];
+            const random = Math.floor(Math.random() * huevos.length);
+            miHuevo = huevos[random];
+            localStorage.setItem(usuarioID, miHuevo);
+        }
+
+        headerImg.src = miHuevo;
+
+        const mainProfileImg = document.querySelector('.imagen-left img');
+        if (mainProfileImg) {
+            mainProfileImg.src = miHuevo;
+        }
+    }
+});

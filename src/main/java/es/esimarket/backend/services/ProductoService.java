@@ -42,7 +42,7 @@ public class ProductoService {
     private VariosService variosService;
 
 
-    public ResponseEntity<String> nuevoProducto(String vendedor, int precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada, byte[] foto ){
+    public ResponseEntity<String> nuevoProducto(String vendedor, Integer precio, String descripcion, String Nombre, String tipo, Producto.estado estado,Producto.PagoAceptado pa,Producto.RecepcionAceptada recepcionAceptada, byte[] foto ){
 
         Producto p = new Producto(vendedor, precio, descripcion, Nombre, tipo, estado,pa,recepcionAceptada);
         p = productoRepository.save(p);
@@ -61,7 +61,11 @@ public class ProductoService {
 
             FotoProd fp = fotoProdRepository.findByIdProd(p.getID());
             Usuario u = usuarioRepository.findByid(p.getuDNI_Vendedor());
-            productDTOs.add(productMapper.toDTO(p,fp,u));
+
+            if ( p.isDisponible() ){
+                productDTOs.add(productMapper.toDTO(p,fp,u));
+            }
+
         }
 
         return productDTOs;

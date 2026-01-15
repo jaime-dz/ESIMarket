@@ -10,12 +10,13 @@
 <body>
     <div id="sideMenu" class="sidebar user-view">
         <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
-        <a href="/purchase/user">Historial de compras</a>
-        <a href="/orders/filter">Lista de pedidos</a>
-        <a href="/service/user">Lista de servicios</a>
-        <a href="/donations/donationByUser">Donaciones</a>
+        <a href="/purchase/">Historial de compras</a>
+        <a href="/orders/">Lista de pedidos</a>
+        <a href="/service/">Lista de servicios</a>
+        <a href="/donations/">Donaciones</a>
         <a href="/chat/">Chats</a>
     </div>
+
     <header class="menu-bar menu-superior">
             <div class="header-left">
                 <div class="hamburger-icon user-view" onclick="toggleMenu()">
@@ -30,7 +31,8 @@
 
             <nav class="header-center">
                 <ul>
-                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                    <li><a href="/home/">Inicio</a></li> 
+                    <li><a href="/home/about">Sobre nosotros</a></li>
                 </ul>
             </nav>
 
@@ -42,14 +44,16 @@
                 </div>
 
                 <div class="user-view" style="display: none;">
-                    
                     <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
                     
                     <div class="profile-container">
                         <div class="coins-info">
                             <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
                         </div>
-                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
                         
                         <div class="dropdown-content">
                             <a href="/profile/">Mi Perfil</a>
@@ -57,52 +61,92 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-        </header>
+    </header>
 
-    <main style="max-width: 800px; margin: 40px auto; padding: 20px;">
-        
-        <div id="product-detail-container" style="display: flex; gap: 30px;">
+    <main style="max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%; box-sizing: border-box;">
+    
+        <div class="product-detail-wrapper" style="position: relative;">
+            <div class="card-header">
+                <div class="header-title-group">
+                    <h1 class="detail-title" th:text="${product.nombre}">Nombre del Producto</h1>
+                    <p class="product-ref">ID: <span th:text="${product.id}">000</span></p>
+                </div>
+                <button th:if="${product.isDisponible and isOwner}" 
+                        class="btn-eliminar"
+                        th:onclick="'eliminarProducto(' + ${product.id} + ')'">
+                    ELIMINAR
+                </button>
+            </div>
             
-            <div style="flex: 1;">
-                <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+
+            <div class="detail-image-col">
+                <img th:if="${product.foto != null}" th:src="${product.fotoBase64}" alt="Producto">
                 
                 <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) == 'servicio'}"
-                     src="/Images/engranaje.jpg" 
-                     alt="Servicio" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                    src="/Images/engranaje.jpg" alt="Servicio">
 
                 <img th:if="${product.foto == null and #strings.toLowerCase(product.tipo) != 'servicio'}"
-                     src="/Images/book.jpg" 
-                     alt="Producto" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                    src="/Images/book.jpg" alt="Producto">
             </div>
 
-            <div style="flex: 1;">
-                <h1 th:text="${product.nombre}" style="color: #E57200;">Nombre del Producto</h1>
+            <div class="detail-info-col">
                 
-                <h3 style="color: #333; text-align: center;">
-                    <span th:text="${product.precio}">0</span> 
-                    <span>⚙️</span>
-                    <span th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}">/h</span>
-                </h3>
+                
+                <div class="detail-price-box">
+                    <span style="font-size: 0.6em;" th:text="${product.precio}">0</span> 
+                    <span style="font-size: 0.6em;">⚙️</span>
+                    <span th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="font-size: 0.6em; color: #666;">/ hora</span>
+                </div>
 
-                <p><strong>Vendedor:</strong> <span th:text="${product.nombreVendedor}">Usuario</span></p>
-                <p><strong>Categoría:</strong> <span th:text="${product.tipo}">-</span></p>
+                <div class="detail-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Vendedor</span>
+                        <span class="meta-value" th:text="${product.nombreVendedor}">Usuario</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Categoría</span>
+                        <span class="meta-value" th:text="${product.tipo}">-</span>
+                    </div>
+                    <div class="meta-item" th:if="${product.tipo.toLowerCase() != 'servicio'}">
+                        <span class="meta-label">Estado</span>
+                        <span class="meta-value" th:text="${product.estado}">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Pago Aceptado</span>
+                        <span class="meta-value" th:text="${product.pago}">-</span>
+                    </div>
+                    <div th:if="${#strings.toLowerCase(product.tipo) != 'servicio'}" class="meta-item">
+                        <span class="meta-label">Entrega</span>
+                        <span class="meta-value" th:text="${product.recepcionAceptada}">-</span>
+                    </div>
+                </div>
                 
-                <p th:if="${product.tipo.toLowerCase() != 'servicio'}">
-                    <strong>Estado:</strong> <span th:text="${product.estado}">-</span>
-                </p>
-                
-                <hr>
-                
-                <h4>Descripción:</h4>
-                <p th:text="${product.descripcion ?: 'Sin descripción detallada.'}"></p>
+                <div class="description-box">
+                    <h4 style="margin-top:0; color:#E57200;">Descripción</h4>
+                    <p style="margin-bottom:0; text-align: left;" th:text="${product.descripcion ?: 'El vendedor no ha añadido una descripción detallada para este producto.'}"></p>
+                </div>
 
-                <br>
-                <button onclick="window.history.back()" style="padding: 10px 20px; cursor: pointer;">Volver</button>
+                <div class="action-buttons">
+                    <button th:if="${product.isDisponible and !isOwner}"
+                            th:onclick="'comprarProducto(' + ${product.id} + ')'" 
+                            class="btn-estilo">
+                        Comprar
+                    </button>
+
+                    <button class="btn-estilo" onclick="contactarVendedor()" style="margin-left: 10px; background-color: #2196F3;">
+                        Contactar 💬
+                    </button>
+
+                    <button onclick="window.history.back()" 
+                            class="btn-estilo btn-volver">
+                        Volver
+                    </button>
+                </div>
             </div>
         </div>
     </main>
+
     <footer class="menu-bar menu-inferior">
             <ul>
                 <li><a th:href="@{/home/}">Inicio</a></li>
@@ -121,6 +165,138 @@
                 </li>
             </ul>
         </footer>
+    <div id="modalCompra" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModalCompra()">&times;</span>
+
+            <div class="modal-header">
+                <h2>Confirmar Compra</h2>
+                <p>Por favor, configura los detalles de tu pedido.</p>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="modal-product-id">
+
+                <div style="margin-bottom:10px;">
+                    <label for="modal-select-pago" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Pago:</label>
+                    <select id="modal-select-pago" onchange="toggleTruequeModal()" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                        <option value="Monedas"
+                                th:if="${product.pago != null and (product.pago.name() == 'Monedas' or product.pago.name() == 'Ambos')}">
+                            Monedas
+                        </option>
+                        <option value="Trueque"
+                                th:if="${product.pago != null and (product.pago.name() == 'Trueque' or product.pago.name() == 'Ambos')}">
+                            Trueque
+                        </option>
+                    </select>
+                </div>
+
+                <div id="modal-trueque-field" style="display:none; margin-bottom:15px; background: #fff3e0; padding: 10px; border-radius: 5px;">
+                    <label for="modal-input-trueque-id" style="font-weight:bold; display:block; margin-bottom:5px; color:#E57200;">ID de tu producto a intercambiar:</label>
+                    <input type="number" id="modal-input-trueque-id" placeholder="Ej: 45" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                </div>
+
+                <div style="margin-bottom:10px;"
+                     th:if="${product.tipo != null and #strings.toLowerCase(product.tipo) != 'servicio'}">
+
+                    <label for="modal-select-recepcion" style="font-weight:bold; display:block; margin-bottom:5px;">Método de Recepción:</label>
+                    <select id="modal-select-recepcion" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;">
+                        <option value="enMano"
+                                th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enMano' or product.recepcionAceptada.name() == 'Ambos')}">
+                            En Mano
+                        </option>
+                        <option value="enTaquilla"
+                                th:if="${product.recepcionAceptada != null and (product.recepcionAceptada.name() == 'enTaquilla' or product.recepcionAceptada.name() == 'Ambos')}">
+                            En Taquilla
+                        </option>
+                    </select>
+                </div>
+
+                <div th:if="${#strings.toLowerCase(product.tipo) == 'servicio'}" style="margin-bottom:15px;">
+                    <label for="modal-input-horas" style="font-weight:bold; display:block; margin-bottom:5px;">Horas a contratar:</label>
+                    <input type="number" id="modal-input-horas" value="1" min="1" max="1"
+                           oninput="actualizarPrecioTotal()"
+                           style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+                </div>
+
+                <div id="modal-total-container" style="margin-top: 15px; font-size: 1.2em; font-weight: bold; text-align: right; color: #00587C;">
+                    Total: <span id="precio-total-display" th:text="${product.precio}">0</span> Monedas
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="cerrarModalCompra()" class="btn-estilo btn-volver" style="padding: 10px 20px;">Cancelar</button>
+                <button onclick="enviarCompra()" class="btn-estilo" style="padding: 10px 20px;">Confirmar</button>
+            </div>
+        </div>
+    </div>
     <script src="/js/common.js" type="module"></script>
+    <script th:inline="javascript">
+        const precioBase = [[${product.precio}]];
+
+        function actualizarPrecioTotal() {
+            const inputHoras = document.getElementById('modal-input-horas');
+            const displayPrecio = document.getElementById('precio-total-display');
+            
+            // Valor por defecto
+            let horas = 1;
+            
+            // Solo intentamos leer el valor si el input existe (es un Servicio)
+            if (inputHoras) {
+                const valor = parseInt(inputHoras.value);
+                // Si es un número válido y mayor que 0, lo usamos
+                if (!isNaN(valor) && valor > 0) {
+                    horas = valor;
+                }
+            }
+
+            // Calculamos el total
+            const total = precioBase * horas;
+            
+            // Actualizamos el texto en pantalla si existe el elemento
+            if (displayPrecio) {
+                displayPrecio.innerText = total;
+            }
+        }
+    </script>
+    <script th:inline="javascript">
+        const vendedorDNI = [[${product.uDNIVendedor}]];
+        const productoID = [[${product.id}]];
+
+        async function contactarVendedor() {
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dni: vendedorDNI,
+                        idProd: productoID
+                    })
+                });
+
+                if (response.ok) {
+                    // Caso 200 OK: Chat creado correctamente
+                    window.location.href = '/chat/';
+                } else {
+                    // Si hay error, leemos el JSON
+                    const data = await response.json();
+
+                    // Verificamos el mensaje específico que pediste
+                    if (data.error === "Ya existe un chat con estos usuarios y producto") {
+                        // Si ya existe, redirigimos igualmente a la lista de chats
+                        window.location.href = '/chat/';
+                    } else {
+                        // Cualquier otro error (ej: contactarse a sí mismo) lo mostramos
+                        alert("No se pudo iniciar el chat: " + data.error);
+                    }
+                }
+            } catch (error) {
+                console.error('Error en la petición:', error);
+                alert("Hubo un error de conexión al intentar contactar.");
+            }
+        }
+    </script>
 </body>
 </html>

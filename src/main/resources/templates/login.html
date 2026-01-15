@@ -37,7 +37,10 @@
                         <div class="coins-info">
                             <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
                         </div>
-                        <img class="profile-avatar" src="/Images/huevoverde.jpeg" alt="Perfil">
+                        <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
                         
                         <div class="dropdown-content">
                             <a href="/profile/">Mi Perfil</a>
@@ -49,7 +52,7 @@
             </div>
         </header>
         <main>
-            <div class="square">
+            <div class="form-container">
                 <h2>Iniciar sesión</h2>
                 <form id="login" method="post">
                     <div id="login-message"></div>
@@ -100,13 +103,11 @@
                 const input = document.getElementById(inputId);
                 
                 if (input.type === "password") {
-                    // Cambiar a texto visible
                     input.type = "text";
-                    iconElement.textContent = "👁️"; // Icono de ojo tachado o similar
+                    iconElement.textContent = "👁️";
                 } else {
-                    // Volver a ocultar
                     input.type = "password";
-                    iconElement.textContent = "🙈"; // Icono de ojo normal
+                    iconElement.textContent = "🙈";
                 }
             }
         </script>

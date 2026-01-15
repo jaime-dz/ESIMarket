@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Donaciones</title>
+        <link rel="stylesheet" href="/css/general_styles.css">
+        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon"> <!-- icono pequeño en pestaña-->
+    </head>
+    <body>
+        <div id="sideMenu" class="sidebar user-view">
+            <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+            <a href="/purchase/">Historial de compras</a>
+            <a href="/orders/">Lista de pedidos</a>
+            <a href="/service/">Lista de servicios</a>
+            <a href="/donations/">Donaciones</a>
+            <a href="/chat/">Chats</a>
+        </div>
+        <header class="menu-bar menu-superior">
+            <div class="header-left">
+                <div class="hamburger-icon user-view" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+            </div>
+
+            <nav class="header-center">
+                <ul>
+                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                
+                <div class="guest-view">
+                    <a href="/auth/login">Iniciar sesión</a>
+                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
+                </div>
+
+                <div class="user-view" style="display: none;">
+                    
+                    <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+                    
+                    <div class="profile-container">
+                        <div class="coins-info">
+                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                        </div>
+                        <img class="profile-avatar" 
+                            th:data-id="${profile?.correo}" 
+                            src="/Images/huevoverde.jpeg" 
+                            alt="Perfil">
+                        
+                        <div class="dropdown-content">
+                            <a href="/profile/">Mi Perfil</a>
+                            <a href="#" id="btn-logout">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+        <main style="padding: 40px; width: 100%; box-sizing: border-box;">
+
+            <div class="donations-layout" style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+
+                <div class="donation-container" style="flex: 1; min-width: 300px; max-width: 600px;">
+                    <div class="donation-card">
+                        <svg class="heart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+
+                        <div class="donation-title">Tu Generosidad</div>
+
+                        <div class="donation-count-wrapper">
+                            <span id="current-count">0</span>
+                            <span class="max-limit">/ 5</span>
+                        </div>
+
+                        <div class="donation-label">Donaciones realizadas</div>
+
+                        <p class="donation-subtitle">
+                            ¡Gracias! Has contribuido <span id="subtitle-count" class="highlight-text">0 veces</span> a mejorar nuestra comunidad universitaria.
+                        </p>
+                    </div>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_ADMIN')"
+                     style="width: 350px; background: #fff; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; height: fit-content; border: 1px solid #eee;">
+
+                    <div style="background: linear-gradient(135deg, #E57200 0%, #ff8c00 100%); padding: 20px; color: white;">
+                        <h3 style="margin: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                            🛠️ Administración
+                        </h3>
+                    </div>
+
+                    <div style="padding: 25px;">
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.5;">
+                            Registrar donación manual.
+                        </p>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 8px;">DNI Usuario</label>
+                            <input type="text" id="inputDniUsuario" placeholder="Ej: u{dni}"
+                                   style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; outline: none; transition: border 0.3s; box-sizing: border-box;">
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #444; margin-bottom: 8px;">Cantidad (€)</label>
+                            <input type="number"
+                                   id="inputCantidad"
+                                   placeholder="0.00"
+                                   step="1"
+                                   min="1"
+                                   oninput="if(this.value < 0) this.value = 0;"
+                                   style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; outline: none; transition: border 0.3s; box-sizing: border-box;">
+                        </div>
+
+                        <button onclick="realizarDonacionManual()"
+                                style="width: 100%; background: #00587C; color: white; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: transform 0.2s, background 0.2s;">
+                            Confirmar Ingreso
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+        <footer class="menu-bar menu-inferior">
+            <ul>
+                <li><a th:href="@{/home/}">Inicio</a></li>
+                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+                <li class="guest-view">
+                    <a th:href="@{/auth/login}">Iniciar sesión</a>
+                </li>
+                <li class="guest-view">
+                    <a th:href="@{/auth/signup}">Registrarse</a>
+                </li>
+
+                <li class="sn">
+                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+                </li>
+            </ul>
+        </footer>
+        <script src="/js/common.js" type="module"></script>
+        <script>
+            // 1. CARGA INICIAL (Animaciones y recuperar datos)
+            document.addEventListener("DOMContentLoaded", function() {
+                const counterElement = document.getElementById("current-count");
+                const subtitleElement = document.getElementById("subtitle-count");
+
+                // --- CAMBIO AQUÍ: URL nueva y método POST ---
+                fetch('/donations/donationByUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Error en la petición");
+                    return response.json(); // Esperamos que devuelva un número (ej: 3)
+                })
+                .then(numero => {
+                    // Animación del número
+                    animateValue(counterElement, 0, numero, 1500);
+
+                    // Texto descriptivo (singular/plural)
+                    const vecesTexto = numero === 1 ? "vez" : "veces";
+                    subtitleElement.innerText = `${numero} ${vecesTexto}`;
+                })
+                .catch(error => {
+                    console.error('Error cargando donaciones:', error);
+                    counterElement.innerText = "0";
+                    subtitleElement.innerText = "0 veces";
+                });
+            });
+
+            // Función auxiliar para animar números
+            function animateValue(obj, start, end, duration) {
+                if (start === end) {
+                    obj.innerHTML = end;
+                    return;
+                }
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    obj.innerHTML = Math.floor(progress * (end - start) + start);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    } else {
+                        obj.innerHTML = end;
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            // 2. LÓGICA DEL BOTÓN DE ADMIN (Fuera del DOMContentLoaded)
+            async function realizarDonacionManual() {
+                const dniUsuario = document.getElementById('inputDniUsuario').value.trim();
+                let cantidad = document.getElementById('inputCantidad').value;
+
+                // Si está vacío, asumimos 0
+                if (!cantidad) cantidad = 0;
+
+                // Validaciones
+                if (cantidad < 0) {
+                    alert("⚠️ La cantidad no puede ser negativa.");
+                    return;
+                }
+                if (!dniUsuario) {
+                     alert("⚠️ Falta el DNI.");
+                     return;
+                }
+
+                if (!confirm(`¿Registrar donación de ${cantidad}€ a ${dniUsuario}?`)) return;
+
+                try {
+                    const url = `/donations/make/${encodeURIComponent(dniUsuario)}/${encodeURIComponent(cantidad)}`;
+
+                    const response = await fetch(url, {
+                        method: 'PUT', // Este sigue siendo PUT según tu controlador Java anterior
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    if (response.ok) {
+                        alert("✅ Donación registrada correctamente.");
+                        // Limpiamos campos
+                        document.getElementById('inputDniUsuario').value = '';
+                        document.getElementById('inputCantidad').value = '';
+                        // Opcional: Recargar la página para ver cambios si el admin se donó a sí mismo
+                        // window.location.reload();
+                    } else {
+                        const text = await response.text();
+                        alert("❌ Error: " + (text || "No se pudo realizar la donación."));
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("❌ Error de conexión");
+                }
+            }
+        </script>
+    </body>
+</html>    

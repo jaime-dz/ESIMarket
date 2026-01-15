@@ -95,6 +95,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/delete/{idProd}")
+    @ResponseBody
     public void  deleteProducto( @PathVariable int idProd) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -110,6 +111,7 @@ public class ProductoController {
 
         if ( !p.isDisponible() ) throw new CannotCreateProductError("No puedes borrar un produccto ya comprado");
 
+        fotoProdRepository.findById(p.getID()).ifPresent(fp -> fotoProdRepository.delete(fp));
         productoRepository.delete(p);
 
     }

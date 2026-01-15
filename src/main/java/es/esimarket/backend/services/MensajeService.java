@@ -1,24 +1,17 @@
 package es.esimarket.backend.services;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
-import es.esimarket.backend.dtos.MensajeDTO;
-import es.esimarket.backend.entities.Usuario;
-import es.esimarket.backend.mappers.MessageMapper;
-import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.controllers.responses.MessageResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import es.esimarket.backend.entities.Mensaje;
 import es.esimarket.backend.repositories.MensajeRepository;
-import es.esimarket.backend.services.VariosService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class MensajeService
@@ -27,26 +20,33 @@ public class MensajeService
     private MensajeRepository mensajeRepository;
 
     @Autowired
-    private MessageMapper messageMapper;
+    private VariosService variosService;
 
-    public String CrearMensaje(int chat, String uDNI, String texto, String Fecha)
+    public Mensaje CrearMensaje(int chat, String uDNI, String texto, LocalDateTime Fecha)
     {
         Mensaje m = new Mensaje(chat,uDNI,Fecha,texto);
 
         mensajeRepository.save(m);
 
-        return "Mensaje añadido correctamente";
+        return m;
     }
 
-    public List<MensajeDTO >mostrar_mensajes( List<Mensaje> m ){
+    public List<MessageResponse>mostrar_mensajes(List<Mensaje> m , String dni){
 
-        List<MensajeDTO> messagesDTO = new ArrayList<>();
+        List<MessageResponse> messagesRes = new ArrayList<>();
+        LocalDateTime fechaAct = variosService.ObtenerFecha();
+        LocalDateTime fechaAyer = fechaAct.minusDays(1);
+        String dia = null;
 
         for ( Mensaje mess : m ){
-            messagesDTO.add(messageMapper.toDto(mess));
+
+            if ( fechaAct.toLocalDate().equals(mess.getFecha().toLocalDate())) dia = "Hoy";
+            else if ( fechaAct.toLocalDate().equals(fechaAyer.toLocalDate())) dia = "Ayer";
+            else dia = mess.getFechaDia();
+            messagesRes.add(new MessageResponse(mess.getId(),mess.getTexto(),mess.getuDNIremitente(),dia,mess.getHoraMin(),null,false));
         }
 
-        return messagesDTO;
+        return messagesRes;
     }
 
     /*public ResponseEntity<List<Mensaje>> MostrarChat(int chat)
@@ -57,7 +57,7 @@ public class MensajeService
         
     }*/
 
-    /*
+
     public Boolean ContienePalabrasProhibidas(String txt)
     {
         List<String> PalabrasProhibidas = List.of("idiota", "imbecil", "imbécil", "estupido", "estupido", "tonto", "tarado", "bobo", "burro",
@@ -70,8 +70,8 @@ public class MensajeService
         "chingar", "chinga", "chingado", "chupasangre", "culiado", "cagar", "cagado", "zorra", "perra",
         "cabrona", "zorra", "malparido", "malparida", "ratahumana","rata", "prostituta", "ramera",
         "polla", "falo", "pito", "verga", "pija", "cuca","follar", "chocho", "concha", "clitoris", "clítoris",
-        "tetas", "pezones", "nalgas", "culo", "ortiga", "ortiga", "madre", "putamadre", "hijodeputa",
-        "hijodeperra", "sucia", "apestado", "apestado", "apestoso", "sarnoso", "traidor", "cerdo",
+        "tetas", "pezones", "nalgas", "culo", "ortiga", "ortiga", "putamadre", "hijodeputa",
+        "hijodeperra", "apestado", "apestado", "apestoso", "sarnoso", "traidor", "cerdo",
         "chancho", "porqueria", "porquería", "excremento", "mierda", "caca", "mojón", "mierdero", "furcia",
         "gonorrea", "maldito", "maldita", "pajero", "onanista", "lamebotas", "lamesuelas", "malnacido", "malnacida",
         "chupacabras", "anoréxica", "anorexica", "bulímica", "gorda", "gordo", "obeso", "fea", "feo",
@@ -79,7 +79,7 @@ public class MensajeService
         "nini", "pelele", "anoréxica", "anoréxico", "flacucho", "caradeculo","culo", "culoroto", "malparido",
         "expulsado", "nini", "mostruo", "pelmazo", "tarugo", "pelma", "papanatas", "cretina",
         "baboso", "rastrero", "malagradecido", "asno", "tarugo", "payasa", "gil", "jumento",
-        "gilún", "come mierda", "transero", "inepto", "payaso", "zángano",
+        "gilún", "come mierda", "transero", "inepto", "payaso", "zángano", "paja",
         "cobarde", "malviviente", "tarambana", "botarate", "pelafustán", "alcornoque",
         "descerebrada", "apestoso", "cuasimodo", "espantajo", "escuálido", "cretina",
         "tunante", "vergonzoso", "panduro", "gandul", "patán", "patana", "bagazo", "bagasa",
@@ -95,12 +95,15 @@ public class MensajeService
         "cagaprisas", "gilipicha", "dedosucio", "orinador", "periquero", "tragón", "malfollado",
         "ojete", "popó", "puerca", "cerda", "percherón", "inmundo");
 
-        boolean contiene = PalabrasProhibidas.stream().anyMatch(p -> txt.toLowerCase().contains(p));
+        String textoEnMinúsculas = txt.toLowerCase();
 
-        return contiene;
+        return PalabrasProhibidas.stream().anyMatch(palabra -> {
+            String regex = "\\b" + Pattern.quote(palabra.toLowerCase()) + "\\b";
+            return Pattern.compile(regex).matcher(textoEnMinúsculas).find();
+        });
+
     }
 
-    */
 
 
 }

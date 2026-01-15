@@ -4,23 +4,17 @@ import java.util.List;
 
 import es.esimarket.backend.controllers.requests.FiltroPedRequest;
 import es.esimarket.backend.controllers.requests.TaquillaRequest;
-import es.esimarket.backend.entities.FotoProd;
+import es.esimarket.backend.entities.*;
 import es.esimarket.backend.exceptions.CannotCompleteActionError;
 import es.esimarket.backend.exceptions.CannotCompletePurchaseError;
 import es.esimarket.backend.exceptions.CannotCreatePhotoError;
 import es.esimarket.backend.exceptions.CannotCreateProductError;
-import es.esimarket.backend.repositories.CompraRepository;
-import es.esimarket.backend.repositories.FotoProdRepository;
-import es.esimarket.backend.repositories.PedidosRepository;
-import es.esimarket.backend.repositories.ProductoRepository;
+import es.esimarket.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import es.esimarket.backend.dtos.PedidosDTO;
-import es.esimarket.backend.entities.Compra;
-import es.esimarket.backend.entities.Pedidos;
-import es.esimarket.backend.entities.Producto;
 import es.esimarket.backend.mappers.PedidosMapper;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +26,9 @@ public class PedidosService{
 
     @Autowired
     private CompraRepository compraRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private FotoProdRepository fotoProdRepository;
@@ -47,49 +44,89 @@ public class PedidosService{
     
     public List<PedidosDTO> filtro_pedidos(String dni, FiltroPedRequest request){
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM pedido");
-        sql.append("JOIN compra c ON p.IdCompra = c.IdCompra ");
+        StringBuilder sql = new StringBuilder("SELECT p.IdPedido, p.IdProd, p.Estado, p.EnTaquilla AS enTaquilla,p.NumTaquilla AS NTaquilla ");
+        sql.append("FROM pedido p ");
+        sql.append("JOIN compra c ON (c.IDproducto = p.IdProd OR c.IdProdTrueque = p.IdProd) ");
         sql.append("JOIN producto pr ON c.IDproducto = pr.ID ");
+        sql.append("WHERE (c.uDNIcomprador = ? OR pr.uDNIVendedor = ?) ");
+
         List<Object> params = new ArrayList<>();
 
-        String[] filters = new String[]{"todos", "por entregar","por recoger"};
+        params.add(dni);
+        params.add(dni);
 
-        if ( request.filter() != null && ( request.filter().equals("todos") || request.filter().equals("por entregar") || request.filter().equals("por recoger") ) ){
+        String[] filters = new String[]{"Todos", "PorEntregar","Entregado", "Recogido"};
+
+        if ( request.filter() != null && ( request.filter().equals("Todos") || request.filter().equals("PorEntregar") || request.filter().equals("Entregado") || request.filter().equals("Recogido") ) ){
             switch (request.filter()) {
-                case "por entregar":
+                case "PorEntregar":
                     // El usuario es el VENDEDOR y el estado es 'PorEntregar'
-                    sql.append("WHERE pr.uDNIVendedor = ? AND p.Estado = 'PorEntregar'");
-                    params.add(dni);
+                    sql.append("AND  p.Estado = 'PorEntregar'");
                     break;
 
-                case "por recoger":
+                case "Entregado":
                     // El usuario es el COMPRADOR y el estado es 'Entregado' (listo para recoger)
-                    sql.append("WHERE c.uDNIcomprador = ? AND p.Estado = 'Entregado'");
-                    params.add(dni);
+                    sql.append("AND p.Estado = 'Entregado'");
                     break;
 
-                case "todos":
+                case "Recogido":
+                    sql.append("AND p.Estado = 'Recogido'");
+                    break;
                 default:
-                    // El usuario es el COMPRADOR O el VENDEDOR
-                    sql.append("WHERE c.uDNIcomprador = ? OR pr.uDNIVendedor = ?");
-                    params.add(dni);
-                    params.add(dni); // Añadimos el DNI dos veces para los dos '?'
                     break;
             }
 
         }
 
-
         List<Pedidos> peds = jdbcTemplate.query(String.valueOf(sql), new BeanPropertyRowMapper<>(Pedidos.class), params.toArray());
         List<PedidosDTO> PedidosDTOs = new ArrayList<>();
 
-        for( Pedidos p : peds)
-        {
-            Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow(()->new CannotCompletePurchaseError("Compra no encontrada"));
-            Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow(()->new CannotCreateProductError("Producto no encontrado"));
-            FotoProd fp = fotoProdRepository.findByIdProd(prod.getID());
+        for (Pedidos p : peds) {
 
-            PedidosDTOs.add(new PedidosDTO(p.getIdPedido(),fp.getFoto(),c.getuDNIComprador(),prod.getuDNI_Vendedor(),c.getuDNIComprador().equals(dni),prod.getNombre(),p.getNTaquilla(),p.isEnTaquilla(),p.getEstado()));
+            System.out.println("-----------------------------------\n" + p.getIdProd());
+
+            Producto prodActual = productoRepository.findById(p.getIdProd())
+                    .orElseThrow(() -> new CannotCreateProductError("Producto no encontrado"));
+
+            Compra c = compraRepository.findByIDProductoOrIDProdTrueque(p.getIdProd(), p.getIdProd());
+
+            if (c == null) continue;
+
+            Usuario usuarioMainComprador = usuarioRepository.findByid(c.getuDNIComprador());
+
+            Producto prodPrincipal = productoRepository.findById(c.getIDProducto()).orElse(null);
+            Usuario usuarioMainVendedor = (prodPrincipal != null) ? usuarioRepository.findByid(prodPrincipal.getuDNI_Vendedor()) : null;
+
+            if (usuarioMainComprador == null || usuarioMainVendedor == null) continue;
+
+            String nombreCompradorFinal;
+            String nombreVendedorFinal;
+            String nombreProductoFinal = prodActual.getNombre();
+            Boolean esCompradorFinal;
+            Integer NTaq = (p.getNTaquilla() != null) ? p.getNTaquilla() : null;
+
+            if (prodActual.getID() == c.getIDProducto()) {
+                nombreCompradorFinal = usuarioMainComprador.getNombre();
+                nombreVendedorFinal = usuarioMainVendedor.getNombre();
+                esCompradorFinal = usuarioMainComprador.getId().equals(dni);
+
+            } else {
+
+                nombreCompradorFinal = usuarioMainVendedor.getNombre();
+                nombreVendedorFinal = usuarioMainComprador.getNombre();
+                esCompradorFinal = usuarioMainVendedor.getId().equals(dni);
+            }
+
+            PedidosDTOs.add(new PedidosDTO(
+                    p.getIdPedido(),
+                    nombreCompradorFinal,
+                    nombreVendedorFinal,
+                    esCompradorFinal,
+                    nombreProductoFinal,
+                    NTaq,
+                    p.isEnTaquilla(),
+                    p.getEstado()
+            ));
         }
 
         return PedidosDTOs;
@@ -135,7 +172,7 @@ public class PedidosService{
     public String entregarPedido(int IdPedido,int NTaquilla, String dni)
     {
         Pedidos ped = pedidosRepository.findById(IdPedido).orElseThrow(() -> new CannotCompleteActionError("Usuario no encontrado"));
-        Compra c = compraRepository.findById(ped.getIdCompra()).orElseThrow( () -> new CannotCompleteActionError("Compra no encontrada") );
+        Compra c = compraRepository.findByIDProductoOrIDProdTrueque(ped.getIdProd(),ped.getIdProd());
         Producto p = productoRepository.findById(c.getIDProducto()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrada"));
         if ( !p.getuDNI_Vendedor().equals(dni) ) throw new CannotCompleteActionError("Debes ser propietario del producto para entregarlo");
         ped.setEstado(Pedidos.Estado.Entregado);
@@ -144,7 +181,7 @@ public class PedidosService{
         pedidosRepository.save(ped);
 
         if ( c.getRecepcion() == Producto.RecepcionAceptada.enMano && c.getTipoPago() == Producto.PagoAceptado.Trueque ){
-            Producto pT = productoRepository.findById(c.getIdProdTrueque()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
+            Producto pT = productoRepository.findById(c.getIDProdTrueque()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
         }
 
         return "Se ha entregado su pedido con exito";
@@ -154,7 +191,7 @@ public class PedidosService{
     public String recogerPedido(int IdPedido, String dni )
     {
         Pedidos p = pedidosRepository.findById(IdPedido).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Compra c = compraRepository.findById(p.getIdCompra()).orElseThrow( () -> new CannotCompleteActionError("Compra no encontrada") );
+        Compra c = compraRepository.findByIDProductoOrIDProdTrueque(p.getIdProd(),p.getIdProd());
         Producto prod = productoRepository.findById(c.getIDProducto()).orElseThrow( () -> new CannotCompleteActionError("Producto no encontrado") );
 
         if ( !c.getuDNIComprador().equals(dni) ) throw new CannotCompleteActionError("Debes ser el comprador del producto para poder recogerlo");
