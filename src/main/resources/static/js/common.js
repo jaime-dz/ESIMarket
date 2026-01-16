@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 /* FUNCIONES EXPORTABLES */
 
-export async function enviarFormularioComoJSON(evento) {
+async function enviarFormularioComoJSON(evento) {
     evento.preventDefault();
 
     const form = evento.target;
@@ -170,7 +170,7 @@ export async function enviarFormularioComoJSON(evento) {
     }
 }
 
-export async function cerrarSesion() {
+async function cerrarSesion() {
     try {
         const respuesta = await fetch('/auth/logout', {
             method: 'DELETE', 
@@ -246,7 +246,7 @@ function ocultarEnlacePaginaActual() {
     });
 }
 
-export function displayProductsItems(products, container) {
+function displayProductsItems(products, container) {
     if (!products || products.length === 0) {
         container.innerHTML = "<p>No hay productos disponibles.</p>";
         return;
@@ -602,3 +602,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 });
+
+function togglePassword(inputId, iconElement) {
+                const input = document.getElementById(inputId);
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    iconElement.textContent = "👁️";
+                } else {
+                    input.type = "password";
+                    iconElement.textContent = "🙈";
+                }
+            }

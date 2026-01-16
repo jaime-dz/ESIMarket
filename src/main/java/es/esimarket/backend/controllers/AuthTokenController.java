@@ -122,7 +122,7 @@ public class AuthTokenController {
     private ResponseCookie crearCookie(String nombre, String valor, long duracion, boolean httponly) {
         return ResponseCookie.from(nombre, valor)
                 .httpOnly(httponly) // Seguridad: JS no puede leerla
-                .secure(true)  // false para localhost, true para producción (HTTPS)
+                .secure(false)  // false para localhost, true para producción (HTTPS)
                 .path("/")
                 .maxAge(duracion / 1000) // Segundos
                 .sameSite("Strict")

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <th:block th:fragment="common-head">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../static/css/general_styles.css" th:href="@{/css/general_styles.css}">
+        <link rel="icon" href="../../static/Images/favicon.ico" th:href="@{/Images/favicon.ico}" type="image/x-icon">
+    </th:block>
+</head>
+<body>
+    <div th:fragment="sidebar" id="sideMenu" class="sidebar user-view">
+        <a href="javascript:void(0)" class="closebtn" onclick="toggleMenu()">&times;</a>
+        <a href="/purchase/">Historial de compras</a>
+        <a href="/orders/">Lista de pedidos</a>
+        <a href="/service/">Lista de servicios</a>
+        <a href="/donations/">Donaciones</a>
+        <a href="/chat/">Chats</a>
+    </div>
+    <header th:fragment="menu-superior" class="menu-bar menu-superior">
+        <div class="header-left">
+            <div class="hamburger-icon user-view" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
+            <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
+            <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
+        </div>
+
+        <nav class="header-center">
+            <ul>
+                <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-right">
+
+            <div class="guest-view">
+                <a href="/auth/login"> Iniciar sesión</a>
+                <a href="/auth/signup"> Registrarse</a>
+            </div>
+
+            <div class="user-view" style="display: none;">
+
+                <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+
+                <div class="profile-container">
+                    <div class="coins-info">
+                        <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
+                    </div>
+                    <img class="profile-avatar"
+                         th:data-id="${profile?.correo}"
+                         src="/Images/huevoverde.jpeg"
+                         alt="Perfil">
+
+                    <div class="dropdown-content">
+                        <a href="/profile/">Mi Perfil</a>
+                        <a href="#" id="btn-logout">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <footer th:fragment="menu-inferior" class="menu-bar menu-inferior">
+        <ul>
+            <li><a th:href="@{/home/}">Inicio</a></li>
+            <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
+
+            <li class="guest-view">
+                <a th:href="@{/auth/login}">Iniciar sesión</a>
+            </li>
+            <li class="guest-view">
+                <a th:href="@{/auth/signup}">Registrarse</a>
+            </li>
+
+            <li class="sn">
+                <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
+                <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
+            </li>
+        </ul>
+    </footer>
+
+</body>
+</html>

@@ -2,5 +2,5 @@
 /.vscode/
 /.idea/
 /.mvn/
-env.properties
+src/main/resources/env.properties
 pull.sh
