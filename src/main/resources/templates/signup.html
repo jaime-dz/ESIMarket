@@ -2,55 +2,11 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Registrarse</title>
-        <link rel="stylesheet" href="/css/general_styles.css">
-        <link rel="icon" href="/Images/favicon.ico" type="image/x-icon">
+        <title>Registro</title>
+        <th:block th:replace="~{common/general-fragments :: common-head}"></th:block>
     </head>
     <body>
-        <header class="menu-bar menu-superior">
-            <div class="header-left">
-                <img class="logo-item" src="/Images/logo64.png" alt="Logo ESIMarket">
-                <h1 style="color:#E57200; font-family: monospace; font-weight: bold; margin:0;">ESI</h1>
-                <h1 style="color:#ffffff; font-family: monospace; margin:0;">Market</h1>
-            </div>
-
-            <nav class="header-center">
-                <ul>
-                    <li><a href="/home/">Inicio</a></li> <li><a href="/home/about">Sobre nosotros</a></li>
-                </ul>
-            </nav>
-
-            <div class="header-right">
-                
-                <div class="guest-view">
-                    <a href="/auth/login">Iniciar sesión</a>
-                    <a href="/auth/signup" style="background-color: rgba(255,255,255,0.1); border-radius:5px;">Registrarse</a>
-                </div>
-
-                <div class="user-view" style="display: none;">
-                    
-                    <button class="btn-publicar" onclick="window.location.href='/home/publish'">Publicar</button>
-                    
-                    <div class="profile-container">
-                        <div class="coins-info">
-                            <span th:text="${profile?.saldoMoneda}"></span> <span>⚙️</span>
-                        </div>
-                        <img class="profile-avatar" 
-                            th:data-id="${profile?.correo}" 
-                            src="/Images/huevoverde.jpeg" 
-                            alt="Perfil">
-                        
-                        <div class="dropdown-content">
-                            <a href="/profile/">Mi Perfil</a>
-                            <a href="#" id="btn-logout">Cerrar sesión</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </header>
+        <div th:replace="~{common/general-fragments :: menu-superior}"></div>
         <main>
             <div class="form-container">
                 <h2>Registrarse</h2>
@@ -123,40 +79,8 @@
                 </form>
             </div>
         </main>
-        
-        
-        <footer class="menu-bar menu-inferior">
-            <ul>
-                <li><a th:href="@{/home/}">Inicio</a></li>
-                <li><a th:href="@{/home/about}">Sobre nosotros</a></li>
-
-                <li class="guest-view">
-                    <a th:href="@{/auth/login}">Iniciar sesión</a>
-                </li>
-                <li class="guest-view">
-                    <a th:href="@{/auth/signup}">Registrarse</a>
-                </li>
-
-                <li class="sn">
-                    <a href="https://www.instagram.com/esimarket_uca/"><img width="64px" height="64px" src="/Images/instagram.png" alt="Instagram"></a>
-                    <a href="https://x.com/esimarket_uca"><img width="64px" height="64px" src="/Images/twitter.png" alt="Twitter"></a>
-                </li>
-            </ul>
-        </footer>
-        <script src="/js/common.js" type="module"></script>
-        <script src="/js/signup.js" type="module"></script>
-        <script>
-            function togglePassword(inputId, iconElement) {
-                const input = document.getElementById(inputId);
-                
-                if (input.type === "password") {
-                    input.type = "text";
-                    iconElement.textContent = "👁️";
-                } else {
-                    input.type = "password";
-                    iconElement.textContent = "🙈";
-                }
-            }
-        </script>
+        <div th:replace="~{common/general-fragments :: menu-inferior}"></div>
+        <script src="/js/common.js" ></script>
+        <script src="/js/signup.js" ></script>
     </body>
 </html>

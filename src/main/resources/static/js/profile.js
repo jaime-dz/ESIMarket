@@ -44,3 +44,38 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+function abrirModalEliminar() {
+    document.getElementById("modalEliminarPerfil").style.display = "flex";
+}
+
+function cerrarModalEliminar() {
+    document.getElementById("modalEliminarPerfil").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("modalEliminarPerfil");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function confirmarEliminarPerfil() {
+    fetch('/profile/delete', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = '/home/';
+        } else {
+            alert("Hubo un error al intentar eliminar el perfil.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Error de conexión.");
+    });
+}

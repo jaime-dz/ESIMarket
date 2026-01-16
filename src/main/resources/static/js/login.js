@@ -1,6 +1,3 @@
-// login.js
-import { enviarFormularioComoJSON } from './common.js';
-
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login');
 

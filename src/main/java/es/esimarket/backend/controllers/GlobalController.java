@@ -79,7 +79,7 @@ public class GlobalController {
     public ResponseEntity<Map<String, String>> handleGenericException(Exception e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Collections.singletonMap("message", "Ocurrió un error interno inesperado."));
+                .body(Collections.singletonMap("message", "Ocurrió un error interno inesperado: " + e.getMessage()));
     }
 
     private ResponseEntity<Map<String, String>> buildInternalErrorResponse(RuntimeException e) {
