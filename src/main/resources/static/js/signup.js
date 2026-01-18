@@ -1,5 +1,3 @@
-import { enviarFormularioComoJSON } from './common.js';
-
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signup');
     if (!signupForm) return;
