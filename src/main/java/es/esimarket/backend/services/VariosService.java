@@ -35,7 +35,7 @@ public class VariosService
 
     public String calcularFechaAmigable(LocalDateTime fechaMensaje) {
         LocalDate fecha = fechaMensaje.toLocalDate();
-        LocalDate hoy = LocalDate.now();
+        LocalDate hoy = LocalDate.now(zonaHoraria);
 
         if (fecha.equals(hoy)) {
             return "Hoy";

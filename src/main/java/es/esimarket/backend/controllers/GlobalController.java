@@ -1,6 +1,8 @@
 package es.esimarket.backend.controllers;
+import es.esimarket.backend.entities.Notificacion;
 import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.*;
+import es.esimarket.backend.repositories.NotificationRepository;
 import es.esimarket.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
@@ -20,6 +24,9 @@ public class GlobalController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @ExceptionHandler(BadInputError.class)
     public ResponseEntity<Map<String, String>> handleBadInput(BadInputError e) {
@@ -101,4 +108,20 @@ public class GlobalController {
 
         return null; // Si no está logueado, "profile" será null en la vista
     }
+
+
+    @ModelAttribute("notificaciones")
+    public List<Notificacion> addNotificacionesToModel() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Si el usuario está logueado y no es anónimo
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            String dni = auth.getName(); // Asumiendo que el DNI es el username
+            return notificationRepository.findByuDNIOrderByIdDesc(dni);
+        }
+
+        // Si no está logueado, devolvemos lista vacía para que no dé error el HTML
+        return new ArrayList<>();
+    }
+
 }

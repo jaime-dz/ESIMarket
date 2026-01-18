@@ -43,24 +43,39 @@ function pintarListaChats(chats) {
     chats.forEach(chat => {
         const item = document.createElement('div');
         item.className = 'chat-item';
-        item.id = 'chat-item-' + chat.id; // ID para manipular clases active
+        item.id = 'chat-item-' + chat.id;
+
+        // Comprobar si viene marcado del servidor (si implementaste el booleano en Java)
+        if (chat.tieneMensajesSinLeer) {
+            item.classList.add('has-unread');
+        }
+
         item.onclick = () => abrirChat(chat, item);
 
-        const imgUrl = chat.foto ? "data:image/jpeg;base64," + chat.foto : "/Images/logo64.png";
+        const imgUrl = (chat.foto && chat.foto.length > 0)
+            ? 'data:image/jpeg;base64,' + chat.foto
+            : '/Images/producto_default.png';
+
 
         item.innerHTML = `
-            <img src="${imgUrl}" alt="Prod">
-            <div class="chat-info">
-                <div class="chat-name">${chat.nombreProducto}</div>
-                <div class="chat-preview">${chat.nombreUsu}</div>
+            <div style="display:flex; align-items:center;">
+                <img src="${imgUrl}" alt="" style="width:45px; height:45px; border-radius:50%; margin-right:15px; object-fit: cover; border: 1px solid #ddd;">
+                <div>
+                    <div class="chat-name" style="font-weight:bold; font-size:1.1em;">${chat.nombreProducto || 'Desconocido'}</div>
+                    <div class="chat-product" style="font-size:0.85em; color:#666;">${chat.nombreUsu || 'Anonimo'}</div>
+                </div>
             </div>
+            <div class="unread-dot"></div>
         `;
+
         container.appendChild(item);
     });
 }
 
 function abrirChat(chat, element) {
     currentChatId = chat.id;
+
+    element.classList.remove('has-unread');
 
     // Gestionar clase active visualmente
     document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));

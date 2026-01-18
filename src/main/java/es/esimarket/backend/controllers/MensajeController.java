@@ -1,11 +1,14 @@
 package es.esimarket.backend.controllers;
 import es.esimarket.backend.controllers.requests.MessageRequest;
 import es.esimarket.backend.controllers.responses.MessageResponse;
+import es.esimarket.backend.entities.Chat;
 import es.esimarket.backend.entities.Mensaje;
+import es.esimarket.backend.entities.Producto;
+import es.esimarket.backend.entities.Usuario;
 import es.esimarket.backend.exceptions.CannotDetermineIfToxicError;
-import es.esimarket.backend.services.JwtService;
-import es.esimarket.backend.services.OllamaService;
-import es.esimarket.backend.services.VariosService;
+import es.esimarket.backend.repositories.ProductoRepository;
+import es.esimarket.backend.repositories.UsuarioRepository;
+import es.esimarket.backend.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -24,8 +27,6 @@ import es.esimarket.backend.repositories.MensajeRepository;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-
-import es.esimarket.backend.services.MensajeService;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -49,10 +50,16 @@ public class MensajeController
     private OllamaService ollamaService;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    @Autowired
     private VariosService variosService;
 
     @Autowired
-    private JwtService jwtService;
+    private NotificationService notificationService;
 
     @Autowired
     private JdbcTemplate jbdcTemplate;
@@ -108,7 +115,7 @@ public class MensajeController
                 String respuestaIA = null;
                 try {
                     respuestaIA = ollamaService.isToxic(prompt + texto + " ###");
-                } catch (CannotDetermineIfToxicError e) {
+                } catch (Exception e) {
                     respuestaIA = "false";
                 }
 
@@ -145,6 +152,16 @@ public class MensajeController
 
                 messagingTemplate.convertAndSend("/topic/messages/" + chatId, respuesta);
 
+                Usuario u = usuarioRepository.findByid(m.getuDNIremitente());
+                Chat c = chatRepository.findByid(chatId);
+                Producto p = productoRepository.findByID(c.getIdProducto());
+                String destinatarioDni = obtenerDniDestinatario(chatId,m.getuDNIremitente());
+                notificationService.notificarNuevoMensaje(
+                        destinatarioDni,
+                        u.getNombre(),
+                        p.getNombre()
+                );
+
             }catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Error enviando mensaje socket: " + e.getMessage());
@@ -152,6 +169,13 @@ public class MensajeController
 
         });
 
+    }
+
+    private String obtenerDniDestinatario( int idChat , String remitente){
+
+        Chat c = chatRepository.findByid(idChat);
+
+        return ( c.getuDNIcomprador().equals(remitente))  ? c.getUDNIvendedor() : c.getuDNIcomprador() ;
     }
 
 

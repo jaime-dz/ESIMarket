@@ -6,6 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../../static/css/general_styles.css" th:href="@{/css/general_styles.css}">
         <link rel="icon" href="../../static/Images/favicon.ico" th:href="@{/Images/favicon.ico}" type="image/x-icon">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
     </th:block>
 </head>
 <body>
@@ -45,6 +49,38 @@
             <div class="user-view" style="display: none;">
 
                 <button class="btn-publicar" onclick="window.location.href='/products/create'">Publicar</button>
+
+                <script src="/js/notification.js"></script>
+                <div class="notification-container">
+                    <svg class="bell-icon" onclick="toggleNotificaciones(event)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+
+                    <span id="notif-red-dot" class="red-dot"
+                          th:style="${#lists.isEmpty(notificaciones)} ? 'display:none;' : 'display:block;'">
+                    </span>
+
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">
+                            <span>Notificaciones</span>
+                            <button class="clear-all" onclick="borrarTodas()">Borrar todo</button>
+                        </div>
+
+                        <ul id="notif-list">
+                            <li th:each="notif : ${notificaciones}" th:id="'notif-' + ${notif.id}" class="notif-item">
+                                <span th:text="${notif.mensaje}"></span>
+                                <span class="delete-notif" th:onclick="'borrarNotif(event,' + ${notif.id} + ')'">&times;</span>
+                            </li>
+                        </ul>
+
+                        <div id="no-notif-msg" class="no-notif" th:style="${#lists.isEmpty(notificaciones)} ? 'display:block;' : 'display:none;'">
+                            No tienes notificaciones
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <div class="profile-container">
                     <div class="coins-info">

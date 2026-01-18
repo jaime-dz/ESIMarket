@@ -1467,6 +1467,7 @@ main {
 
 /* Tarjeta de Chat Individual */
 .chat-item {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 15px;
@@ -1476,6 +1477,24 @@ main {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     border: 1px solid transparent; /* Para evitar saltos al hacer hover */
+}
+
+.unread-dot {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: #ff3b30; /* Color rojo */
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(255, 59, 48, 0.6);
+    display: none; /* Por defecto oculto, lo mostramos con JS */
+}
+
+
+.chat-item.has-unread .unread-dot {
+    display: block;
 }
 
 /* Hover Effect: Elevación sutil */
@@ -1731,3 +1750,148 @@ main {
 }
 
 .back-button { display: none; }
+
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+#notif-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Esto fuerza la orientación vertical */
+    max-height: 400px;     /* Altura máxima antes de permitir scroll */
+    overflow-y: auto;      /* Scroll vertical si hay muchas */
+}
+
+/* Cada notificación individual */
+.notif-item {
+    display: flex;
+    justify-content: space-between; /* Mensaje a la izquierda, 'X' a la derecha */
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0; /* Línea divisoria entre notas */
+    background-color: #fff;
+    width: 100%; /* Ocupar todo el ancho del desplegable */
+    box-sizing: border-box; /* Para que el padding no ensanche el div */
+    transition: background-color 0.2s;
+}
+
+.notif-item:hover {
+    background-color: #f9f9f9;
+}
+
+/* El texto de la notificación */
+.notif-item span {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+    padding-right: 10px; /* Espacio para que el texto no choque con la X */
+    word-break: break-word; /* Romper palabras largas si es necesario */
+}
+
+
+.notification-container {
+    position: relative; /* Importante para que el hijo absoluto se guíe por este padre */
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+/* El desplegable */
+.notification-dropdown {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    top: 40px;    /* Ajusta según la altura de tu menú superior */
+    right: 0;     /* Alineado a la derecha de la campana */
+    width: 320px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    z-index: 1002; /* Por encima de todo */
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+/* Clase que añadiremos con JS para mostrarlo */
+.notification-dropdown.show {
+    display: block;
+}
+
+/* Punto rojo posicionado sobre la campana */
+.red-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    border: 2px solid #00587C; /* Del mismo color que el fondo del menú */
+}
+
+.clear-all {
+    background: none;
+    border: none;
+    color: #E57200; /* Tu color naranja corporativo */
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.clear-all:hover {
+    text-decoration: underline;
+    color: #cc6600;
+}
+
+.delete-notif {
+    cursor: pointer;
+    padding: 0 5px;
+    color: #ccc;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.delete-notif:hover {
+    color: #ff4d4d;
+}
+
+.bell-icon {
+    width: 28px;
+    height: 28px;
+    color: white; /* O el color que quieras que tenga la campana */
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.bell-icon:hover {
+    transform: scale(1.1);
+}
+
+
+@keyframes bell-shake {
+  0% { transform: rotate(0); }
+  15% { transform: rotate(15deg); }
+  30% { transform: rotate(-15deg); }
+  45% { transform: rotate(10deg); }
+  60% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  85% { transform: rotate(-5deg); }
+  100% { transform: rotate(0); }
+}
+
+/* Clase que aplicaremos por JS */
+.bell-shake-active {
+  animation: bell-shake 0.6s ease-in-out;
+  transform-origin: top center; /* El balanceo sale desde arriba */
+}

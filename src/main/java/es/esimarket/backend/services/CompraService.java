@@ -31,6 +31,9 @@ public class CompraService {
     private ServicioService servicioService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private ServicioRepository servicioRepository;
 
     @Autowired
@@ -155,6 +158,12 @@ public class CompraService {
 
             usuarioRepository.save(uComprador);
             usuarioRepository.save(uVendedor);
+
+            String destinatarioDni = p.getuDNI_Vendedor();
+            notificationService.crearYEnviarNotificacion(
+                    destinatarioDni,
+                    "¡Enhorabuena! " + uComprador.getNombre() + " ha comprado tu producto: " + p.getNombre()
+            );
 
             return "Compra realizada correctamente";
         }

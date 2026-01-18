@@ -49,7 +49,8 @@ public class SecurityConfig {
                                                      "/Images/**",
                                                      "/*.pdf",
                                                      "/*.ico",
-                                                     "/ws/**")
+                                                     "/ws/**",
+                                                     "/ws-notifications/**")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

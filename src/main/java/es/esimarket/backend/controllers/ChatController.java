@@ -90,9 +90,9 @@ public class ChatController
                 .map(m -> new MessageResponse(
                         m.getId(),
                         m.getTexto(),
-                        m.getuDNIremitente(),     // Quién lo envió
-                        variosService.calcularFechaAmigable(m.getFecha()),      // Fecha
-                        m.getHoraMin(),  // Hora
+                        m.getuDNIremitente(),
+                        variosService.calcularFechaAmigable(m.getFecha()),
+                        m.getHoraMin(),
                         null,
                         false
                 ))
